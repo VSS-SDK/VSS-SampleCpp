@@ -9,8 +9,40 @@
 
 #include "interface.h"
 
-int main(){
-	Interface interface;
+int main(int argc, char** argv){
+	/*Interface interface;
 	vss_state::Global_State global_state;
-	interface.createLoopReceiveState(&global_state);
+	interface.createLoopReceiveState(&global_state);*/
+
+	if(argc <= 1){
+		Interface interface;
+		vss_command::Global_Commands global_commands;
+
+		global_commands.set_id(0);
+		global_commands.set_is_team_yellow(true);
+
+		for(int i = 0 ; i < 3 ; i++){
+			vss_command::Robot_Command *robot = global_commands.add_robot_commands();
+			robot->set_id(i);
+			robot->set_left_vel(100);
+			robot->set_right_vel(100);
+		}
+
+		interface.createLoopSendCommandsYellow(&global_commands);
+	}else{
+		Interface interface;
+		vss_command::Global_Commands global_commands;
+
+		global_commands.set_id(0);
+		global_commands.set_is_team_yellow(false);
+
+		for(int i = 0 ; i < 3 ; i++){
+			vss_command::Robot_Command *robot = global_commands.add_robot_commands();
+			robot->set_id(i);
+			robot->set_left_vel(55);
+			robot->set_right_vel(55);
+		}
+
+		interface.createLoopSendCommandsBlue(&global_commands);
+	}
 }
