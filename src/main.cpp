@@ -10,11 +10,15 @@
 #include "interface.h"
 
 int main(int argc, char** argv){
-	/*Interface interface;
+	Interface interface;
 	vss_state::Global_State global_state;
-	interface.createLoopReceiveState(&global_state);*/
+	interface.createSocketReceiveState(&global_state);
 
-	if(argc <= 1){
+	while(true){
+		interface.receiveState();
+	}
+
+	/*if(argc <= 1){
 		Interface interface;
 		vss_command::Global_Commands global_commands;
 
@@ -44,5 +48,5 @@ int main(int argc, char** argv){
 		}
 
 		interface.createLoopSendCommandsBlue(&global_commands);
-	}
+	}*/
 }

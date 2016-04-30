@@ -21,8 +21,14 @@
 
 class Interface{
 private:
+	zmq::message_t request;
+	zmq::context_t *context;
+    zmq::socket_t *socket;
+    
 	vss_state::Global_State *global_state;
 	vss_command::Global_Commands *global_commands;
+
+	
 	// Simulator and VSS -> Strategys
 	const char *addr_server_multicast = "tcp://*:5555";
 	const char *addr_client_multicast = "tcp://localhost:5555";
@@ -37,8 +43,10 @@ private:
 public:
 	Interface();
 
-	void createLoopSendState(vss_state::Global_State*);
-	void createLoopReceiveState(vss_state::Global_State*);
+	void createSocketSendState(vss_state::Global_State*);
+	void sendState();
+	void createSocketReceiveState(vss_state::Global_State*);
+	void receiveState();
 
 	void createLoopSendCommandsYellow(vss_command::Global_Commands*);
 	void createLoopReceiveCommandsYellow(vss_command::Global_Commands*);

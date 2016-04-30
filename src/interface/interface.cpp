@@ -11,16 +11,16 @@
 Interface::Interface(){
 }
 
-void Interface::createLoopSendState(vss_state::Global_State *global_state){
+void Interface::createSocketSendState(vss_state::Global_State *global_state){
 	this->global_state = global_state;
 
-	zmq::context_t context (1);
-	zmq::socket_t socket (context, ZMQ_PUB);
+	context = new zmq::context_t(1);
+	socket = new zmq::socket_t(*context, ZMQ_PUB);
 
 	std::cout << "Connecting Server Multicast Sender: " << addr_server_multicast << std::endl;
-	socket.bind(addr_server_multicast);
+	socket->bind(addr_server_multicast);
 
-	while (true) {
+	/*while (true) {
 		usleep (100000);
 
 		std::string msg_str;
@@ -30,21 +30,31 @@ void Interface::createLoopSendState(vss_state::Global_State *global_state){
 	    memcpy ((void *) request.data (), msg_str.c_str(), msg_str.size());
 	    std::cout << "Sending State data ..." << std::endl;
 	    socket.send(request);
-	}
+	}*/
 }
 
-void Interface::createLoopReceiveState(vss_state::Global_State *global_state){
+void Interface::sendState(){
+	std::string msg_str;
+    global_state->SerializeToString(&msg_str);
+
+    zmq::message_t request (msg_str.size());
+    memcpy ((void *) request.data (), msg_str.c_str(), msg_str.size());
+    std::cout << "Sending State data ..." << std::endl;
+    socket->send(request);
+}
+
+void Interface::createSocketReceiveState(vss_state::Global_State *global_state){
 	this->global_state = global_state;
 	
-	zmq::context_t context(1);
-	zmq::socket_t socket (context, ZMQ_SUB);
+	context = new zmq::context_t(1);
+	socket = new zmq::socket_t(*context, ZMQ_SUB);
 
 	std::cout << "Connecting Client Multicast Receiver: " << addr_client_multicast << std::endl;
-	socket.connect(addr_client_multicast);
+	socket->connect(addr_client_multicast);
 
-	socket.setsockopt (ZMQ_SUBSCRIBE, "", 0);
+	socket->setsockopt(ZMQ_SUBSCRIBE, "", 0);
 
-	int request_nbr;
+	/*int request_nbr;
 	while(true){
 		zmq::message_t request;
         socket.recv (&request, 0); //  Wait for next request from client
@@ -53,7 +63,16 @@ void Interface::createLoopReceiveState(vss_state::Global_State *global_state){
         global_state->ParseFromString(msg_str);
         printState();
 	}
-	socket.close();
+	socket.close();*/
+}
+
+void Interface::receiveState(){
+	zmq::message_t request;
+	socket->recv(&request, 0); //  Wait for next request from client
+	std::cout << "Received" << std::endl;
+	std::string msg_str(static_cast<char*>(request.data()), request.size());
+	global_state->ParseFromString(msg_str);
+	printState();
 }
 
 void Interface::createLoopSendCommandsYellow(vss_command::Global_Commands* global_commands){
