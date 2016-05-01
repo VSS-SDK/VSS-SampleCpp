@@ -1,5 +1,5 @@
-VSS-Vision 
-==========
+VSS-SampleStrategy
+==================
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)][gpl3]
 
 **Install** Ubuntu (14.04 LTS)
