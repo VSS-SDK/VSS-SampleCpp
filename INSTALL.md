@@ -11,6 +11,15 @@ $ sudo apt-get install pkg-config
 $ sudo apt-get install g++ cmake git libzmq3 libzmq3-dev protobuf-compiler libprotobuf-dev
 ```
 
+**Install** Raspbian (2016-05-10)
+------------------------------
+**Install Standard Packages:**
+```
+$ sudo apt-get update && apt-get upgrade
+$ sudo apt-get install pkgconf
+$ sudo apt-get install g++ cmake git libzmq3 libzmq3-dev protobuf-compiler libprotobuf-dev
+```
+
 License
 -------
 
