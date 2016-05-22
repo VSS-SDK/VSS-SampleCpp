@@ -1,6 +1,7 @@
 VSS-SampleStrategy
 ==================
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)][gpl3]
+[![Link: Youtube](https://img.shields.io/badge/Link-Youtube-red.svg)][youtube]
 
 
 
@@ -41,3 +42,4 @@ You are allowed and encouraged to use this software on the IEEE Very Small Size 
 [travis]: https://travis-ci.org/SIRLab/VSS-Vision
 [samplestrategy]: https://github.com/SIRLab/VSS-SampleStrategy
 [install]: https://github.com/SIRLab/VSS-SampleStrategy/blob/master/INSTALL.md
+[youtube]: https://www.youtube.com/watch?v=qYsNPGvAuME
