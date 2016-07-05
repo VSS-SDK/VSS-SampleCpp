@@ -3,11 +3,18 @@ VSS-SampleStrategy
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)][gpl3]
 [![Link: Youtube](https://img.shields.io/badge/Link-Youtube-red.svg)][youtube]
 
+O VSS-Vision é uma das partes de um framework que está sendo desenvolvido para a categoria de futebol de robôs [IEEE Very Small Size Soccer (VSSS)][vss], que consiste em:
+
+> Um programa de Visão Computacional global para a categoria, o [VSS-Vision][vss-vision];
+
+> Um simulador para a categoria, o [VSS-Simulator][vss-simulator];
+
+> Um visualizador de estados em 3D para categoria, o [VSS-Viewer][vss-viewer];
+
+> Uma base de estratégia que pode ser utilizada para obter e enviar dados dos três projetos citados, o [VSS-SampleStrategy][vss-sample].
 
 
-Description
------------
-Uma estratégia que demonstra como obter os dados do projeto VSS-Vision
+Mais informações podem ser encontradas em [sirlab.github.io][sirlab_site].
 
 
 Installation
@@ -43,3 +50,7 @@ You are allowed and encouraged to use this software on the IEEE Very Small Size 
 [samplestrategy]: https://github.com/SIRLab/VSS-SampleStrategy
 [install]: https://github.com/SIRLab/VSS-SampleStrategy/blob/master/INSTALL.md
 [youtube]: https://www.youtube.com/watch?v=qYsNPGvAuME
+[vss-vision]: https://github.com/SIRLab/VSS-Vision
+[vss-simulator]: https://github.com/SIRLab/VSS-Simulator
+[vss-viewer]: https://github.com/SIRLab/VSS-Viewer
+[vss-sample]: https://github.com/SIRLab/VSS-SampleStrategy

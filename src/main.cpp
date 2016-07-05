@@ -10,13 +10,16 @@
 #include "interface.h"
 
 int main(int argc, char** argv){
-	Interface interface;
-	vss_state::Global_State global_state;
-	interface.createSocketReceiveState(&global_state);
+	Strategy strategy;
+	strategy.init();
+
+	//Interface interface;
+	//vss_state::Global_State global_state;
+	/*interface_receive.createSocketReceiveState(&global_state);
 
 	while(true){
-		interface.receiveState();
-	}
+		interface_receive.receiveState();
+	}*/
 
 	/*if(argc <= 1){
 		Interface interface;
@@ -49,4 +52,6 @@ int main(int argc, char** argv){
 
 		interface.createLoopSendCommandsBlue(&global_commands);
 	}*/
+
+	return 0;
 }
