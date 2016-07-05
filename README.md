@@ -54,3 +54,4 @@ You are allowed and encouraged to use this software on the IEEE Very Small Size 
 [vss-simulator]: https://github.com/SIRLab/VSS-Simulator
 [vss-viewer]: https://github.com/SIRLab/VSS-Viewer
 [vss-sample]: https://github.com/SIRLab/VSS-SampleStrategy
+[sirlab_site]: http://sirlab.github.io/vss.html
