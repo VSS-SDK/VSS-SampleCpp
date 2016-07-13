@@ -24,10 +24,16 @@ Installation
 
 Development and Use
 -------------------
-```
-$ make && make run
-```
+> C++ 
 
+```
+$ make all_cpp
+```
+> Java 
+
+```
+$ make all_java
+```
 
 License
 -------
