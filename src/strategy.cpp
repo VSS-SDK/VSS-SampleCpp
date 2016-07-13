@@ -28,8 +28,17 @@ void Strategy::receive_thread(){
 		interface_receive.receiveState();
 
 		// Ball state
-		global_state.balls(0).y();		// X
-		global_state.balls(0).x();		// Y
+		global_state.balls(0).pose().x();			// Pos X
+		global_state.balls(0).pose().y();			// Pos Y
+
+		global_state.balls(0).v_pose().x();			// Vel X
+		global_state.balls(0).v_pose().y();			// Vel Y
+
+		global_state.balls(0).k_pose().x();			// Kalman Pos X
+		global_state.balls(0).k_pose().y();			// kalman Pos Y
+
+		global_state.balls(0).k_v_pose().x();		// Kalman Vel X
+		global_state.balls(0).k_v_pose().y();		// Kalman Vel Y
 
 		// Robots state
 		for(int i = 0 ; i < 3 ; i++){
@@ -72,7 +81,7 @@ void Strategy::receive_thread(){
 
 			// Blue Robots Kalman predict POSE
 			global_state.robots_blue(i).k_pose().x();			// Kalman Pos X
-			global_state.robots_blue(i).k_	pose().y();			// Kalman Pos Y
+			global_state.robots_blue(i).k_pose().y();			// Kalman Pos Y
 			global_state.robots_blue(i).k_pose().yaw();			// Kalman Rotation in Z Axis (YAW)
 
 			// Blue Robots Kalman predict VELOCITYS
