@@ -6,8 +6,7 @@
  * file, You can obtain one at http://www.gnu.org/licenses/gpl-3.0/.
  */
 
-
-#include "interface.h"
+#include "strategy.h"
 
 int main(int argc, char** argv){
 	Strategy strategy;

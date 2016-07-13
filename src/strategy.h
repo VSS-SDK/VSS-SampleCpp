@@ -24,6 +24,7 @@ protected:
     thread *thread_send;
 
     bool has_new_state, has_new_command;
+	bool its_real_transmition;
 public:
 	Strategy();	
 	void init();
