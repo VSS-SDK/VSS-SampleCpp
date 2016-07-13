@@ -24,6 +24,7 @@ void Strategy::receive_thread(){
 	interface_receive.createSocketReceiveState(&global_state);
 
 	while(true){
+		// Only loop if has a new state
 		interface_receive.receiveState();
 		has_new_state = true;
 	}
@@ -53,14 +54,14 @@ void Strategy::send_thread(){
 					global_state.robots_yellow(i).v_pose().yaw();		// Vel Rotation in Z Axis (YAW)
 
 					// Yellow Robots Kalman predict POSE
-					global_state.robots_yellow(i).k_pose().x();			// Pos X
-					global_state.robots_yellow(i).k_pose().y();			// Pos Y
-					global_state.robots_yellow(i).k_pose().yaw();		// Rotation in Z Axis (YAW)
+					global_state.robots_yellow(i).k_pose().x();			// Kalman Pos X
+					global_state.robots_yellow(i).k_pose().y();			// Kalman Pos Y
+					global_state.robots_yellow(i).k_pose().yaw();		// Kalman Rotation in Z Axis (YAW)
 
 					// Yellow Robots Kalman predict VELOCITYS
-					global_state.robots_yellow(i).k_v_pose().x();		// Vel X
-					global_state.robots_yellow(i).k_v_pose().y();		// Vel Y
-					global_state.robots_yellow(i).k_v_pose().yaw();		// Vel Rotation in Z Axis (YAW)
+					global_state.robots_yellow(i).k_v_pose().x();		// Kalman Vel X
+					global_state.robots_yellow(i).k_v_pose().y();		// Kalman Vel Y
+					global_state.robots_yellow(i).k_v_pose().yaw();		// Kalman Vel Rotation in Z Axis (YAW)
 
 					// Yellow Robots COLOR LABEL (RGB)
 					global_state.robots_yellow(i).color().r();			// R
@@ -80,14 +81,14 @@ void Strategy::send_thread(){
 					global_state.robots_blue(i).v_pose().yaw();			// Vel Rotation in Z Axis (YAW)
 
 					// Blue Robots Kalman predict POSE
-					global_state.robots_blue(i).k_pose().x();			// Pos X
-					global_state.robots_blue(i).k_pose().y();			// Pos Y
-					global_state.robots_blue(i).k_pose().yaw();			// Rotation in Z Axis (YAW)
+					global_state.robots_blue(i).k_pose().x();			// Kalman Pos X
+					global_state.robots_blue(i).k_pose().y();			// Kalman Pos Y
+					global_state.robots_blue(i).k_pose().yaw();			// Kalman Rotation in Z Axis (YAW)
 
 					// Blue Robots Kalman predict VELOCITYS
-					global_state.robots_blue(i).k_v_pose().x();			// Vel X
-					global_state.robots_blue(i).k_v_pose().y();			// Vel Y
-					global_state.robots_blue(i).k_v_pose().yaw();		// Vel Rotation in Z Axis (YAW)
+					global_state.robots_blue(i).k_v_pose().x();			// Kalman Vel X
+					global_state.robots_blue(i).k_v_pose().y();			// Kalman Vel Y
+					global_state.robots_blue(i).k_v_pose().yaw();		// Kalman Vel Rotation in Z Axis (YAW)
 
 					// Blue Robots COLOR LABEL (RGB)
 					global_state.robots_blue(i).color().r();			// R
