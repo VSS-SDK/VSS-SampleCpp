@@ -30,7 +30,7 @@ void Strategy::receive_thread(){
 }
 
 void Strategy::send_thread(){
-	global_commands.set_id(0);
+	/*global_commands.set_id(0);
 	global_commands.set_is_team_yellow(true);
 
 	while(true){
@@ -42,5 +42,5 @@ void Strategy::send_thread(){
 		}	
 	}
 
-	interface.createLoopSendCommandsYellow(&global_commands);
+	interface.createLoopSendCommandsYellow(&global_commands);*/
 }
