@@ -101,11 +101,15 @@ void Strategy::calc_strategy(){
 	cout << angulation_robot_robot_ball << endl;
 
 	float left_vel, right_vel;
+	float eixoRobo = 8.0;
 
-	left_vel = -angulation_robot_robot_ball*0.05;
-	right_vel = angulation_robot_robot_ball*0.05;
+	left_vel = distance_robot_ball - (angulation_robot_robot_ball * eixoRobo / 2.00);
+	right_vel = distance_robot_ball + (angulation_robot_robot_ball * eixoRobo / 2.00);
 	
-	if(fabs(angulation_robot_robot_ball) < 8){
+	left_vel *= 0.3;
+	right_vel *= 0.3;
+
+	if(fabs(angulation_robot_robot_ball) < 8 && distance_robot_ball < 10){
 		left_vel = 0;
 		right_vel = 0;
 	}
