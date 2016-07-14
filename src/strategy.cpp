@@ -29,75 +29,6 @@ void Strategy::receive_thread(){
 	while(true){
 		// Only loop if has a new state
 		interface_receive.receiveState();
-
-		// Ball state
-		global_state.balls(0).pose().x();			// Pos X
-		global_state.balls(0).pose().y();			// Pos Y
-
-		global_state.balls(0).v_pose().x();			// Vel X
-		global_state.balls(0).v_pose().y();			// Vel Y
-
-		global_state.balls(0).k_pose().x();			// Kalman Pos X
-		global_state.balls(0).k_pose().y();			// kalman Pos Y
-
-		global_state.balls(0).k_v_pose().x();		// Kalman Vel X
-		global_state.balls(0).k_v_pose().y();		// Kalman Vel Y
-
-		// Robots state
-		for(int i = 0 ; i < 3 ; i++){
-			// Yellow Robots POSE
-			global_state.robots_yellow(i).pose().x();			// Pos X
-			global_state.robots_yellow(i).pose().y();			// Pos Y
-			global_state.robots_yellow(i).pose().yaw();			// Rotation in Z Axis (YAW)
-
-			// Yellow Robots VELOCITYS
-			global_state.robots_yellow(i).v_pose().x();			// Vel X
-			global_state.robots_yellow(i).v_pose().y();			// Vel Y
-			global_state.robots_yellow(i).v_pose().yaw();		// Vel Rotation in Z Axis (YAW)
-
-			// Yellow Robots Kalman predict POSE
-			global_state.robots_yellow(i).k_pose().x();			// Kalman Pos X
-			global_state.robots_yellow(i).k_pose().y();			// Kalman Pos Y
-			global_state.robots_yellow(i).k_pose().yaw();		// Kalman Rotation in Z Axis (YAW)
-
-			// Yellow Robots Kalman predict VELOCITYS
-			global_state.robots_yellow(i).k_v_pose().x();		// Kalman Vel X
-			global_state.robots_yellow(i).k_v_pose().y();		// Kalman Vel Y
-			global_state.robots_yellow(i).k_v_pose().yaw();		// Kalman Vel Rotation in Z Axis (YAW)
-
-			// Yellow Robots COLOR LABEL (RGB)
-			global_state.robots_yellow(i).color().r();			// R
-			global_state.robots_yellow(i).color().g();			// G
-			global_state.robots_yellow(i).color().b();			// B
-			
-
-
-			// Blue Robots POSE
-			global_state.robots_blue(i).pose().x();				// Pos X
-			global_state.robots_blue(i).pose().y();				// Pos Y
-			global_state.robots_blue(i).pose().yaw();			// Rotation in Z Axis (YAW)
-
-			// Blue Robots VELOCITYS
-			global_state.robots_blue(i).v_pose().x();			// Vel X
-			global_state.robots_blue(i).v_pose().y();			// Vel Y
-			global_state.robots_blue(i).v_pose().yaw();			// Vel Rotation in Z Axis (YAW)
-
-			// Blue Robots Kalman predict POSE
-			global_state.robots_blue(i).k_pose().x();			// Kalman Pos X
-			global_state.robots_blue(i).k_pose().y();			// Kalman Pos Y
-			global_state.robots_blue(i).k_pose().yaw();			// Kalman Rotation in Z Axis (YAW)
-
-			// Blue Robots Kalman predict VELOCITYS
-			global_state.robots_blue(i).k_v_pose().x();			// Kalman Vel X
-			global_state.robots_blue(i).k_v_pose().y();			// Kalman Vel Y
-			global_state.robots_blue(i).k_v_pose().yaw();		// Kalman Vel Rotation in Z Axis (YAW)
-
-			// Blue Robots COLOR LABEL (RGB)
-			global_state.robots_blue(i).color().r();			// R
-			global_state.robots_blue(i).color().g();			// G
-			global_state.robots_blue(i).color().b();			// B
-		}
-
 		has_new_state = true;
 	}
 }
@@ -119,12 +50,7 @@ void Strategy::send_thread(){
 
 		while(true){
 			if(has_new_state){
-				for(int i = 0 ; i < 3 ; i++){
-					vss_command::Robot_Command *robot = global_commands.add_robot_commands();
-					robot->set_id(i);
-					robot->set_left_vel(100);
-					robot->set_right_vel(100);
-				}	
+				calc_strategy();
 				has_new_state = false;
 
 				interface_send.sendCommandTeam1();
@@ -136,3 +62,145 @@ void Strategy::send_thread(){
 	}
 
 }
+
+void Strategy::calc_strategy(){
+	float robot_x, robot_y, robot_yaw;
+	float ball_x, ball_y;
+	float distance_robot_ball;
+	float angulation_robot_ball;
+	float angulation_robot_robot_ball;
+
+	ball_x = global_state.balls(0).pose().x();
+	ball_y = global_state.balls(0).pose().y();
+
+	robot_x = global_state.robots_yellow(0).pose().x();
+	robot_y = global_state.robots_yellow(0).pose().y();
+	robot_yaw = global_state.robots_yellow(0).pose().yaw();		// RADIANS
+
+	robot_yaw = robot_yaw * (180.0/M_PI);	// CONVERT TO DEGREES
+	                                     	
+	robot_yaw -= 180; // 180 if comes from VSS-Simulator
+
+	if(robot_yaw < 0){
+		robot_yaw += 360;
+	}
+
+	distance_robot_ball = distance(robot_x, robot_y, ball_x, ball_y);
+	angulation_robot_ball = angulation(robot_x, robot_y, ball_x, ball_y);
+
+	angulation_robot_ball = angulation_robot_ball * (180.0/M_PI);	// CONVERT TO DEGREES
+	                                     	
+	//angulation_robot_ball -= 45;
+
+	if(angulation_robot_ball < 0){
+		angulation_robot_ball += 360;
+	}
+
+	angulation_robot_robot_ball = robot_yaw - angulation_robot_ball;
+
+	cout << angulation_robot_robot_ball << endl;
+
+	float left_vel, right_vel;
+
+	left_vel = -angulation_robot_robot_ball*0.05;
+	right_vel = angulation_robot_robot_ball*0.05;
+	
+	if(fabs(angulation_robot_robot_ball) < 8){
+		left_vel = 0;
+		right_vel = 0;
+	}
+
+	cout << left_vel << " - " << right_vel << endl;
+	
+	global_commands = vss_command::Global_Commands();
+
+	global_commands.set_is_team_yellow(true);
+	vss_command::Robot_Command *robot = global_commands.add_robot_commands();
+	robot->set_id(0);
+	robot->set_left_vel(left_vel);
+	robot->set_right_vel(right_vel);
+
+	for(int i = 1 ; i < 3 ; i++){
+		vss_command::Robot_Command *robot = global_commands.add_robot_commands();
+		robot->set_id(i);
+		robot->set_left_vel(0);
+		robot->set_right_vel(0);
+	}
+}
+
+float Strategy::distance(float r_x, float r_y, float b_x, float b_y){
+	return sqrt(((r_x - b_x)*(r_x - b_x)) + ((r_y - b_y)*(r_y - b_y)));
+}
+
+float Strategy::angulation(float r_x, float r_y, float b_x, float b_y){
+	return atan2(r_y - b_y, r_x - b_x);
+}
+
+// HOW GET VALUES FROM PROTOBUF GLOBAL_STATE
+// Ball state
+/*global_state.balls(0).pose().x();			// Pos X
+global_state.balls(0).pose().y();			// Pos Y
+
+global_state.balls(0).v_pose().x();			// Vel X
+global_state.balls(0).v_pose().y();			// Vel Y
+
+global_state.balls(0).k_pose().x();			// Kalman Pos X
+global_state.balls(0).k_pose().y();			// kalman Pos Y
+
+global_state.balls(0).k_v_pose().x();		// Kalman Vel X
+global_state.balls(0).k_v_pose().y();		// Kalman Vel Y
+
+// Robots state
+for(int i = 0 ; i < 3 ; i++){
+	// Yellow Robots POSE
+	global_state.robots_yellow(i).pose().x();			// Pos X
+	global_state.robots_yellow(i).pose().y();			// Pos Y
+	global_state.robots_yellow(i).pose().yaw();			// Rotation in Z Axis (YAW)
+
+	// Yellow Robots VELOCITYS
+	global_state.robots_yellow(i).v_pose().x();			// Vel X
+	global_state.robots_yellow(i).v_pose().y();			// Vel Y
+	global_state.robots_yellow(i).v_pose().yaw();		// Vel Rotation in Z Axis (YAW)
+
+	// Yellow Robots Kalman predict POSE
+	global_state.robots_yellow(i).k_pose().x();			// Kalman Pos X
+	global_state.robots_yellow(i).k_pose().y();			// Kalman Pos Y
+	global_state.robots_yellow(i).k_pose().yaw();		// Kalman Rotation in Z Axis (YAW)
+
+	// Yellow Robots Kalman predict VELOCITYS
+	global_state.robots_yellow(i).k_v_pose().x();		// Kalman Vel X
+	global_state.robots_yellow(i).k_v_pose().y();		// Kalman Vel Y
+	global_state.robots_yellow(i).k_v_pose().yaw();		// Kalman Vel Rotation in Z Axis (YAW)
+
+	// Yellow Robots COLOR LABEL (RGB)
+	global_state.robots_yellow(i).color().r();			// R
+	global_state.robots_yellow(i).color().g();			// G
+	global_state.robots_yellow(i).color().b();			// B
+	
+
+
+	// Blue Robots POSE
+	global_state.robots_blue(i).pose().x();				// Pos X
+	global_state.robots_blue(i).pose().y();				// Pos Y
+	global_state.robots_blue(i).pose().yaw();			// Rotation in Z Axis (YAW)
+
+	// Blue Robots VELOCITYS
+	global_state.robots_blue(i).v_pose().x();			// Vel X
+	global_state.robots_blue(i).v_pose().y();			// Vel Y
+	global_state.robots_blue(i).v_pose().yaw();			// Vel Rotation in Z Axis (YAW)
+
+	// Blue Robots Kalman predict POSE
+	global_state.robots_blue(i).k_pose().x();			// Kalman Pos X
+	global_state.robots_blue(i).k_pose().y();			// Kalman Pos Y
+	global_state.robots_blue(i).k_pose().yaw();			// Kalman Rotation in Z Axis (YAW)
+
+	// Blue Robots Kalman predict VELOCITYS
+	global_state.robots_blue(i).k_v_pose().x();			// Kalman Vel X
+	global_state.robots_blue(i).k_v_pose().y();			// Kalman Vel Y
+	global_state.robots_blue(i).k_v_pose().yaw();		// Kalman Vel Rotation in Z Axis (YAW)
+
+	// Blue Robots COLOR LABEL (RGB)
+	global_state.robots_blue(i).color().r();			// R
+	global_state.robots_blue(i).color().g();			// G
+	global_state.robots_blue(i).color().b();			// B
+}*/

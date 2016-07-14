@@ -39,7 +39,7 @@ void Interface::sendState(){
 
     zmq::message_t request (msg_str.size());
     memcpy ((void *) request.data (), msg_str.c_str(), msg_str.size());
-    std::cout << "Sending State data ..." << std::endl;
+    //std::cout << "Sending State data ..." << std::endl;
     socket->send(request);
 }
 
@@ -69,10 +69,10 @@ void Interface::createSocketReceiveState(vss_state::Global_State *global_state){
 void Interface::receiveState(){
 	zmq::message_t request;
 	socket->recv(&request, 0); //  Wait for next request from client
-	std::cout << "Received" << std::endl;
+	//std::cout << "Received" << std::endl;
 	std::string msg_str(static_cast<char*>(request.data()), request.size());
 	global_state->ParseFromString(msg_str);
-	printState();
+	//printState();
 }
 
 void Interface::createSendCommandsTeam1(vss_command::Global_Commands* global_commands){
@@ -91,7 +91,7 @@ void Interface::sendCommandTeam1(){
 
 	zmq::message_t request (msg_str.size());
 	memcpy ((void *) request.data (), msg_str.c_str(), msg_str.size());
-	std::cout << "Sending State data ..." << std::endl;
+	//std::cout << "Sending State data ..." << std::endl;
 	socket_command_yellow->send(request);
 }
 

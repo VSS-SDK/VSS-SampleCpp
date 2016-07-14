@@ -9,6 +9,7 @@
 #ifndef _STRATEGY_H_
 #define _STRATEGY_H_
 
+#include "math.h"
 #include "thread"		// C++11
 #include "interface.h"
 
@@ -32,6 +33,9 @@ public:
 
 	void receive_thread();
 	void send_thread();
+	void calc_strategy();
+	float distance(float, float, float, float);
+	float angulation(float, float, float, float);
 };
 
 #endif // _STRATEGY_H_
