@@ -32,6 +32,7 @@ public:
 
 	void receive_thread();
 	void send_thread();
+	void calc_strategy();
 };
 
 #endif // _STRATEGY_H_
