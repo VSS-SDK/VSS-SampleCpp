@@ -7,24 +7,55 @@
 #
 
 
-all: all_cpp all_java
+CCX = g++ -std=c++11 -w
+
+
+
+INCLUDES = -Isrc -Isrc/interface
+
+LIBRARIES_PROTO = `pkg-config --cflags --libs protobuf`
+
+LIBRARIES = $(LIBRARIES_PROTO) -lzmq -pthread -lm -w
+
+
+
+SRC := $(shell find -name '*.cpp')
+FILE_NAMES_SRC = $(SRC:.cpp=.o)
+
+PROTOS := $(shell find -name '*.cc')
+FILE_NAMES_PROTOS = $(PROTOS:.cc=.o)
+
+FILE_NAMES = $(FILE_NAMES_SRC) $(FILE_NAMES_PROTOS) 
+
+
+
+EXEC = VSS-SampleStrategy
+.cpp.o:
+	@$(CCX) $(INCLUDES) $(LIBRARIES) -Wall -Wformat -c -o $@ $< -w
+
+.cc.o:
+	@$(CCX) $(INCLUDES) $(LIBRARIES) -Wall -Wformat -c -o $@ $< -w
+
+all: message_compiling $(EXEC)
 	@echo Done ...
+	
+message_compiling:
+	@echo Compiling VSS-SampleStrategy ...
 
+message_cleaning:
+	@echo Cleaning VSS-SampleStrategy ...
 
+run:
+	./$(EXEC)
 
-all_cpp:
-	make -f cpp.make 
+$(EXEC): proto $(FILE_NAMES)
+	@$(CCX) -o $(EXEC) $(FILE_NAMES) $(LIBRARIES) $(INCLUDES)
 
-proto_cpp:
-	make -f cpp.make proto
+clean: message_cleaning
+	@rm $(EXEC) $(FILE_NAMES)
 
-clean_cpp:
-	make -f cpp.make clean
+proto:
+	cd src/interface/protos && make -f protos.make
 
-run_cpp:
-	make -f cpp.make run
-
-
-
-all_java:
-	make -f java.make
+teste: 
+	$(SRC)

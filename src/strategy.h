@@ -23,11 +23,12 @@ protected:
 	thread *thread_receive;
     thread *thread_send;
 
+    int port;
     bool has_new_state, has_new_command;
 	bool its_real_transmition;
 public:
 	Strategy();	
-	void init();
+	void init(int port);
 
 	void receive_thread();
 	void send_thread();
