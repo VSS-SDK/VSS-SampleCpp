@@ -6,11 +6,22 @@
  * file, You can obtain one at http://www.gnu.org/licenses/gpl-3.0/.
  */
 
+#include "sstream"
 #include "strategy.h"
 
 int main(int argc, char** argv){
-	Strategy strategy;
-	strategy.init();
+	if(argc > 1){
+		stringstream ss; 
+		int port;
+
+		ss << argv[1];
+		ss >> port;
+
+		Strategy strategy;
+		strategy.init(port);
+	}else{
+		cerr << "Please enter the port" << endl;
+	}
 
 	//Interface interface;
 	//vss_state::Global_State global_state;

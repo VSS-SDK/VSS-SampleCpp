@@ -9,15 +9,18 @@
 #include "strategy.h"
 
 Strategy::Strategy(){
+	its_real_transmition = false;
 	has_new_state = has_new_command = false;
 }
 
-void Strategy::init(){
+void Strategy::init(int port){
+	this->port = port;
+
 	thread_receive = new thread(bind(&Strategy::receive_thread, this));
-	//thread_send = new thread(bind(&Strategy::send_thread, this));
+	thread_send = new thread(bind(&Strategy::send_thread, this));
 
 	thread_receive->join();
-	//thread_send->join();
+	thread_send->join();
 }
 
 void Strategy::receive_thread(){
@@ -110,21 +113,26 @@ void Strategy::send_thread(){
 			}
 		}
 	}else{
-		// SEND INFO FOR SIMULATOR
-
-		/*global_commands.set_id(0);
+		interface_send.createSendCommandsTeam1(&global_commands);
+		global_commands.set_id(0);
 		global_commands.set_is_team_yellow(true);
 
 		while(true){
-			for(int i = 0 ; i < 3 ; i++){
-				vss_command::Robot_Command *robot = global_commands.add_robot_commands();
-				robot->set_id(i);
-				robot->set_left_vel(100);
-				robot->set_right_vel(100);
-			}	
-		}
+			if(has_new_state){
+				for(int i = 0 ; i < 3 ; i++){
+					vss_command::Robot_Command *robot = global_commands.add_robot_commands();
+					robot->set_id(i);
+					robot->set_left_vel(100);
+					robot->set_right_vel(100);
+				}	
+				has_new_state = false;
 
-		interface.createLoopSendCommandsYellow(&global_commands);*/
+				interface_send.sendCommandTeam1();
+			}else{
+				usleep(33333);
+			}
+
+		}
 	}
 
 }
