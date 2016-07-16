@@ -24,16 +24,10 @@ Installation
 
 
 Development and Use
--------------------
-> C++ 
-
 ```
-$ make all_cpp
-```
-> Java 
-
-```
-$ make all_java
+$ make proto
+$ make 
+$ ./VSS-SampleStrategy [required=PORT]
 ```
 
 License
