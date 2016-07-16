@@ -1,6 +1,7 @@
 VSS-SampleStrategy
 ==================
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)][gpl3]
+[![Build Status](https://travis-ci.org/SIRLab/VSS-SampleStrategy.svg?branch=master)][travis]
 [![Link: Youtube](https://img.shields.io/badge/Link-Youtube-red.svg)][youtube]
 
 O VSS-SampleStrategy é uma das partes de um framework que está sendo desenvolvido para a categoria de futebol de robôs [IEEE Very Small Size Soccer (VSSS)][vss], que consiste em:
@@ -52,7 +53,7 @@ You are allowed and encouraged to use this software on the IEEE Very Small Size 
 [opencv]: http://opencv.org/
 [glfw]: http://www.glfw.org/
 [imgui]: https://github.com/ocornut/imgui/
-[travis]: https://travis-ci.org/SIRLab/VSS-Vision
+[travis]: https://travis-ci.org/SIRLab/VSS-SampleStrategy
 [samplestrategy]: https://github.com/SIRLab/VSS-SampleStrategy
 [install]: https://github.com/SIRLab/VSS-SampleStrategy/blob/master/INSTALL.md
 [youtube]: https://www.youtube.com/watch?v=qYsNPGvAuME
