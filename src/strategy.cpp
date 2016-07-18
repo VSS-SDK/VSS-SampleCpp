@@ -13,6 +13,8 @@ Strategy::Strategy(){
 	has_new_state = has_new_command = false;
 	robot_radius = 8.0;
 	force_kick = 2.5;
+	distance_stop = 5.0;
+	situation = 0;
 }
 
 void Strategy::init(int port){
@@ -32,6 +34,7 @@ void Strategy::receive_thread(){
 		// Only loop if has a new state
 		interface_receive.receiveState();
 		state = common::Global_State2State(global_state);
+		situation = global_state.situation();
 		has_new_state = true;
 	}
 }
@@ -67,23 +70,78 @@ void Strategy::send_thread(){
 }
 
 void Strategy::calc_strategy(){
-	float distance_stop = 5.0;
-	float act_distance_to_proj;
+	bool all_robots_ok = false;
 
+	// PACK COMMAND
+	global_commands = vss_command::Global_Commands();
+
+	if(situation == 0){
+		play();
+		global_commands.set_situation(NONE); 
+	}else{
+		all_robots_ok = position_our_goal();
+
+		if(all_robots_ok){
+			global_commands.set_situation(NONE); 
+		}else{
+			global_commands.set_situation(GOAL_TEAM1); 
+		}
+	}
+
+
+	for(int i = 0 ; i < 3 ; i++){
+		if( (commands[i].left > 0 && commands[i].right < 0) || (commands[i].left < 0 && commands[i].right > 0) ){
+			float diff = fabs(fabs(commands[i].left) - fabs(commands[i].right));
+			//cout << diff << endl;
+			if(diff > 40){
+				if(commands[i].left > 0){
+					commands[i].left = 20;
+					commands[i].right = -20;
+				}else{
+					commands[i].left = -20;
+					commands[i].right = 20;
+				}
+			}
+		}
+	}
+
+	//commands[0].show();
+
+	global_commands.set_is_team_yellow(true);	// IF IS YELLOW: TRUE
+
+	for(int i = 0 ; i < 3 ; i++){
+		vss_command::Robot_Command *robot = global_commands.add_robot_commands();
+		robot->set_id(i);
+		robot->set_left_vel(commands[i].left);
+		robot->set_right_vel(commands[i].right);
+	}
+}
+
+void Strategy::play(){
+	float act_distance_to_proj;
 	btVector3 projection;
+
 	projection = project_bt_to(state.ball, btVector3(150.0, 65, 0), distance_stop);
 
 	act_distance_to_proj = distancePoint(state.robots[0].pose, projection);
-	cout << act_distance_to_proj << endl;
 
 	if(act_distance_to_proj > distance_stop + robot_radius){
 		commands[0] = calc_cmd_to(state.robots[0].pose, projection, distance_stop);
 	}else{
 		commands[0] = kick_to(state.robots[0].pose, btVector3(150, 75, 0));
-		cout << "kick" << endl;
+	}
+}
+
+bool Strategy::position_our_goal(){
+	bool all_robots_ok = false;
+
+	commands[0] = calc_cmd_to(state.robots[0].pose, btVector3(50, 65, 0), distance_stop);
+	
+	if(commands[0].left == 0 && commands[0].right == 0){
+		all_robots_ok = true;
 	}
 	
-	pack_command();
+	return all_robots_ok;
 }
 
 
@@ -118,18 +176,18 @@ common::Command Strategy::calc_cmd_to(btVector3 act, btVector3 goal, float dista
 
 	angulation_robot_robot_goal = act.z - angulation_robot_goal;
 
-	cmd.left = distance_robot_goal - 1.1*(angulation_robot_robot_goal * robot_radius / 2.00);
-	cmd.right = distance_robot_goal + 1.1*(angulation_robot_robot_goal * robot_radius / 2.00);
+	cmd.left = distance_robot_goal - 0.5*(angulation_robot_robot_goal * robot_radius / 2.00);
+	cmd.right = distance_robot_goal + 0.5*(angulation_robot_robot_goal * robot_radius / 2.00);
 	
-	cmd.left *= 0.25;
-	cmd.right *= 0.25;
+	cmd.left *= 0.3;
+	cmd.right *= 0.3;
 
 	if(distance_robot_goal < distance_to_stop){
 		cmd.left = 0;
 		cmd.right = 0;
 	}
 
-	force_kick = 0.25;
+	force_kick = 0.3;
 
 	return cmd;
 }
@@ -149,8 +207,8 @@ common::Command Strategy::kick_to(btVector3 act, btVector3 goal){
 
 	angulation_robot_robot_goal = act.z - angulation_robot_goal;
 
-	cmd.left = distance_robot_goal - 1.1*(angulation_robot_robot_goal * robot_radius / 2.00);
-	cmd.right = distance_robot_goal + 1.1*(angulation_robot_robot_goal * robot_radius / 2.00);
+	cmd.left = distance_robot_goal - 0.5*(angulation_robot_robot_goal * robot_radius / 2.00);
+	cmd.right = distance_robot_goal + 0.5*(angulation_robot_robot_goal * robot_radius / 2.00);
 	
 	cmd.left *= force_kick;
 	cmd.right *= force_kick;
@@ -158,19 +216,4 @@ common::Command Strategy::kick_to(btVector3 act, btVector3 goal){
 	force_kick += 0.1;
 
 	return cmd;
-}
-
-
-void Strategy::pack_command(){
-	global_commands = vss_command::Global_Commands();
-
-	global_commands.set_situation(0); 			// ESTAMOS JOGANDO NORMALMENTE
-	global_commands.set_is_team_yellow(true);	// IF IS YELLOW: TRUE
-
-	for(int i = 0 ; i < 3 ; i++){
-		vss_command::Robot_Command *robot = global_commands.add_robot_commands();
-		robot->set_id(i);
-		robot->set_left_vel(commands[i].left);
-		robot->set_right_vel(commands[i].right);
-	}
 }

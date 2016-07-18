@@ -30,7 +30,8 @@ protected:
 	common::Command commands[3];
 
     int port;
-	float robot_radius, force_kick;
+    int situation;
+	float robot_radius, force_kick, distance_stop;
     bool has_new_state, has_new_command;
 	bool its_real_transmition;
 public:
@@ -44,8 +45,9 @@ public:
 	common::btVector3 project_bt_to(btVector3 ball, btVector3 goal, float proj_dist);
 	common::Command calc_cmd_to(btVector3 init, btVector3 final, float distance_to_stop = 10.0);
 	common::Command kick_to(btVector3 robot, btVector3 kick_goal);
-
-	void pack_command();
+	
+	void play();
+	bool position_our_goal();
 };
 
 #endif // _STRATEGY_H_
