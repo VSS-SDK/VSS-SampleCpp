@@ -11,9 +11,12 @@
 
 #include "math.h"
 #include "thread"		// C++11
+#include "common.h"
 #include "interface.h"
+#include "vector"
 
 using namespace std;
+using namespace common;
 
 class Strategy{
 protected:
@@ -23,8 +26,11 @@ protected:
 	
 	thread *thread_receive;
     thread *thread_send;
+    common::State state;
+	common::Command commands[3];
 
     int port;
+	float robot_radius, force_kick;
     bool has_new_state, has_new_command;
 	bool its_real_transmition;
 public:
@@ -33,9 +39,13 @@ public:
 
 	void receive_thread();
 	void send_thread();
+
 	void calc_strategy();
-	float distance(float, float, float, float);
-	float angulation(float, float, float, float);
+	common::btVector3 project_bt_to(btVector3 ball, btVector3 goal, float proj_dist);
+	common::Command calc_cmd_to(btVector3 init, btVector3 final, float distance_to_stop = 10.0);
+	common::Command kick_to(btVector3 robot, btVector3 kick_goal);
+
+	void pack_command();
 };
 
 #endif // _STRATEGY_H_

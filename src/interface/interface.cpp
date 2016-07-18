@@ -69,10 +69,10 @@ void Interface::createSocketReceiveState(vss_state::Global_State *global_state){
 void Interface::receiveState(){
 	zmq::message_t request;
 	socket->recv(&request, 0); //  Wait for next request from client
-	std::cout << "Received" << std::endl;
+	//std::cout << "Received" << std::endl;
 	std::string msg_str(static_cast<char*>(request.data()), request.size());
 	global_state->ParseFromString(msg_str);
-	printState();
+	//printState();
 }
 
 void Interface::createSendCommandsTeam1(vss_command::Global_Commands* global_commands){

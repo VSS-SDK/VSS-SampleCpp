@@ -11,6 +11,8 @@
 Strategy::Strategy(){
 	its_real_transmition = false;
 	has_new_state = has_new_command = false;
+	robot_radius = 8.0;
+	force_kick = 2.5;
 }
 
 void Strategy::init(int port){
@@ -29,6 +31,7 @@ void Strategy::receive_thread(){
 	while(true){
 		// Only loop if has a new state
 		interface_receive.receiveState();
+		state = common::Global_State2State(global_state);
 		has_new_state = true;
 	}
 }
@@ -64,147 +67,110 @@ void Strategy::send_thread(){
 }
 
 void Strategy::calc_strategy(){
-	float robot_x, robot_y, robot_yaw;
-	float ball_x, ball_y;
-	float distance_robot_ball;
-	float angulation_robot_ball;
-	float angulation_robot_robot_ball;
+	float distance_stop = 5.0;
+	float act_distance_to_proj;
 
-	ball_x = global_state.balls(0).pose().x();
-	ball_y = global_state.balls(0).pose().y();
+	btVector3 projection;
+	projection = project_bt_to(state.ball, btVector3(150.0, 65, 0), distance_stop);
 
-	robot_x = global_state.robots_yellow(0).pose().x();
-	robot_y = global_state.robots_yellow(0).pose().y();
-	robot_yaw = global_state.robots_yellow(0).pose().yaw();		// RADIANS
+	act_distance_to_proj = distancePoint(state.robots[0].pose, projection);
+	cout << act_distance_to_proj << endl;
 
-	robot_yaw = robot_yaw * (180.0/M_PI);	// CONVERT TO DEGREES
-	                                     	
-	robot_yaw -= 180; // 180 if comes from VSS-Simulator
-
-	if(robot_yaw < 0){
-		robot_yaw += 360;
+	if(act_distance_to_proj > distance_stop + robot_radius){
+		commands[0] = calc_cmd_to(state.robots[0].pose, projection, distance_stop);
+	}else{
+		commands[0] = kick_to(state.robots[0].pose, btVector3(150, 75, 0));
+		cout << "kick" << endl;
 	}
-
-	distance_robot_ball = distance(robot_x, robot_y, ball_x, ball_y);
-	angulation_robot_ball = angulation(robot_x, robot_y, ball_x, ball_y);
-
-	angulation_robot_ball = angulation_robot_ball * (180.0/M_PI);	// CONVERT TO DEGREES
-	                                     	
-	//angulation_robot_ball -= 45;
-
-	if(angulation_robot_ball < 0){
-		angulation_robot_ball += 360;
-	}
-
-	angulation_robot_robot_ball = robot_yaw - angulation_robot_ball;
-
-	cout << angulation_robot_robot_ball << endl;
-
-	float left_vel, right_vel;
-	float eixoRobo = 8.0;
-
-	left_vel = distance_robot_ball - (angulation_robot_robot_ball * eixoRobo / 2.00);
-	right_vel = distance_robot_ball + (angulation_robot_robot_ball * eixoRobo / 2.00);
 	
-	left_vel *= 0.3;
-	right_vel *= 0.3;
+	pack_command();
+}
 
-	if(fabs(angulation_robot_robot_ball) < 8 && distance_robot_ball < 10){
-		left_vel = 0;
-		right_vel = 0;
+
+common::btVector3 Strategy::project_bt_to(btVector3 ball, btVector3 goal, float proj_distance){
+	btVector3 projection;
+	float theta, distance;
+
+	distance = distancePoint(ball, goal);
+	theta = radian(goal, ball);
+
+	projection.x = ball.x + cos(theta)*proj_distance;
+	projection.y = ball.y + sin(theta)*proj_distance;
+
+	//ball.show();
+	//projection.show();
+
+	return projection;
+}
+
+common::Command Strategy::calc_cmd_to(btVector3 act, btVector3 goal, float distance_to_stop){
+	Command cmd;
+	float distance_robot_goal;
+	float angulation_robot_goal;
+	float angulation_robot_robot_goal;
+
+	distance_robot_goal = distancePoint(act, goal);
+	angulation_robot_goal = angulation(act, goal);
+											
+	if(angulation_robot_goal < 0){
+		angulation_robot_goal += 360;
 	}
 
-	cout << left_vel << " - " << right_vel << endl;
+	angulation_robot_robot_goal = act.z - angulation_robot_goal;
+
+	cmd.left = distance_robot_goal - 1.1*(angulation_robot_robot_goal * robot_radius / 2.00);
+	cmd.right = distance_robot_goal + 1.1*(angulation_robot_robot_goal * robot_radius / 2.00);
 	
+	cmd.left *= 0.25;
+	cmd.right *= 0.25;
+
+	if(distance_robot_goal < distance_to_stop){
+		cmd.left = 0;
+		cmd.right = 0;
+	}
+
+	force_kick = 0.25;
+
+	return cmd;
+}
+
+common::Command Strategy::kick_to(btVector3 act, btVector3 goal){
+	Command cmd;
+	float distance_robot_goal;
+	float angulation_robot_goal;
+	float angulation_robot_robot_goal;
+
+	distance_robot_goal = distancePoint(act, goal);
+	angulation_robot_goal = angulation(act, goal);
+											
+	if(angulation_robot_goal < 0){
+		angulation_robot_goal += 360;
+	}
+
+	angulation_robot_robot_goal = act.z - angulation_robot_goal;
+
+	cmd.left = distance_robot_goal - 1.1*(angulation_robot_robot_goal * robot_radius / 2.00);
+	cmd.right = distance_robot_goal + 1.1*(angulation_robot_robot_goal * robot_radius / 2.00);
+	
+	cmd.left *= force_kick;
+	cmd.right *= force_kick;
+
+	force_kick += 0.1;
+
+	return cmd;
+}
+
+
+void Strategy::pack_command(){
 	global_commands = vss_command::Global_Commands();
 
-	global_commands.set_is_team_yellow(true);
-	vss_command::Robot_Command *robot = global_commands.add_robot_commands();
-	robot->set_id(0);
-	robot->set_left_vel(left_vel);
-	robot->set_right_vel(right_vel);
+	global_commands.set_situation(0); 			// ESTAMOS JOGANDO NORMALMENTE
+	global_commands.set_is_team_yellow(true);	// IF IS YELLOW: TRUE
 
-	for(int i = 1 ; i < 3 ; i++){
+	for(int i = 0 ; i < 3 ; i++){
 		vss_command::Robot_Command *robot = global_commands.add_robot_commands();
 		robot->set_id(i);
-		robot->set_left_vel(0);
-		robot->set_right_vel(0);
+		robot->set_left_vel(commands[i].left);
+		robot->set_right_vel(commands[i].right);
 	}
 }
-
-float Strategy::distance(float r_x, float r_y, float b_x, float b_y){
-	return sqrt(((r_x - b_x)*(r_x - b_x)) + ((r_y - b_y)*(r_y - b_y)));
-}
-
-float Strategy::angulation(float r_x, float r_y, float b_x, float b_y){
-	return atan2(r_y - b_y, r_x - b_x);
-}
-
-// HOW GET VALUES FROM PROTOBUF GLOBAL_STATE
-// Ball state
-/*global_state.balls(0).pose().x();			// Pos X
-global_state.balls(0).pose().y();			// Pos Y
-
-global_state.balls(0).v_pose().x();			// Vel X
-global_state.balls(0).v_pose().y();			// Vel Y
-
-global_state.balls(0).k_pose().x();			// Kalman Pos X
-global_state.balls(0).k_pose().y();			// kalman Pos Y
-
-global_state.balls(0).k_v_pose().x();		// Kalman Vel X
-global_state.balls(0).k_v_pose().y();		// Kalman Vel Y
-
-// Robots state
-for(int i = 0 ; i < 3 ; i++){
-	// Yellow Robots POSE
-	global_state.robots_yellow(i).pose().x();			// Pos X
-	global_state.robots_yellow(i).pose().y();			// Pos Y
-	global_state.robots_yellow(i).pose().yaw();			// Rotation in Z Axis (YAW)
-
-	// Yellow Robots VELOCITYS
-	global_state.robots_yellow(i).v_pose().x();			// Vel X
-	global_state.robots_yellow(i).v_pose().y();			// Vel Y
-	global_state.robots_yellow(i).v_pose().yaw();		// Vel Rotation in Z Axis (YAW)
-
-	// Yellow Robots Kalman predict POSE
-	global_state.robots_yellow(i).k_pose().x();			// Kalman Pos X
-	global_state.robots_yellow(i).k_pose().y();			// Kalman Pos Y
-	global_state.robots_yellow(i).k_pose().yaw();		// Kalman Rotation in Z Axis (YAW)
-
-	// Yellow Robots Kalman predict VELOCITYS
-	global_state.robots_yellow(i).k_v_pose().x();		// Kalman Vel X
-	global_state.robots_yellow(i).k_v_pose().y();		// Kalman Vel Y
-	global_state.robots_yellow(i).k_v_pose().yaw();		// Kalman Vel Rotation in Z Axis (YAW)
-
-	// Yellow Robots COLOR LABEL (RGB)
-	global_state.robots_yellow(i).color().r();			// R
-	global_state.robots_yellow(i).color().g();			// G
-	global_state.robots_yellow(i).color().b();			// B
-	
-
-
-	// Blue Robots POSE
-	global_state.robots_blue(i).pose().x();				// Pos X
-	global_state.robots_blue(i).pose().y();				// Pos Y
-	global_state.robots_blue(i).pose().yaw();			// Rotation in Z Axis (YAW)
-
-	// Blue Robots VELOCITYS
-	global_state.robots_blue(i).v_pose().x();			// Vel X
-	global_state.robots_blue(i).v_pose().y();			// Vel Y
-	global_state.robots_blue(i).v_pose().yaw();			// Vel Rotation in Z Axis (YAW)
-
-	// Blue Robots Kalman predict POSE
-	global_state.robots_blue(i).k_pose().x();			// Kalman Pos X
-	global_state.robots_blue(i).k_pose().y();			// Kalman Pos Y
-	global_state.robots_blue(i).k_pose().yaw();			// Kalman Rotation in Z Axis (YAW)
-
-	// Blue Robots Kalman predict VELOCITYS
-	global_state.robots_blue(i).k_v_pose().x();			// Kalman Vel X
-	global_state.robots_blue(i).k_v_pose().y();			// Kalman Vel Y
-	global_state.robots_blue(i).k_v_pose().yaw();		// Kalman Vel Rotation in Z Axis (YAW)
-
-	// Blue Robots COLOR LABEL (RGB)
-	global_state.robots_blue(i).color().r();			// R
-	global_state.robots_blue(i).color().g();			// G
-	global_state.robots_blue(i).color().b();			// B
-}*/
