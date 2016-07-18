@@ -14,8 +14,9 @@ CCX = g++ -std=c++11 -w
 INCLUDES = -Isrc -Isrc/interface
 
 LIBRARIES_PROTO = `pkg-config --cflags --libs protobuf`
+LIBRARIES_BOOST = -lboost_system -lboost_filesystem -lboost_program_options -lboost_thread
 
-LIBRARIES = $(LIBRARIES_PROTO) -lzmq -pthread -lm -w
+LIBRARIES = $(LIBRARIES_PROTO) $(LIBRARIES_BOOST) -lzmq -pthread -lm -w
 
 
 
@@ -48,7 +49,7 @@ message_cleaning:
 run:
 	./$(EXEC)
 
-$(EXEC): proto $(FILE_NAMES)
+$(EXEC): $(FILE_NAMES)
 	@$(CCX) -o $(EXEC) $(FILE_NAMES) $(LIBRARIES) $(INCLUDES)
 
 clean: message_cleaning

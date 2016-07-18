@@ -8,60 +8,49 @@
 
 #include "sstream"
 #include "strategy.h"
+#include "boost.h"
+
+bool argParse(int argc, char** argv, string *color);
 
 int main(int argc, char** argv){
-	if(argc > 1){
-		stringstream ss; 
-		int port;
+	string color;
 
-		ss << argv[1];
-		ss >> port;
-
-		Strategy strategy;
-		strategy.init(port);
+	if(argParse(argc, argv, &color)){
+        if(color == "yellow" || color == "blue"){
+		    Strategy strategy;
+		    strategy.init(color);
+        }else{
+            cerr << "ERROR: Your main color must be yellow or blue." << endl;
+        }
 	}else{
-		cerr << "Please enter the port" << endl;
+		cerr << "ERROR: You must enter a main color." << endl;
 	}
 
-	//Interface interface;
-	//vss_state::Global_State global_state;
-	/*interface_receive.createSocketReceiveState(&global_state);
-
-	while(true){
-		interface_receive.receiveState();
-	}*/
-
-	/*if(argc <= 1){
-		Interface interface;
-		vss_command::Global_Commands global_commands;
-
-		global_commands.set_id(0);
-		global_commands.set_is_team_yellow(true);
-
-		for(int i = 0 ; i < 3 ; i++){
-			vss_command::Robot_Command *robot = global_commands.add_robot_commands();
-			robot->set_id(i);
-			robot->set_left_vel(100);
-			robot->set_right_vel(100);
-		}
-
-		interface.createLoopSendCommandsYellow(&global_commands);
-	}else{
-		Interface interface;
-		vss_command::Global_Commands global_commands;
-
-		global_commands.set_id(0);
-		global_commands.set_is_team_yellow(false);
-
-		for(int i = 0 ; i < 3 ; i++){
-			vss_command::Robot_Command *robot = global_commands.add_robot_commands();
-			robot->set_id(i);
-			robot->set_left_vel(55);
-			robot->set_right_vel(55);
-		}
-
-		interface.createLoopSendCommandsBlue(&global_commands);
-	}*/
-
 	return 0;
+}
+
+bool argParse(int argc, char** argv, string *color){
+    namespace bpo = boost::program_options;
+
+    // Declare the supported options.
+    bpo::options_description desc("Allowed options");
+    desc.add_options()
+        ("help,h", "(Optional) produce help message")
+        ("color,c", bpo::value<std::string>()->default_value(" "), "(Required) Specify the main color of your team, may be yellow or blue.");
+    bpo::variables_map vm;
+    bpo::store(bpo::parse_command_line(argc, argv, desc), vm);
+    bpo::notify(vm);
+
+    if (vm.count("help")){
+        std::cout << desc << std::endl;
+        return false;
+    }
+
+    *color = vm["color"].as<string>();
+
+    if(*color == " "){
+        return false;
+    }
+
+    return true;
 }

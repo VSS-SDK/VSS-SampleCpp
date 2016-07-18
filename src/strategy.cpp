@@ -17,8 +17,8 @@ Strategy::Strategy(){
 	situation = 0;
 }
 
-void Strategy::init(int port){
-	this->port = port;
+void Strategy::init(string main_color){
+	this->main_color = main_color;
 
 	thread_receive = new thread(bind(&Strategy::receive_thread, this));
 	thread_send = new thread(bind(&Strategy::send_thread, this));
@@ -33,7 +33,7 @@ void Strategy::receive_thread(){
 	while(true){
 		// Only loop if has a new state
 		interface_receive.receiveState();
-		state = common::Global_State2State(global_state);
+		state = common::Global_State2State(global_state, main_color);
 		situation = global_state.situation();
 		has_new_state = true;
 	}
@@ -50,9 +50,15 @@ void Strategy::send_thread(){
 			}
 		}
 	}else{
-		interface_send.createSendCommandsTeam1(&global_commands);
-		global_commands.set_id(0);
-		global_commands.set_is_team_yellow(true);
+		if(main_color == "yellow"){
+			interface_send.createSendCommandsTeam1(&global_commands);
+			global_commands.set_id(0);
+			global_commands.set_is_team_yellow(true);
+		}else{
+			interface_send.createSendCommandsTeam2(&global_commands);
+			global_commands.set_id(0);
+			global_commands.set_is_team_yellow(false);
+		}
 
 		while(true){
 			if(has_new_state){

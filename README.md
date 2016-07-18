@@ -29,7 +29,7 @@ Development and Use
 ```
 $ make proto
 $ make 
-$ ./VSS-SampleStrategy [required=PORT]
+$ ./VSS-SampleStrategy -c [yellow || blue]
 ```
 
 License

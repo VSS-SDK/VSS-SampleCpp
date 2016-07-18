@@ -20,6 +20,7 @@ using namespace common;
 
 class Strategy{
 protected:
+	string main_color;
 	Interface interface_receive, interface_send;
 	vss_state::Global_State global_state;
 	vss_command::Global_Commands global_commands;
@@ -36,7 +37,7 @@ protected:
 	bool its_real_transmition;
 public:
 	Strategy();	
-	void init(int port);
+	void init(string main_color);
 
 	void receive_thread();
 	void send_thread();

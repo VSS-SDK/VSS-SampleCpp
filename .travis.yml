@@ -32,6 +32,7 @@ addons:
       - libopencv-dev
       - libzmq3
       - libzmq3-dev
+      - libboost-all-dev
 script:
 
   - make proto
