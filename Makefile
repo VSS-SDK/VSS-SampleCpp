@@ -46,8 +46,11 @@ message_compiling:
 message_cleaning:
 	@echo Cleaning VSS-SampleStrategy ...
 
-run:
-	./$(EXEC)
+yellow:
+	./$(EXEC) -c yellow
+
+blue:
+	./$(EXEC) -c blue
 
 $(EXEC): $(FILE_NAMES)
 	@$(CCX) -o $(EXEC) $(FILE_NAMES) $(LIBRARIES) $(INCLUDES)

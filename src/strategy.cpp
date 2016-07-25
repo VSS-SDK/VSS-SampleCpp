@@ -52,20 +52,23 @@ void Strategy::send_thread(){
 	}else{
 		if(main_color == "yellow"){
 			interface_send.createSendCommandsTeam1(&global_commands);
-			global_commands.set_id(0);
-			global_commands.set_is_team_yellow(true);
 		}else{
 			interface_send.createSendCommandsTeam2(&global_commands);
-			global_commands.set_id(0);
-			global_commands.set_is_team_yellow(false);
 		}
 
 		while(true){
 			if(has_new_state){
 				calc_strategy();
 				has_new_state = false;
-
-				interface_send.sendCommandTeam1();
+				if(main_color == "yellow"){
+					//global_commands.set_id(0);
+					//global_commands.set_is_team_yellow(true);
+					interface_send.sendCommandTeam1();
+				}else{
+					//global_commands.set_id(0);
+					//global_commands.set_is_team_yellow(false);
+					interface_send.sendCommandTeam2();
+				}
 			}else{
 				usleep(33333);
 			}
@@ -113,7 +116,15 @@ void Strategy::calc_strategy(){
 
 	//commands[0].show();
 
-	global_commands.set_is_team_yellow(true);	// IF IS YELLOW: TRUE
+	if(main_color == "yellow"){
+		global_commands.set_is_team_yellow(true);	// IF IS YELLOW: TRUE
+	}else{
+		global_commands.set_is_team_yellow(false);
+	}
+
+	/*commands[0].left = 1;
+	commands[0].right = -1;*/
+	commands[0].show();
 
 	for(int i = 0 ; i < 3 ; i++){
 		vss_command::Robot_Command *robot = global_commands.add_robot_commands();
@@ -127,14 +138,22 @@ void Strategy::play(){
 	float act_distance_to_proj;
 	btVector3 projection;
 
-	projection = project_bt_to(state.ball, btVector3(150.0, 65, 0), distance_stop);
+	if(main_color == "yellow"){
+		projection = project_bt_to(state.ball, btVector3(150.0, 75, 0), distance_stop);
+	}else{
+		projection = project_bt_to(state.ball, btVector3(0.0, 55, 0), distance_stop);
+	}
 
-	act_distance_to_proj = distancePoint(state.robots[0].pose, projection);
+	act_distance_to_proj = fabs(distancePoint(state.robots[0].pose, projection));
 
 	if(act_distance_to_proj > distance_stop + robot_radius){
 		commands[0] = calc_cmd_to(state.robots[0].pose, projection, distance_stop);
 	}else{
-		commands[0] = kick_to(state.robots[0].pose, btVector3(150, 75, 0));
+		if(main_color == "yellow"){
+			commands[0] = kick_to(state.robots[0].pose, btVector3(150, 75, 0));
+		}else{
+			commands[0] = kick_to(state.robots[0].pose, btVector3(0, 55, 0));
+		}
 	}
 }
 
@@ -158,8 +177,8 @@ common::btVector3 Strategy::project_bt_to(btVector3 ball, btVector3 goal, float 
 	distance = distancePoint(ball, goal);
 	theta = radian(goal, ball);
 
-	projection.x = ball.x + cos(theta)*proj_distance;
-	projection.y = ball.y + sin(theta)*proj_distance;
+	projection.x = ball.x - cos(theta)*proj_distance;
+	projection.y = ball.y - sin(theta)*proj_distance;
 
 	//ball.show();
 	//projection.show();
@@ -175,12 +194,32 @@ common::Command Strategy::calc_cmd_to(btVector3 act, btVector3 goal, float dista
 
 	distance_robot_goal = distancePoint(act, goal);
 	angulation_robot_goal = angulation(act, goal);
-											
-	if(angulation_robot_goal < 0){
+
+	cout << "act: " << act.z << endl;
+	cout << "ang_robot_goal: " << angulation_robot_goal << endl;
+
+	/*if(angulation_robot_goal < 0){
 		angulation_robot_goal += 360;
+	}*/
+
+	if(angulation_robot_goal < -180){
+		angulation_robot_goal += 360;
+	}	
+
+	if(angulation_robot_goal > 180){
+		angulation_robot_goal -= 180;
 	}
 
+
+	cout << "ang_robot_goal_rec: " << angulation_robot_goal << endl;
+
 	angulation_robot_robot_goal = act.z - angulation_robot_goal;
+
+	/*if(angulation_robot_robot_goal > 180){
+		angulation_robot_robot_goal = -180 + (angulation_robot_robot_goal-180);
+	}*/
+
+	cout << "diff: " << angulation_robot_robot_goal << endl;
 
 	cmd.left = distance_robot_goal - 0.5*(angulation_robot_robot_goal * robot_radius / 2.00);
 	cmd.right = distance_robot_goal + 0.5*(angulation_robot_robot_goal * robot_radius / 2.00);

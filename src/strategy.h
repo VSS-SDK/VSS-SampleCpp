@@ -49,6 +49,7 @@ public:
 	
 	void play();
 	bool position_our_goal();
+	float handleAngle(float, float);
 };
 
 #endif // _STRATEGY_H_
