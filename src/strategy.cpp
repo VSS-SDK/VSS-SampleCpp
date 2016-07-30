@@ -138,22 +138,24 @@ void Strategy::play(){
 	float act_distance_to_proj;
 	btVector3 projection;
 
-	if(main_color == "yellow"){
+	/*if(main_color == "yellow"){
 		projection = project_bt_to(state.ball, btVector3(150.0, 75, 0), distance_stop);
 	}else{
 		projection = project_bt_to(state.ball, btVector3(0.0, 55, 0), distance_stop);
-	}
+	}*/
+
+	projection = project_bt_to(state.ball, btVector3(0.0, 55, 0), distance_stop);
 
 	act_distance_to_proj = fabs(distancePoint(state.robots[0].pose, projection));
 
 	if(act_distance_to_proj > distance_stop + robot_radius){
 		commands[0] = calc_cmd_to(state.robots[0].pose, projection, distance_stop);
 	}else{
-		if(main_color == "yellow"){
+		/*if(main_color == "yellow"){
 			commands[0] = kick_to(state.robots[0].pose, btVector3(150, 75, 0));
-		}else{
+		}else{*/
 			commands[0] = kick_to(state.robots[0].pose, btVector3(0, 55, 0));
-		}
+		//}
 	}
 }
 

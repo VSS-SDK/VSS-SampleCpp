@@ -15,6 +15,9 @@
 
 using namespace std;
 
+#define SIZE_WIDTH 150
+#define SIZE_DEPTH 130
+
 namespace common{
     enum { NONE = 0, GOAL_TEAM1 = 1, GOAL_TEAM2 = 2, FAULT_TEAM1 = 3, FAULT_TEAM2 = 4, PENALTY_TEAM1 = 5, PENALTY_TEAM2 = 6 };
     
@@ -153,6 +156,8 @@ namespace common{
     double radian(btVector3, btVector3);
 
     State Global_State2State(vss_state::Global_State global_state, string main_color);
+
+    btVector3 calcRelativePosition(btVector3 absPos, int attackDir);
 }
 
 #endif
