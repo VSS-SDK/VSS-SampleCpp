@@ -18,7 +18,7 @@ int main(int argc, char** argv){
 	if(argParse(argc, argv, &color)){
         if(color == "yellow" || color == "blue"){
 		    Strategy strategy;
-		    strategy.init(color); 
+		    strategy.init(color);
         }else{
             cerr << "ERROR: Your main color must be yellow or blue." << endl;
         }

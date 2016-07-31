@@ -26,13 +26,14 @@ protected:
 	vss_command::Global_Commands global_commands;
 	
 	thread *thread_receive;
-    thread *thread_send;
     common::State state;
 	common::Command commands[3];
+	btVector3 goal_glob;
 
     int port;
     int situation;
-	float robot_radius, force_kick, distance_stop;
+	float robot_radius, distance_stop;
+	int rotate, rear;
     bool has_new_state, has_new_command;
 	bool its_real_transmition;
 public:

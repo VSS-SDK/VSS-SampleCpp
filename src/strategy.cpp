@@ -12,23 +12,31 @@ Strategy::Strategy(){
 	its_real_transmition = false;
 	has_new_state = has_new_command = false;
 	robot_radius = 8.0;
-	force_kick = 2.5;
 	distance_stop = 5.0;
 	situation = 0;
+	srand(time(NULL));
+	goal_glob.x = (rand() % 110) + 20;
+	goal_glob.y = (rand() % 100) + 20;
 }
 
 void Strategy::init(string main_color){
 	this->main_color = main_color;
 
 	thread_receive = new thread(bind(&Strategy::receive_thread, this));
-	thread_send = new thread(bind(&Strategy::send_thread, this));
+	//thread_send = new thread(bind(&Strategy::send_thread, this));
 
 	thread_receive->join();
-	thread_send->join();
+	//thread_send->join();
 }
 
 void Strategy::receive_thread(){
 	interface_receive.createSocketReceiveState(&global_state);
+
+	if(main_color == "yellow"){
+		interface_send.createSendCommandsTeam1(&global_commands);
+	}else{
+		interface_send.createSendCommandsTeam2(&global_commands);
+	}
 
 	while(true){
 		// Only loop if has a new state
@@ -36,6 +44,14 @@ void Strategy::receive_thread(){
 		state = common::Global_State2State(global_state, main_color);
 		situation = global_state.situation();
 		has_new_state = true;
+
+		calc_strategy();
+		has_new_state = false;
+		if(main_color == "yellow"){
+			interface_send.sendCommandTeam1();
+		}else{
+			interface_send.sendCommandTeam2();
+		}	
 	}
 }
 
@@ -61,12 +77,8 @@ void Strategy::send_thread(){
 				calc_strategy();
 				has_new_state = false;
 				if(main_color == "yellow"){
-					//global_commands.set_id(0);
-					//global_commands.set_is_team_yellow(true);
 					interface_send.sendCommandTeam1();
 				}else{
-					//global_commands.set_id(0);
-					//global_commands.set_is_team_yellow(false);
 					interface_send.sendCommandTeam2();
 				}
 			}else{
@@ -97,34 +109,13 @@ void Strategy::calc_strategy(){
 		}
 	}
 
-
-	for(int i = 0 ; i < 3 ; i++){
-		if( (commands[i].left > 0 && commands[i].right < 0) || (commands[i].left < 0 && commands[i].right > 0) ){
-			float diff = fabs(fabs(commands[i].left) - fabs(commands[i].right));
-			//cout << diff << endl;
-			if(diff > 40){
-				if(commands[i].left > 0){
-					commands[i].left = 20;
-					commands[i].right = -20;
-				}else{
-					commands[i].left = -20;
-					commands[i].right = 20;
-				}
-			}
-		}
-	}
-
-	//commands[0].show();
-
 	if(main_color == "yellow"){
 		global_commands.set_is_team_yellow(true);	// IF IS YELLOW: TRUE
 	}else{
 		global_commands.set_is_team_yellow(false);
 	}
 
-	/*commands[0].left = 1;
-	commands[0].right = -1;*/
-	commands[0].show();
+	//commands[0].show();
 
 	for(int i = 0 ; i < 3 ; i++){
 		vss_command::Robot_Command *robot = global_commands.add_robot_commands();
@@ -144,18 +135,14 @@ void Strategy::play(){
 		projection = project_bt_to(state.ball, btVector3(0.0, 55, 0), distance_stop);
 	}*/
 
-	projection = project_bt_to(state.ball, btVector3(0.0, 55, 0), distance_stop);
-
-	act_distance_to_proj = fabs(distancePoint(state.robots[0].pose, projection));
+	act_distance_to_proj = fabs(distancePoint(state.robots[0].pose, goal_glob));
+	//cout << "distance: " << act_distance_to_proj << endl;
 
 	if(act_distance_to_proj > distance_stop + robot_radius){
-		commands[0] = calc_cmd_to(state.robots[0].pose, projection, distance_stop);
+		commands[0] = calc_cmd_to(state.robots[0].pose, goal_glob, distance_stop);
 	}else{
-		/*if(main_color == "yellow"){
-			commands[0] = kick_to(state.robots[0].pose, btVector3(150, 75, 0));
-		}else{*/
-			commands[0] = kick_to(state.robots[0].pose, btVector3(0, 55, 0));
-		//}
+		goal_glob.x = (rand() % 110) + 20;
+		goal_glob.y = (rand() % 100) + 20;
 	}
 }
 
@@ -182,9 +169,6 @@ common::btVector3 Strategy::project_bt_to(btVector3 ball, btVector3 goal, float 
 	projection.x = ball.x - cos(theta)*proj_distance;
 	projection.y = ball.y - sin(theta)*proj_distance;
 
-	//ball.show();
-	//projection.show();
-
 	return projection;
 }
 
@@ -194,73 +178,49 @@ common::Command Strategy::calc_cmd_to(btVector3 act, btVector3 goal, float dista
 	float angulation_robot_goal;
 	float angulation_robot_robot_goal;
 
-	distance_robot_goal = distancePoint(act, goal);
-	angulation_robot_goal = angulation(act, goal);
+	distance_robot_goal = distancePoint(goal, act);
+	angulation_robot_goal = angulation(goal, act);
 
-	cout << "act: " << act.z << endl;
-	cout << "ang_robot_goal: " << angulation_robot_goal << endl;
+	//cout << "act: " << act.z << endl;
+	//cout << "ang_robot_goal: " << angulation_robot_goal << endl;
 
-	/*if(angulation_robot_goal < 0){
-		angulation_robot_goal += 360;
-	}*/
+	angulation_robot_goal -= 180; // 180 if comes from VSS-Simulator
 
-	if(angulation_robot_goal < -180){
-		angulation_robot_goal += 360;
-	}	
+    if(angulation_robot_goal < 0){
+    	angulation_robot_goal += 360;
+    }
 
-	if(angulation_robot_goal > 180){
-		angulation_robot_goal -= 180;
+	//cout << "ang_robot_goal: " << angulation_robot_goal << endl;
+
+	int angles = (int)fabs(act.z - angulation_robot_goal) % 360;
+	int dist = angles > 180 ? 360 - angles : angles*-1;
+
+	//cout << dist << endl;
+	angulation_robot_robot_goal = dist;
+
+	cout << angulation_robot_robot_goal << endl;
+	//cout << "diff: " << angulation_robot_robot_goal << endl;
+
+	if(fabs(angulation_robot_robot_goal) <= 135){
+		cmd.left = distance_robot_goal + 0.2*(angulation_robot_robot_goal * robot_radius / 2.00);
+		cmd.right = distance_robot_goal - 0.2*(angulation_robot_robot_goal * robot_radius / 2.00);
+		
+		cmd.left *= 0.3;
+		cmd.right *= 0.3;
+	}else{
+		if(angulation_robot_robot_goal >= 0){
+			cmd.left = 50;
+			cmd.right = -50;
+		}else{
+			cmd.left = -50;
+			cmd.right = 50;
+		}
 	}
-
-
-	cout << "ang_robot_goal_rec: " << angulation_robot_goal << endl;
-
-	angulation_robot_robot_goal = act.z - angulation_robot_goal;
-
-	/*if(angulation_robot_robot_goal > 180){
-		angulation_robot_robot_goal = -180 + (angulation_robot_robot_goal-180);
-	}*/
-
-	cout << "diff: " << angulation_robot_robot_goal << endl;
-
-	cmd.left = distance_robot_goal - 0.5*(angulation_robot_robot_goal * robot_radius / 2.00);
-	cmd.right = distance_robot_goal + 0.5*(angulation_robot_robot_goal * robot_radius / 2.00);
-	
-	cmd.left *= 0.3;
-	cmd.right *= 0.3;
 
 	if(distance_robot_goal < distance_to_stop){
 		cmd.left = 0;
 		cmd.right = 0;
 	}
-
-	force_kick = 0.3;
-
-	return cmd;
-}
-
-common::Command Strategy::kick_to(btVector3 act, btVector3 goal){
-	Command cmd;
-	float distance_robot_goal;
-	float angulation_robot_goal;
-	float angulation_robot_robot_goal;
-
-	distance_robot_goal = distancePoint(act, goal);
-	angulation_robot_goal = angulation(act, goal);
-											
-	if(angulation_robot_goal < 0){
-		angulation_robot_goal += 360;
-	}
-
-	angulation_robot_robot_goal = act.z - angulation_robot_goal;
-
-	cmd.left = distance_robot_goal - 0.5*(angulation_robot_robot_goal * robot_radius / 2.00);
-	cmd.right = distance_robot_goal + 0.5*(angulation_robot_robot_goal * robot_radius / 2.00);
-	
-	cmd.left *= force_kick;
-	cmd.right *= force_kick;
-
-	force_kick += 0.1;
 
 	return cmd;
 }

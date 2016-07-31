@@ -34,30 +34,11 @@ namespace common{
         return atan2(a.y - b.y, a.x - b.x);
     }
 
-btVector3 calcRelativePosition(float absX, float absY, int attackDir){
-    float relX = absX;
-    //cout << attackDir;
-    float relZ = absY;
-    if(attackDir == -1){
-
-        relZ = SIZE_DEPTH - absY;
-        relX = SIZE_WIDTH - absX;
-    } 
-    return btVector3(relX,0,relZ);
-}
-
     State Global_State2State(vss_state::Global_State global_state, string main_color){
         State state;
 
-        int teamAttackDir = global_state.team_attack_dir();
-
         state.ball.x = global_state.balls(0).pose().x();           // Pos X
         state.ball.y = global_state.balls(0).pose().y();           // Pos Y
-
-        btVector3 relBallPos = calcRelativePosition(state.ball.x,state.ball.y,teamAttackDir);
-
-        state.ball.x = relBallPos.x;
-        state.ball.y = relBallPos.y;
 
         state.v_ball.x = global_state.balls(0).v_pose().x();         // Vel X
         state.v_ball.y = global_state.balls(0).v_pose().y();         // Vel Y
@@ -68,30 +49,15 @@ btVector3 calcRelativePosition(float absX, float absY, int attackDir){
         state.v_ball_kalman.x = global_state.balls(0).k_v_pose().x();       // Kalman Vel X
         state.v_ball_kalman.y = global_state.balls(0).k_v_pose().y();       // Kalman Vel Y
 
-        
-
         if(main_color == "yellow"){
             for(int i = 0 ; i < 3 ; i++){
                 // Yellow Robots POSE
                 state.robots[i].pose.x =  global_state.robots_yellow(i).pose().x();           // Pos X
-                state.robots[i].pose.y = global_state.robots_yellow(i).pose().y();   
-
-                btVector3 relPosRobot = calcRelativePosition(state.robots[i].pose.x,state.robots[i].pose.y,teamAttackDir);
-
-                state.robots[i].pose.x =  relPosRobot.x;           // Pos X
-                state.robots[i].pose.y = relPosRobot.y; 
-                      // Pos Y
+                state.robots[i].pose.y = global_state.robots_yellow(i).pose().y();           // Pos Y
                 state.robots[i].pose.z =  global_state.robots_yellow(i).pose().yaw();         // Rotation in Z Axis (YAW)
-                float compFrontX = cos(state.robots[i].pose.z);
-                float compFrontY = sin(state.robots[i].pose.z);
 
-                compFrontX *= teamAttackDir;
-                compFrontY *= teamAttackDir;
+                state.robots[i].pose.z = state.robots[i].pose.z * (180.0/M_PI);	// CONVERT TO DEGREES
 
-                float rads = atan2(compFrontY,compFrontX);
-
-                state.robots[i].pose.z = rads * (180.0/M_PI);	// CONVERT TO DEGREES
-                                                
                 state.robots[i].pose.z -= 180; // 180 if comes from VSS-Simulator
 
                 if(state.robots[i].pose.z < 0){
@@ -122,23 +88,13 @@ btVector3 calcRelativePosition(float absX, float absY, int attackDir){
                 state.robots_kalman[i].v_pose.z = global_state.robots_yellow(i).k_v_pose().yaw();     // Kalman Vel Rotation in Z Axis (YAW)
 
 
-                teamAttackDir *= -1;
+
+
 
                 // Blue Robots POSE
                 state.robots[i+3].pose.x =  global_state.robots_blue(i).pose().x();           // Pos X
                 state.robots[i+3].pose.y = global_state.robots_blue(i).pose().y();           // Pos Y
-                relPosRobot = calcRelativePosition(state.robots[i].pose.x,state.robots[i].pose.y,teamAttackDir);
-
-                state.robots[i+3].pose.x =  relPosRobot.x;           // Pos X
-                state.robots[i+3].pose.y = relPosRobot.y; 
-                      // Pos Y
-                state.robots[i+3].pose.z =  global_state.robots_yellow(i).pose().yaw();         // Rotation in Z Axis (YAW)
-                compFrontX = cos(state.robots[i+3].pose.z*teamAttackDir);
-                compFrontY = sin(state.robots[i+3].pose.z*teamAttackDir);
-
-                rads = atan2(compFrontY,compFrontX);
-
-                state.robots[i+3].pose.z = rads * (180.0/M_PI);   // CONVERT TO DEGREES         // Rotation in Z Axis (YAW)
+                state.robots[i+3].pose.z =  global_state.robots_blue(i).pose().yaw();         // Rotation in Z Axis (YAW)
 
                 // Blue Robots VELOCITYS
                 state.robots[i+3].v_pose.x = global_state.robots_blue(i).v_pose().x();         // Vel X
@@ -160,24 +116,10 @@ btVector3 calcRelativePosition(float absX, float absY, int attackDir){
                 // Yellow Robots POSE
                 state.robots[i].pose.x =  global_state.robots_blue(i).pose().x();           // Pos X
                 state.robots[i].pose.y = global_state.robots_blue(i).pose().y();           // Pos Y
-                btVector3 relPosRobot = calcRelativePosition(state.robots[i].pose.x,state.robots[i].pose.y,teamAttackDir);
-
-                state.robots[i].pose.x =  relPosRobot.x;           // Pos X
-                state.robots[i].pose.y = relPosRobot.y; 
-                      // Pos Y
                 state.robots[i].pose.z =  global_state.robots_blue(i).pose().yaw();         // Rotation in Z Axis (YAW)
-                float compFrontX = cos(state.robots[i].pose.z);
-                float compFrontY = sin(state.robots[i].pose.z);
 
-                compFrontX *= teamAttackDir;
-                compFrontY *= teamAttackDir;
+                state.robots[i].pose.z = state.robots[i].pose.z * (180.0/M_PI);	// CONVERT TO DEGREES
 
-                float rads = atan2(compFrontY,compFrontX);
-
-                state.robots[i].pose.z = rads * (180.0/M_PI);   // CONVERT TO DEGREES
-
-                if(i == 0) cout << state.robots[i].pose.z << endl;
-                                                
                 state.robots[i].pose.z -= 180; // 180 if comes from VSS-Simulator
 
                 if(state.robots[i].pose.z < 0){
@@ -208,23 +150,12 @@ btVector3 calcRelativePosition(float absX, float absY, int attackDir){
                 state.robots_kalman[i].v_pose.z = global_state.robots_blue(i).k_v_pose().yaw();     // Kalman Vel Rotation in Z Axis (YAW)
 
 
-                teamAttackDir *= -1;
+
 
                 // Blue Robots POSE
                 state.robots[i+3].pose.x =  global_state.robots_yellow(i).pose().x();           // Pos X
                 state.robots[i+3].pose.y = global_state.robots_yellow(i).pose().y();           // Pos Y
-                relPosRobot = calcRelativePosition(state.robots[i].pose.x,state.robots[i].pose.y,teamAttackDir);
-
-                state.robots[i+3].pose.x =  relPosRobot.x;           // Pos X
-                state.robots[i+3].pose.y = relPosRobot.y; 
-                      // Pos Y
                 state.robots[i+3].pose.z =  global_state.robots_yellow(i).pose().yaw();         // Rotation in Z Axis (YAW)
-                compFrontX = cos(state.robots[i+3].pose.z*teamAttackDir);
-                compFrontY = sin(state.robots[i+3].pose.z*teamAttackDir);
-
-                rads = atan2(compFrontY,compFrontX);
-
-                state.robots[i+3].pose.z = rads * (180.0/M_PI);   // CONVERT TO DEGREES
 
                 // Blue Robots VELOCITYS
                 state.robots[i+3].v_pose.x = global_state.robots_yellow(i).v_pose().x();         // Vel X
