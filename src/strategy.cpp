@@ -55,59 +55,16 @@ void Strategy::receive_thread(){
 	}
 }
 
-void Strategy::send_thread(){
-	if(its_real_transmition){
-		// SEND INFO FOR ROBOTS
-		while(true){
-			if(has_new_state){
-				has_new_state = false;
-			}else{
-				usleep(33333);
-			}
-		}
-	}else{
-		if(main_color == "yellow"){
-			interface_send.createSendCommandsTeam1(&global_commands);
-		}else{
-			interface_send.createSendCommandsTeam2(&global_commands);
-		}
-
-		while(true){
-			if(has_new_state){
-				calc_strategy();
-				has_new_state = false;
-				if(main_color == "yellow"){
-					interface_send.sendCommandTeam1();
-				}else{
-					interface_send.sendCommandTeam2();
-				}
-			}else{
-				usleep(33333);
-			}
-
-		}
-	}
-
-}
-
 void Strategy::calc_strategy(){
 	bool all_robots_ok = false;
 
 	// PACK COMMAND
 	global_commands = vss_command::Global_Commands();
 
-	if(situation == 0){
-		play();
-		global_commands.set_situation(NONE); 
-	}else{
-		all_robots_ok = position_our_goal();
 
-		if(all_robots_ok){
-			global_commands.set_situation(NONE); 
-		}else{
-			global_commands.set_situation(GOAL_TEAM1); 
-		}
-	}
+	play();
+	global_commands.set_situation(NONE); 
+	
 
 	if(main_color == "yellow"){
 		global_commands.set_is_team_yellow(true);	// IF IS YELLOW: TRUE
@@ -145,19 +102,6 @@ void Strategy::play(){
 		goal_glob.y = (rand() % 100) + 20;
 	}
 }
-
-bool Strategy::position_our_goal(){
-	bool all_robots_ok = false;
-
-	commands[0] = calc_cmd_to(state.robots[0].pose, btVector3(50, 65, 0), distance_stop);
-	
-	if(commands[0].left == 0 && commands[0].right == 0){
-		all_robots_ok = true;
-	}
-	
-	return all_robots_ok;
-}
-
 
 common::btVector3 Strategy::project_bt_to(btVector3 ball, btVector3 goal, float proj_distance){
 	btVector3 projection;
