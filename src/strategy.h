@@ -12,7 +12,7 @@
 #include "math.h"
 #include "thread"		// C++11
 #include "common.h"
-#include "interface.h"
+#include "VSS-Interface/interface.h"
 #include "vector"
 
 using namespace std;
