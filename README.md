@@ -22,6 +22,12 @@ Installation
 ------------
 [INSTALL][install]
 
+Cloning
+-------
+```
+$ git clone --recursive https://github.com/SIRLab/VSS-SampleStrategy.git
+```
+
 
 Development and Use
 -------------------
