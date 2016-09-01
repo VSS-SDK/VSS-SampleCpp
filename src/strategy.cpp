@@ -15,6 +15,7 @@ Strategy::Strategy(){
 	distance_stop = 5.0;
 	situation = 0;
 	srand(time(NULL));
+
 	goal_glob.x = (rand() % 110) + 20;
 	goal_glob.y = (rand() % 100) + 20;
 }
@@ -22,14 +23,11 @@ Strategy::Strategy(){
 void Strategy::init(string main_color){
 	this->main_color = main_color;
 
-	thread_receive = new thread(bind(&Strategy::receive_thread, this));
-	//thread_send = new thread(bind(&Strategy::send_thread, this));
-
-	thread_receive->join();
-	//thread_send->join();
+	thread_comm = new thread(bind(&Strategy::comm_thread, this));
+	thread_comm->join();
 }
 
-void Strategy::receive_thread(){
+void Strategy::comm_thread(){
 	interface_receive.createSocketReceiveState(&global_state);
 
 	if(main_color == "yellow"){
@@ -47,6 +45,7 @@ void Strategy::receive_thread(){
 
 		calc_strategy();
 		has_new_state = false;
+		
 		if(main_color == "yellow"){
 			interface_send.sendCommandTeam1();
 		}else{
@@ -85,12 +84,6 @@ void Strategy::calc_strategy(){
 void Strategy::play(){
 	float act_distance_to_proj;
 	btVector3 projection;
-
-	/*if(main_color == "yellow"){
-		projection = project_bt_to(state.ball, btVector3(150.0, 75, 0), distance_stop);
-	}else{
-		projection = project_bt_to(state.ball, btVector3(0.0, 55, 0), distance_stop);
-	}*/
 
 	act_distance_to_proj = fabs(distancePoint(state.robots[0].pose, goal_glob));
 	//cout << "distance: " << act_distance_to_proj << endl;

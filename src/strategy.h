@@ -25,7 +25,7 @@ protected:
 	vss_state::Global_State global_state;
 	vss_command::Global_Commands global_commands;
 	
-	thread *thread_receive;
+	thread *thread_comm;
     common::State state;
 	common::Command commands[3];
 	btVector3 goal_glob;
@@ -40,8 +40,7 @@ public:
 	Strategy();	
 	void init(string main_color);
 
-	void receive_thread();
-	void send_thread();
+	void comm_thread();
 
 	void calc_strategy();
 	common::btVector3 project_bt_to(btVector3 ball, btVector3 goal, float proj_dist);
