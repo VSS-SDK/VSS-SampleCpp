@@ -22,14 +22,14 @@ Strategy::Strategy(){
 void Strategy::init(string main_color){
 	this->main_color = main_color;
 
-	thread_receive = new thread(bind(&Strategy::receive_thread, this));
+	thread_comm = new thread(bind(&Strategy::comm_thread, this));
 	//thread_send = new thread(bind(&Strategy::send_thread, this));
 
-	thread_receive->join();
+	thread_comm->join();
 	//thread_send->join();
 }
 
-void Strategy::receive_thread(){
+void Strategy::comm_thread(){
 	interface_receive.createSocketReceiveState(&global_state);
 
 	if(main_color == "yellow"){
