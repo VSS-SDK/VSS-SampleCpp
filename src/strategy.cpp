@@ -93,13 +93,14 @@ void Strategy::calc_strategy(){
 	}
 
 	int size_of_path = 3;
-	for(int i = 0 ; i < 3 ; i++){
+	global_debug = vss_debug::Global_Debug();
+	for(int i = 0 ; i < 1 ; i++){
 		vss_debug::Path *paths = global_debug.add_paths();
 		paths->set_id(i);
 		for(int j = 0 ; j < size_of_path ; j++){
 			vss_debug::Pose *poses = paths->add_poses();
 			poses->set_id(i);
-			poses->set_x(0);
+			poses->set_x(j*10);
 			poses->set_y(0);
 			poses->set_yaw(0);
 		}
