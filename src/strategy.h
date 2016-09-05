@@ -21,14 +21,16 @@ using namespace common;
 class Strategy{
 protected:
 	string main_color;
-	Interface interface_receive, interface_send;
+	Interface interface_receive, interface_send, interface_debug;
 	vss_state::Global_State global_state;
 	vss_command::Global_Commands global_commands;
+	vss_debug::Global_Debug global_debug;
 	
 	thread *thread_comm;
     common::State state;
 	common::Command commands[3];
 	btVector3 goal_glob;
+	bool debug;
 
     int port;
     int situation;
@@ -38,7 +40,7 @@ protected:
 	bool its_real_transmition;
 public:
 	Strategy();	
-	void init(string main_color);
+	void init(string main_color, bool debug);
 
 	void comm_thread();
 

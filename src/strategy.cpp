@@ -17,10 +17,12 @@ Strategy::Strategy(){
 	srand(time(NULL));
 	goal_glob.x = (rand() % 110) + 20;
 	goal_glob.y = (rand() % 100) + 20;
+	debug = false;
 }
 
-void Strategy::init(string main_color){
+void Strategy::init(string main_color, bool debug){
 	this->main_color = main_color;
+	this->debug = debug;
 
 	thread_comm = new thread(bind(&Strategy::comm_thread, this));
 	//thread_send = new thread(bind(&Strategy::send_thread, this));
@@ -34,8 +36,14 @@ void Strategy::comm_thread(){
 
 	if(main_color == "yellow"){
 		interface_send.createSendCommandsTeam1(&global_commands);
+		if(debug)
+			interface_debug.createSendDebugTeam1(&global_debug);
+
+		cout << "teste" << endl;
 	}else{
 		interface_send.createSendCommandsTeam2(&global_commands);
+		if(debug)
+			interface_debug.createSendDebugTeam2(&global_debug);
 	}
 
 	while(true){
@@ -47,10 +55,15 @@ void Strategy::comm_thread(){
 
 		calc_strategy();
 		has_new_state = false;
+
 		if(main_color == "yellow"){
 			interface_send.sendCommandTeam1();
+			if(debug)
+				interface_debug.sendDebugTeam1();
 		}else{
 			interface_send.sendCommandTeam2();
+			if(debug)
+				interface_debug.sendDebugTeam2();
 		}	
 	}
 }
@@ -77,6 +90,19 @@ void Strategy::calc_strategy(){
 		robot->set_id(i);
 		robot->set_left_vel(commands[i].left);
 		robot->set_right_vel(commands[i].right);
+	}
+
+	int size_of_path = 3;
+	for(int i = 0 ; i < 3 ; i++){
+		vss_debug::Path *paths = global_debug.add_paths();
+		paths->set_id(i);
+		for(int j = 0 ; j < size_of_path ; j++){
+			vss_debug::Pose *poses = paths->add_poses();
+			poses->set_id(i);
+			poses->set_x(0);
+			poses->set_y(0);
+			poses->set_yaw(0);
+		}
 	}
 }
 
