@@ -39,7 +39,6 @@ void Strategy::comm_thread(){
 		if(debug)
 			interface_debug.createSendDebugTeam1(&global_debug);
 
-		cout << "teste" << endl;
 	}else{
 		interface_send.createSendCommandsTeam2(&global_commands);
 		if(debug)
@@ -58,8 +57,10 @@ void Strategy::comm_thread(){
 
 		if(main_color == "yellow"){
 			interface_send.sendCommandTeam1();
-			if(debug)
+			if(debug){
 				interface_debug.sendDebugTeam1();
+				//cout << "send" << endl;
+			}
 		}else{
 			interface_send.sendCommandTeam2();
 			if(debug)
