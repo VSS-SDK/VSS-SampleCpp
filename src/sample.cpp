@@ -84,32 +84,17 @@ void Sample::send_debug(){
 		finals->set_yaw(debug.robots_final_pose[i].z);
 	}
 
-	/*vss_debug::Path *path_1 = global_debug.mutable_path_robot_1();
-	for(int i = 0 ; i < debug.robots_path[0].poses.size() ; i++){
-		vss_debug::Pose *pose_s = path_1->add_poses();
-		pose_s->set_id(0);
-		pose_s->set_x(debug.robots_path[0].poses.at(i).x);
-		pose_s->set_y(debug.robots_path[0].poses.at(i).y);
-		pose_s->set_yaw(debug.robots_path[0].poses.at(i).z);
+	for(int i = 0 ; i < 3 ; i++){
+		vss_debug::Path *paths = global_debug.add_paths();
+		paths->set_id(i);
+		for(int j = 0 ; j < debug.robots_path[i].poses.size() ; j++){
+			vss_debug::Pose *poses = paths->add_poses();
+			poses->set_id(i);
+			poses->set_x(debug.robots_path[i].poses.at(j).x);
+			poses->set_y(debug.robots_path[i].poses.at(j).y);
+			poses->set_yaw(debug.robots_path[i].poses.at(j).z);
+		}
 	}
-
-	vss_debug::Path *path_2 = global_debug.mutable_path_robot_2();
-	for(int i = 0 ; i < debug.robots_path[1].poses.size() ; i++){
-		vss_debug::Pose *pose_s = path_2->add_poses();
-		pose_s->set_id(1);
-		pose_s->set_x(debug.robots_path[1].poses.at(i).x);
-		pose_s->set_y(debug.robots_path[1].poses.at(i).y);
-		pose_s->set_yaw(debug.robots_path[1].poses.at(i).z);
-	}
-
-	vss_debug::Path *path_3 = global_debug.mutable_path_robot_1();
-	for(int i = 0 ; i < debug.robots_path[2].poses.size() ; i++){
-		vss_debug::Pose *pose_s = path_3->add_poses();
-		pose_s->set_id(2);
-		pose_s->set_x(debug.robots_path[2].poses.at(i).x);
-		pose_s->set_y(debug.robots_path[2].poses.at(i).y);
-		pose_s->set_yaw(debug.robots_path[2].poses.at(i).z);
-	}*/
 
 	if(main_color == "yellow"){
 		interface_debug.sendDebugTeam1();
