@@ -80,6 +80,27 @@ namespace common{
         }
     };
 
+    //! This is a simple structure responsible for represent a path: vector of poses. 
+	struct Path{
+		vector<btVector3> poses;
+		Path(){};
+		Path(Path *path){
+			poses = path->poses;
+		};
+		void show(){
+			for(int i = 0 ; i < poses.size() ; i++)
+			cout << "(" << poses.at(i).x << ", " << poses.at(i).y << ", " << poses.at(i).z << ")" << endl;
+		}
+	};
+
+    //! This is a simple structure that represents a Debug packet
+    struct Debug{
+        btVector3 robots_step_pose[3];
+        btVector3 robots_final_pose[3];
+        Path robots_path[3];
+        Debug(){};
+    };
+
     //! This struct represents the state that the workspace can handle.
     struct State{
         //! All robots by vision
