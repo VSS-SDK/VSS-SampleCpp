@@ -28,6 +28,9 @@ class Strategy : public Sample{
 protected:
 	float robot_radius;
 	float distance_to_stop;
+
+	btVector3 final;
+	bool changePose;
 public:
 	Strategy();	
 
