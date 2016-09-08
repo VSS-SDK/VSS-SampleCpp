@@ -46,6 +46,7 @@ void Strategy::loop(){
 
 void Strategy::calc_strategy(){
 	commands[0] = calc_cmd_to(state.robots[0].pose, state.ball, distance_to_stop);
+	//state.robots[0].pose.show();
 	// commands[1]
 	// commands[2]
 	debug.robots_final_pose[0] = state.ball;
@@ -67,18 +68,29 @@ common::Command Strategy::calc_cmd_to(btVector3 act, btVector3 goal, float dista
 	// Diferença entre angulação do robô e do objetivo
 	distance_robot_goal = distancePoint(goal, act);
 	angulation_robot_goal = angulation(goal, act);
+
+
 	angulation_robot_goal -= 180; // 180 if comes from VSS-Simulator
     if(angulation_robot_goal < 0){
     	angulation_robot_goal += 360;
     }
-	int angles = (int)fabs(act.z - angulation_robot_goal) % 360;
-	int dist = angles > 180 ? 360 - angles : angles*-1;
-	angulation_robot_robot_goal = dist;
+
+	angulation_robot_robot_goal = act.z - angulation_robot_goal;
+
+	if(angulation_robot_robot_goal > 180){
+		angulation_robot_robot_goal -= 360;
+	}
+
+	if(angulation_robot_robot_goal < -180){
+		angulation_robot_robot_goal += 360;
+	}
+	
+	cout << angulation_robot_robot_goal << endl;
 
 	// Regras de movimentação
 	if(fabs(angulation_robot_robot_goal) <= 135){
-		cmd.left = distance_robot_goal + 0.2*(angulation_robot_robot_goal * robot_radius / 2.00);
-		cmd.right = distance_robot_goal - 0.2*(angulation_robot_robot_goal * robot_radius / 2.00);
+		cmd.left = distance_robot_goal - 0.2*(angulation_robot_robot_goal * robot_radius / 2.00);
+		cmd.right = distance_robot_goal + 0.2*(angulation_robot_robot_goal * robot_radius / 2.00);
 		
 		cmd.left *= 0.3;
 		cmd.right *= 0.3;
@@ -92,6 +104,8 @@ common::Command Strategy::calc_cmd_to(btVector3 act, btVector3 goal, float dista
 		}
 	}
 
+	//cmd.left = 1;
+	//cmd.right = -1;
 	//cmd.left e cmd.right são PWM (0 a 255 para frente) (256 á 252 para trás)
 
 	if(distance_robot_goal < 15.0){
