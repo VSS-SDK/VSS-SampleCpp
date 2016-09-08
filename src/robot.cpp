@@ -12,6 +12,7 @@ Robot::Robot(){
     front_and_rear_movimentaion = false;
 
 	task = Task::GOAL_KEEPER;
+	debug_pos = true;
 }
 
 void Robot::calc_action(){
@@ -37,7 +38,7 @@ void Robot::calc_cmd_to(){
 	// Diferença entre angulação do robô e do objetivo
 	distance_robot_goal = distancePoint(step_pose, pose);
 	angulation_robot_goal = angulation(step_pose, pose);
-	//step_pose.show();
+
 	angulation_robot_goal -= 180; 
     if(angulation_robot_goal < 0){
     	angulation_robot_goal += 360;
@@ -54,13 +55,10 @@ void Robot::calc_cmd_to(){
 	}
 	
 	// Regras de movimentação
-	if(fabs(angulation_robot_robot_goal) <= angle_to_spin){
-		cmd.left = distance_robot_goal - 0.2*(angulation_robot_robot_goal * robot_side_size / 2.00);
-		cmd.right = distance_robot_goal + 0.2*(angulation_robot_robot_goal * robot_side_size / 2.00);
-		
-		cmd.left *= 0.3;
-		cmd.right *= 0.3;
-	}else{
+	//if(fabs(angulation_robot_robot_goal) <= angle_to_spin){
+		cmd.left = (distance_robot_goal) - (angulation_robot_robot_goal * robot_side_size * 0.05);
+		cmd.right = (distance_robot_goal) + (angulation_robot_robot_goal * robot_side_size * 0.05);
+	/*}else{
         // SPIN
 		if(angulation_robot_robot_goal >= 0){
 			cmd.left = 50;
@@ -69,12 +67,15 @@ void Robot::calc_cmd_to(){
 			cmd.left = -50;
 			cmd.right = 50;
 		}
-	}
+	}*/
 
-	if(distance_robot_goal < 15.0){
+	if(distancePoint(pose, final_pose) < 15.0){
 		cmd.left = 0;
 		cmd.right = 0;
+		debug_pos = true;
 	}
+
+	cmd.show();
 }
 
 void Robot::alloc_our_team(vector<Robot> *our_team){
@@ -115,6 +116,14 @@ void Robot::set_pose(btVector3 pose){
 
 void Robot::set_v_pose(btVector3 v_pose){
     this->v_pose = v_pose;
+}
+
+btVector3 Robot::get_pose(){
+	return pose;
+}
+
+btVector3 Robot::get_v_pose(){
+	return pose;
 }
 
 btVector3 Robot::get_final_pose(){

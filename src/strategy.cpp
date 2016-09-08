@@ -21,14 +21,15 @@ Strategy::Strategy(){
 		our_team.push_back(r);
 		adversary_team.push_back(r);
 	}
-	
-	for(int i = 3 ; i < 3 ; i++){
+
+	for(int i = 0 ; i < 3 ; i++){
 		our_team.at(i).alloc_our_team(&our_team);
 		our_team.at(i).alloc_adversary_team(&adversary_team);
 	}
 }
 
 void Strategy::init(string main_color, bool is_debug, bool real_environment){
+
 	init_sample(main_color, is_debug, real_environment);
 	loop();
 }

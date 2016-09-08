@@ -2,6 +2,7 @@
 #define _ROBOT_H_
 
 #include "common.h"
+#include "potential_fields.h"
 
 using namespace common;
 
@@ -29,7 +30,7 @@ protected:
     vector<Robot> *our_team, *adversary_team;
     btVector3 *ball, *v_ball;
 
-    // PotentialField apf;
+    PotentialFields apf;
     // PID pid;
 
     void calc_cmd_to();
@@ -41,6 +42,7 @@ protected:
     void DF_calc_action();
     void AT_calc_action();
 
+    bool debug_pos;
 public:
     Robot();
 
@@ -53,6 +55,8 @@ public:
     void set_pose(btVector3);
     void set_v_pose(btVector3);
 
+    btVector3 get_pose();
+    btVector3 get_v_pose();
     btVector3 get_final_pose();
     btVector3 get_step_pose();
     Path get_path();

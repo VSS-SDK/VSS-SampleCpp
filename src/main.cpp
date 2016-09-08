@@ -13,6 +13,7 @@
 bool argParse(int argc, char** argv, string *color, bool *debug);
 
 int main(int argc, char** argv){
+    srand(time(NULL));
 	string color;
     bool debug = false;
 
