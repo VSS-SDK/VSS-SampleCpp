@@ -14,6 +14,8 @@ Strategy::Strategy(){
     real_environment = false;
 	robot_radius = 8.0;
 	distance_to_stop = 5.0;
+	changePose = true;
+	srand(time(NULL));
 }
 
 void Strategy::init(string main_color, bool is_debug, bool real_environment){
@@ -45,18 +47,25 @@ void Strategy::loop(){
 }
 
 void Strategy::calc_strategy(){
-	commands[0] = calc_cmd_to(state.robots[0].pose, state.ball, distance_to_stop);
+	if(changePose){
+		changePose = false;
+		final.x = (rand() % 100) + 30;
+		final.y = (rand() % 80) + 30;
+		final.z = rand() % 360;
+	}
+
+	commands[0] = calc_cmd_to(state.robots[0].pose, final, distance_to_stop);
 	//state.robots[0].pose.show();
 	// commands[1]
 	// commands[2]
-	debug.robots_final_pose[0] = state.ball;
+	debug.robots_final_pose[0] = final;
 
 	for(int i = 0 ; i < 3 ; i++){
 		debug.robots_path[i].poses.clear();
 	}
 	
 	debug.robots_path[0].poses.push_back(state.robots[0].pose);
-	debug.robots_path[0].poses.push_back(state.ball);
+	debug.robots_path[0].poses.push_back(final);
 }
 
 common::Command Strategy::calc_cmd_to(btVector3 act, btVector3 goal, float distance_to_stop){
@@ -85,7 +94,7 @@ common::Command Strategy::calc_cmd_to(btVector3 act, btVector3 goal, float dista
 		angulation_robot_robot_goal += 360;
 	}
 	
-	cout << angulation_robot_robot_goal << endl;
+	//cout << angulation_robot_robot_goal << endl;
 
 	// Regras de movimentação
 	if(fabs(angulation_robot_robot_goal) <= 135){
@@ -111,6 +120,7 @@ common::Command Strategy::calc_cmd_to(btVector3 act, btVector3 goal, float dista
 	if(distance_robot_goal < 15.0){
 		cmd.left = 0;
 		cmd.right = 0;
+		changePose = true;
 	}
 
 	return cmd;
