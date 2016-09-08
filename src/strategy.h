@@ -10,6 +10,7 @@
 #define _STRATEGY_H_
 
 #include "sample.h"
+#include "robot.h"
 
 using namespace std;
 using namespace common;
@@ -26,11 +27,10 @@ class Strategy : public Sample{
 		Sample :: common::Debug debug;
 	*/
 protected:
-	float robot_radius;
-	float distance_to_stop;
+	vector<Robot> our_team;
+	vector<Robot> adversary_team;
+	btVector3 ball, v_ball;
 
-	btVector3 final;
-	bool changePose;
 public:
 	Strategy();	
 
@@ -38,7 +38,9 @@ public:
 	void loop();
 	void calc_strategy();
 
-	common::Command calc_cmd_to(btVector3 init, btVector3 final, float distance_to_stop = 10.0);
+	void update_state_on_robots();
+	void update_commands_from_robots();
+	void update_debug_from_robots();
 };
 
 #endif // _STRATEGY_H_

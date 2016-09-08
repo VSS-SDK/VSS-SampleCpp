@@ -17,6 +17,7 @@ using namespace std;
 
 namespace common{
     enum { NONE = 0, GOAL_TEAM1 = 1, GOAL_TEAM2 = 2, FAULT_TEAM1 = 3, FAULT_TEAM2 = 4, PENALTY_TEAM1 = 5, PENALTY_TEAM2 = 6 };
+    enum Task{ GOAL_KEEPER = 0, DEFENDER = 1, ATTACKER = 2 };
     
     //! This struct represents a Vector in R^3.
     struct btVector3{
@@ -46,26 +47,26 @@ namespace common{
 
 
     //! This strcut represets the pose that one robot can handle. Pos and Vel.
-    struct Robot{
+    struct Robot_{
         //! Data: Pose
         btVector3 pose;
         //! Data: V_Pose
         btVector3 v_pose;
 
         //! Default constructor: Robot t;
-        Robot(){
+        Robot_(){
             pose = btVector3(0, 0, 0);
             v_pose = btVector3(0, 0, 0);
         };
 
         //! Constructor 2: Robot t(btVector3(x, y, yaw), btVector3(x, y, yaw))
-        Robot(btVector3 pose, btVector3 v_pose){
+        Robot_(btVector3 pose, btVector3 v_pose){
             this->pose = pose;
             this->v_pose = v_pose;
         };
 
         //! Constructor copy: Robot t(Robot());
-        Robot(Robot *r){
+        Robot_(Robot_ *r){
             pose = r->pose;
             v_pose = r->v_pose;
         };
@@ -104,9 +105,9 @@ namespace common{
     //! This struct represents the state that the workspace can handle.
     struct State{
         //! All robots by vision
-        Robot robots[6];
+        Robot_ robots[6];
         //! All robots by kalman
-        Robot robots_kalman[6];
+        Robot_ robots_kalman[6];
         //! Pos ball by vision
         btVector3 ball;
         //! Vel ball by vision

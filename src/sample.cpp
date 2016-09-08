@@ -41,7 +41,7 @@ void Sample::receive_state(){
 
 void Sample::send_commands(){
     global_commands = vss_command::Global_Commands();
-	global_commands.set_situation(NONE); 
+	global_commands.set_situation(common::NONE); 
 
 	if(main_color == "yellow"){
 		global_commands.set_is_team_yellow(true);

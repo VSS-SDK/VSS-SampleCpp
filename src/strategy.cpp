@@ -12,10 +12,20 @@ Strategy::Strategy(){
     main_color = "yellow";
     is_debug = false;
     real_environment = false;
-	robot_radius = 8.0;
-	distance_to_stop = 5.0;
-	changePose = true;
 	srand(time(NULL));
+
+	for(int i = 0 ; i < 3 ; i++){
+		Robot r;
+		r.set_id(i);
+		r.alloc_ball(&ball, &v_ball);
+		our_team.push_back(r);
+		adversary_team.push_back(r);
+	}
+	
+	for(int i = 3 ; i < 3 ; i++){
+		our_team.at(i).alloc_our_team(&our_team);
+		our_team.at(i).alloc_adversary_team(&adversary_team);
+	}
 }
 
 void Strategy::init(string main_color, bool is_debug, bool real_environment){
@@ -27,9 +37,18 @@ void Strategy::loop(){
 	while(true){
 		// DON'T REMOVE receive_data();
 		receive_state();
-		// DON'T REMOVE receive_Data();'
+		// DON'T REMOVE receive_Data();
 		
+		// DON'T REMOVE update_state_on_robots();
+		update_state_on_robots();
+		// DON'T REMOVE update_state_on_robots();
+
 		calc_strategy();
+
+		// DON'T REMOVE update_commands_from_robots();
+		update_commands_from_robots();
+		// DON'T REMOVE update_commands_from_robots();
+		
 		
 		if(!real_environment){
 			// DON'T REMOVE send_data();
@@ -39,89 +58,44 @@ void Strategy::loop(){
 			// Put your transmission code here
 		}
 
-		// DON'T REMOVE
-		if(is_debug)
+		// DON'T REMOVE debug_mode
+		if(is_debug){
+			update_debug_from_robots();
 			send_debug();
-		// DON'T REMOVE'
+		}
+		// DON'T REMOVE debug_mode
 	}
 }
 
 void Strategy::calc_strategy(){
-	if(changePose){
-		changePose = false;
-		final.x = (rand() % 100) + 30;
-		final.y = (rand() % 80) + 30;
-		final.z = rand() % 360;
-	}
-
-	commands[0] = calc_cmd_to(state.robots[0].pose, final, distance_to_stop);
-	//state.robots[0].pose.show();
-	// commands[1]
-	// commands[2]
-	debug.robots_final_pose[0] = final;
-
 	for(int i = 0 ; i < 3 ; i++){
-		debug.robots_path[i].poses.clear();
+		our_team.at(i).calc_action();
 	}
-	
-	debug.robots_path[0].poses.push_back(state.robots[0].pose);
-	debug.robots_path[0].poses.push_back(final);
 }
 
-common::Command Strategy::calc_cmd_to(btVector3 act, btVector3 goal, float distance_to_stop){
-	Command cmd;
-	float distance_robot_goal;
-	float angulation_robot_goal;
-	float angulation_robot_robot_goal;
+void Strategy::update_state_on_robots(){
+	//ball.show();
+	ball = state.ball;
+	v_ball = state.v_ball;
 
-	// Diferença entre angulação do robô e do objetivo
-	distance_robot_goal = distancePoint(goal, act);
-	angulation_robot_goal = angulation(goal, act);
-
-
-	angulation_robot_goal -= 180; // 180 if comes from VSS-Simulator
-    if(angulation_robot_goal < 0){
-    	angulation_robot_goal += 360;
-    }
-
-	angulation_robot_robot_goal = act.z - angulation_robot_goal;
-
-	if(angulation_robot_robot_goal > 180){
-		angulation_robot_robot_goal -= 360;
+	for(int i = 0 ; i < 3 ; i++){
+		our_team.at(i).set_pose(state.robots[i].pose);
+		our_team.at(i).set_v_pose(state.robots[i].v_pose);
+		adversary_team.at(i).set_pose(state.robots[i+3].pose);
+		adversary_team.at(i).set_v_pose(state.robots[i+3].pose);
 	}
+}
 
-	if(angulation_robot_robot_goal < -180){
-		angulation_robot_robot_goal += 360;
+void Strategy::update_commands_from_robots(){
+	for(int i = 0 ; i < 3 ; i++){
+		commands[i] = our_team.at(i).get_command();
 	}
-	
-	//cout << angulation_robot_robot_goal << endl;
+}
 
-	// Regras de movimentação
-	if(fabs(angulation_robot_robot_goal) <= 135){
-		cmd.left = distance_robot_goal - 0.2*(angulation_robot_robot_goal * robot_radius / 2.00);
-		cmd.right = distance_robot_goal + 0.2*(angulation_robot_robot_goal * robot_radius / 2.00);
-		
-		cmd.left *= 0.3;
-		cmd.right *= 0.3;
-	}else{
-		if(angulation_robot_robot_goal >= 0){
-			cmd.left = 50;
-			cmd.right = -50;
-		}else{
-			cmd.left = -50;
-			cmd.right = 50;
-		}
+void Strategy::update_debug_from_robots(){
+	for(int i = 0 ; i < 3 ; i++){
+		debug.robots_step_pose[i] = our_team.at(i).get_step_pose();
+        debug.robots_final_pose[i] = our_team.at(i).get_final_pose();
+        debug.robots_path[i] = our_team.at(i).get_path();
 	}
-
-	//cmd.left = 1;
-	//cmd.right = -1;
-	//cmd.left e cmd.right são PWM (0 a 255 para frente) (256 á 252 para trás)
-
-	if(distance_robot_goal < 15.0){
-		cmd.left = 0;
-		cmd.right = 0;
-		changePose = true;
-	}
-
-	return cmd;
 }
