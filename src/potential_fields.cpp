@@ -2,10 +2,18 @@
 
 PotentialFields::PotentialFields(){
 	alpha = 1.0;
+	radiusBall = 4.267 / 2.0; // Diametro de uma bola de golfe 4.267 / 2.0 = raio 
+	areaBall = 12.0;
+
+	omega = 3.0;
+	radiusPosition = 1.0;
+	areaPosition = 5.0;
+
 	beta = 0.4; //0.4
 	INF = 0.4; //20
-	radiusRobot = 11.3; // Diagonal de um quadrado L = L*sqrt(2). L = 8 = diagonal 11.3
+	radiusRobot = 11.3 / 2.0; // Diagonal de um quadrado L = L*sqrt(2). L = 8 = diagonal 11.3 / 2.0 = raio
 	areaRobot = 20.0;
+
 
 	id = 0;
 	is_last = true;
@@ -17,11 +25,12 @@ void PotentialFields::set_robots(vector<btVector3> our_robots, vector<btVector3>
     this->adversary_robots = adversary_robots;
 }
 
-btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last){
+btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOTO go_to){
 	result = btVector3(0, 0, 0);
 	this->id = id;
 	this->is_last = is_last;
 	this->goal = goal;
+	this->go_to = go_to;
 
 	attractive_force();
 	//repulsiveForceOurRobots();
@@ -48,22 +57,49 @@ void PotentialFields::attractive_force(){
 	theta = radian(our_robots.at(id), goal);
 	distances = distancePoint(our_robots.at(id), goal);
 
-	if(is_last){
-		if(distances < radiusRobot){
-			x += 0;
-			y += 0;
-		}
-		else if(distances <= (radiusRobot + areaRobot)){
-			x += -alpha*(distances - radiusRobot)*cos(theta); 
-			y += -alpha*(distances - radiusRobot)*sin(theta);
-		}else{
-			x += -alpha*areaRobot*cos(theta); 
-			y += -alpha*areaRobot*sin(theta);
-		}
-	}else{
-		x += -alpha*areaRobot*cos(theta); 
-		y += -alpha*areaRobot*sin(theta);
+	switch(go_to){
+		case GOTO::POSITION:{
+			if(is_last){
+				if(distances < radiusPosition){
+					x += 0;
+					y += 0;
+				}
+				else if(distances <= (radiusPosition + areaPosition)){
+					x += -omega*(distances - radiusPosition)*cos(theta); 
+					y += -omega*(distances - radiusPosition)*sin(theta);
+				}else{
+					x += -omega*areaPosition*cos(theta); 
+					y += -omega*areaPosition*sin(theta);
+				}
+			}else{
+				x += -omega*areaPosition*cos(theta); 
+				y += -omega*areaPosition*sin(theta);
+			}
+		}break;
+		case GOTO::BALL:{
+			if(is_last){
+				if(distances < radiusBall){
+					x += 0;
+					y += 0;
+				}
+				else if(distances <= (radiusBall + areaBall)){
+					x += -alpha*(distances - radiusBall)*cos(theta); 
+					y += -alpha*(distances - radiusBall)*sin(theta);
+				}else{
+					x += -alpha*areaBall*cos(theta); 
+					y += -alpha*areaBall*sin(theta);
+				}
+			}else{
+				x += -alpha*areaBall*cos(theta); 
+				y += -alpha*areaBall*sin(theta);
+			}
+		}break;
+		case GOTO::ROBOT:{
+
+		}break;
 	}
+
+
 
 	result.x += x;
 	result.y += y;

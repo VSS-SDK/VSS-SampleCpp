@@ -9,11 +9,14 @@ class PotentialFields{
 protected:
     int id;
     bool is_last;
-    float alpha, beta, INF, radiusRobot, areaRobot;
+    float beta, INF, radiusRobot, areaRobot;
+    float alpha, radiusBall, areaBall;
+    float omega, radiusPosition, areaPosition;
     
     vector<btVector3> our_robots;
     vector<btVector3> adversary_robots; 
 	btVector3 result, goal;
+    GOTO go_to;
 
     int sign(float signal);
 	void attractive_force();
@@ -25,7 +28,7 @@ public:
 
     void set_robots(vector<btVector3> our_robots, vector<btVector3> adversary_robots);
     
-	btVector3 calc_result(int, btVector3, bool);
+	btVector3 calc_result(int, btVector3, bool, GOTO);
 };
 
 #endif // _POTENTIAL_FIELD_H_

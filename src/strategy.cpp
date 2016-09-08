@@ -17,6 +17,8 @@ Strategy::Strategy(){
 	for(int i = 0 ; i < 3 ; i++){
 		Robot r;
 		r.set_id(i);
+		if(i == 1)
+			r.set_task(Task::ATTACKER);
 		r.alloc_ball(&ball, &v_ball);
 		our_team.push_back(r);
 		adversary_team.push_back(r);
@@ -29,7 +31,6 @@ Strategy::Strategy(){
 }
 
 void Strategy::init(string main_color, bool is_debug, bool real_environment){
-
 	init_sample(main_color, is_debug, real_environment);
 	loop();
 }

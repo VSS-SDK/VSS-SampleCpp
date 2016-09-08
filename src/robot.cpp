@@ -5,11 +5,12 @@ Robot::Robot(){
     robot_side_size = 8.0;
     max_velocity_wheel = 1000.0;
     max_aceleration_wheel = 1000.0;
-    angle_to_spin = 135.0;
+    angle_to_spin = 90.0;
+	distance_to_stop = 10.0;
 
     need_brutal_mode = false;
     need_to_replan_path = true;    
-    front_and_rear_movimentaion = false;
+    front = true;
 
 	task = Task::GOAL_KEEPER;
 	debug_pos = true;
@@ -53,29 +54,61 @@ void Robot::calc_cmd_to(){
 	if(angulation_robot_robot_goal < -180){
 		angulation_robot_robot_goal += 360;
 	}
-	
-	// Regras de movimentação
-	//if(fabs(angulation_robot_robot_goal) <= angle_to_spin){
-		cmd.left = (distance_robot_goal) - (angulation_robot_robot_goal * robot_side_size * 0.05);
-		cmd.right = (distance_robot_goal) + (angulation_robot_robot_goal * robot_side_size * 0.05);
-	/*}else{
-        // SPIN
-		if(angulation_robot_robot_goal >= 0){
-			cmd.left = 50;
-			cmd.right = -50;
-		}else{
-			cmd.left = -50;
-			cmd.right = 50;
-		}
-	}*/
 
-	if(distancePoint(pose, final_pose) < 15.0){
+	if(fabs(angulation_robot_robot_goal) >= angle_to_spin){
+		front = false;
+	}else{
+		front = true;
+	}
+	
+	if(front){
+		// Regras de movimentação
+		if(fabs(angulation_robot_robot_goal) < angle_to_spin){
+			cmd.left = distance_robot_goal - (0.012*angulation_robot_robot_goal * robot_side_size);
+			cmd.right = distance_robot_goal + (0.012*angulation_robot_robot_goal * robot_side_size);
+			
+			cmd.left *= 3.0;
+			cmd.right *= 3.0;
+		}else{
+			// SPIN
+			if(angulation_robot_robot_goal >= 0){
+				cmd.left = -50;
+				cmd.right = 50;
+			}else{
+				cmd.left = 50;
+				cmd.right = -50;
+			}
+		}
+	}else{
+		if(angulation_robot_robot_goal < 0){
+			angulation_robot_robot_goal += 180;
+		}else{
+			angulation_robot_robot_goal -= 180;
+				
+		}
+		if(fabs(angulation_robot_robot_goal) < angle_to_spin){
+			cmd.left = distance_robot_goal + (0.012*angulation_robot_robot_goal * robot_side_size);
+			cmd.right = distance_robot_goal - (0.012*angulation_robot_robot_goal * robot_side_size);
+			
+			cmd.left *= -3.0;
+			cmd.right *= -3.0;
+		}else{
+			// SPIN
+			if(angulation_robot_robot_goal >= 0){
+				cmd.left = 50;
+				cmd.right = -50;
+			}else{
+				cmd.left = -50;
+				cmd.right = 50;
+			}
+		}
+	}
+
+	if(distancePoint(pose, final_pose) < distance_to_stop){
 		cmd.left = 0;
 		cmd.right = 0;
 		debug_pos = true;
 	}
-
-	cmd.show();
 }
 
 void Robot::alloc_our_team(vector<Robot> *our_team){

@@ -13,10 +13,11 @@ protected:
     float max_velocity_wheel;
     float max_aceleration_wheel;
     float angle_to_spin;
+    float distance_to_stop;
 
     bool need_brutal_mode;           // Potential Fields OFF
     bool need_to_replan_path;    
-    bool front_and_rear_movimentaion;
+    bool front;
     Task task;
 
     btVector3 pose;
