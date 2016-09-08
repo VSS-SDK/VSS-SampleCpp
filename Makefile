@@ -8,10 +8,10 @@
 
 
 CCX = g++ -std=c++11 -w
+DEBUG_FLAG = -g
 
 
-
-INCLUDES = -Isrc -Isrc/interface
+INCLUDES = -Isrc
 
 LIBRARIES_PROTO = `pkg-config --cflags --libs protobuf`
 LIBRARIES_BOOST = -lboost_system -lboost_filesystem -lboost_program_options -lboost_thread
@@ -30,16 +30,18 @@ FILE_NAMES = $(FILE_NAMES_SRC) $(FILE_NAMES_PROTOS)
 
 
 
-EXEC = VSS-SampleStrategy
+RELEASE = VSS-SampleStrategy
+DEBUG = VSS-SampleStrategy-Debug
+
 .cpp.o:
 	@$(CCX) $(INCLUDES) $(LIBRARIES) -Wall -Wformat -c -o $@ $< -w
 
 .cc.o:
 	@$(CCX) $(INCLUDES) $(LIBRARIES) -Wall -Wformat -c -o $@ $< -w
 
-all: message_compiling $(EXEC)
+all: message_compiling release
 	@echo Done ...
-	
+
 message_compiling:
 	@echo Compiling VSS-SampleStrategy ...
 
@@ -47,19 +49,19 @@ message_cleaning:
 	@echo Cleaning VSS-SampleStrategy ...
 
 yellow:
-	./$(EXEC) -c yellow
+	./$(RELEASE) -c yellow
 
 blue:
-	./$(EXEC) -c blue
+	./$(RELEASE) -c blue
 
-$(EXEC): $(FILE_NAMES)
-	@$(CCX) -o $(EXEC) $(FILE_NAMES) $(LIBRARIES) $(INCLUDES)
+release: $(FILE_NAMES)
+	@$(CCX) -o $(RELEASE) $(FILE_NAMES) $(LIBRARIES) $(INCLUDES)
+
+debug: 
+	$(CCX) -g $(shell find -name '*.cpp') $(shell find -name '*.cc') $(LIBRARIES) $(INCLUDES) -o $(DEBUG)
 
 clean: message_cleaning
-	@rm $(EXEC) $(FILE_NAMES)
+	@rm $(RELEASE) $(FILE_NAMES)
 
 proto:
 	cd src/VSS-Interface/protos && make -f protos.make
-
-teste: 
-	$(SRC)

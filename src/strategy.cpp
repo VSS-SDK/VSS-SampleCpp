@@ -9,101 +9,53 @@
 #include "strategy.h"
 
 Strategy::Strategy(){
-	its_real_transmition = false;
-	has_new_state = has_new_command = false;
+    main_color = "yellow";
+    is_debug = false;
+    real_environment = false;
 	robot_radius = 8.0;
-	distance_stop = 5.0;
-	situation = 0;
-	srand(time(NULL));
-	goal_glob.x = (rand() % 110) + 20;
-	goal_glob.y = (rand() % 100) + 20;
-	debug = false;
+	distance_to_stop = 5.0;
 }
 
-void Strategy::init(string main_color, bool debug){
-	this->main_color = main_color;
-	this->debug = debug;
-
-	thread_comm = new thread(bind(&Strategy::comm_thread, this));
-	//thread_send = new thread(bind(&Strategy::send_thread, this));
-
-	thread_comm->join();
-	//thread_send->join();
+void Strategy::init(string main_color, bool is_debug, bool real_environment){
+	init_sample(main_color, is_debug, real_environment);
+	loop();
 }
 
-void Strategy::comm_thread(){
-	interface_receive.createSocketReceiveState(&global_state);
-
-	if(main_color == "yellow"){
-		interface_send.createSendCommandsTeam1(&global_commands);
-		if(debug)
-			interface_debug.createSendDebugTeam1(&global_debug);
-
-		cout << "teste" << endl;
-	}else{
-		interface_send.createSendCommandsTeam2(&global_commands);
-		if(debug)
-			interface_debug.createSendDebugTeam2(&global_debug);
-	}
-
+void Strategy::loop(){
 	while(true){
-		// Only loop if has a new state
-		interface_receive.receiveState();
-		state = common::Global_State2State(global_state, main_color);
-		situation = global_state.situation();
-		has_new_state = true;
-
+		// DON'T REMOVE receive_data();
+		receive_state();
+		// DON'T REMOVE receive_Data();'
+		
 		calc_strategy();
-		has_new_state = false;
-
-		if(main_color == "yellow"){
-			interface_send.sendCommandTeam1();
-			if(debug)
-				interface_debug.sendDebugTeam1();
+		
+		if(!real_environment){
+			// DON'T REMOVE send_data();
+			send_commands();
+			// DON'T REMOVE send_data();
 		}else{
-			interface_send.sendCommandTeam2();
-			if(debug)
-				interface_debug.sendDebugTeam2();
-		}	
+			// Put your transmission code here
+		}
+
+		// DON'T REMOVE
+		if(is_debug)
+			send_debug();
+		// DON'T REMOVE'
 	}
 }
 
 void Strategy::calc_strategy(){
-	// Padrão, não mudar nada
-	bool all_robots_ok = false;
-	global_commands = vss_command::Global_Commands();
-	global_commands.set_situation(NONE); 
-	if(main_color == "yellow"){
-		global_commands.set_is_team_yellow(true);	// IF IS YELLOW: TRUE
-	}else{
-		global_commands.set_is_team_yellow(false);
-	}
+	commands[0] = calc_cmd_to(state.robots[0].pose, state.ball, distance_to_stop);
+	// commands[1]
+	// commands[2]
+	debug.robots_final_pose[0] = state.ball;
 
-	// Calcula o comando dos rodas 
-	commands[0] = calc_cmd_to(state.robots[0].pose, state.ball, distance_stop);
-	//commands[0] = calc_cmd_to(state.robots[0].pose, goal_glob, distance_stop);
-	//commands[0] = calc_cmd_to(state.robots[0].pose, goal_glob, distance_stop);
-
-	//Padrão, não mudar
 	for(int i = 0 ; i < 3 ; i++){
-		vss_command::Robot_Command *robot = global_commands.add_robot_commands();
-		robot->set_id(i);
-		robot->set_left_vel(commands[i].left);
-		robot->set_right_vel(commands[i].right);
+		debug.robots_path[i].poses.clear();
 	}
-
-	int size_of_path = 3;
-	for(int i = 0 ; i < 3 ; i++){
-		vss_debug::Path *paths = global_debug.add_paths();
-		paths->set_id(i);
-		for(int j = 0 ; j < size_of_path ; j++){
-			vss_debug::Pose *poses = paths->add_poses();
-			poses->set_id(i);
-			poses->set_x(0);
-			poses->set_y(0);
-			poses->set_yaw(0);
-		}
-	}
+	
+	debug.robots_path[0].poses.push_back(state.robots[0].pose);
+	debug.robots_path[0].poses.push_back(state.ball);
 }
 
 common::Command Strategy::calc_cmd_to(btVector3 act, btVector3 goal, float distance_to_stop){

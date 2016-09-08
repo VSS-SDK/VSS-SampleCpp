@@ -9,49 +9,33 @@
 #ifndef _STRATEGY_H_
 #define _STRATEGY_H_
 
-#include "math.h"
-#include "thread"		// C++11
-#include "common.h"
-#include "VSS-Interface/interface.h"
-#include "vector"
+#include "sample.h"
 
 using namespace std;
 using namespace common;
 
-class Strategy{
-protected:
-	string main_color;
-	Interface interface_receive, interface_send, interface_debug;
-	vss_state::Global_State global_state;
-	vss_command::Global_Commands global_commands;
-	vss_debug::Global_Debug global_debug;
-	
-	thread *thread_comm;
-    common::State state;
-	common::Command commands[3];
-	btVector3 goal_glob;
-	bool debug;
+class Strategy : public Sample{
+	/*
+		Sample :: string main_color;
+		Sample :: bool is_debug;
+		Sample :: bool real_environment;
+		Sample :: int situation;
 
-    int port;
-    int situation;
-	float robot_radius, distance_stop;
-	int rotate, rear;
-    bool has_new_state, has_new_command;
-	bool its_real_transmition;
+		Sample :: common::State state;
+		Sample :: common::Command commands[3];
+		Sample :: common::Debug debug;
+	*/
+protected:
+	float robot_radius;
+	float distance_to_stop;
 public:
 	Strategy();	
-	void init(string main_color, bool debug);
 
-	void comm_thread();
-
+	void init(string main_color, bool is_debug, bool real_environment);
+	void loop();
 	void calc_strategy();
-	common::btVector3 project_bt_to(btVector3 ball, btVector3 goal, float proj_dist);
+
 	common::Command calc_cmd_to(btVector3 init, btVector3 final, float distance_to_stop = 10.0);
-	common::Command kick_to(btVector3 robot, btVector3 kick_goal);
-	
-	void play();
-	bool position_our_goal();
-	float handleAngle(float, float);
 };
 
 #endif // _STRATEGY_H_

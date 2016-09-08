@@ -22,7 +22,7 @@ int main(int argc, char** argv){
         }*/
         if(color == "yellow" || color == "blue"){
 		    Strategy strategy;
-		    strategy.init(color, debug);
+		    strategy.init(color, debug, true);
         }else{
             cerr << "ERROR: Your main color must be yellow or blue." << endl;
         }
