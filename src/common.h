@@ -10,6 +10,7 @@
 #define COMMON_H_
 
 #include "iostream"
+#include "sstream"
 #include "math.h"
 #include "VSS-Interface/interface.h"
 #include "ompl.h"
@@ -181,6 +182,11 @@ namespace common{
     Path PathPtr2Path(ob::PathPtr);
 
     Path PathGeometric2Path(og::PathGeometric);
+
+    //! This function clean a stringstream 
+    void clearSS(stringstream &ss);
+
+    string cmdTerminal(string s);
 }
 
 #endif

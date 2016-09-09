@@ -17,12 +17,14 @@ Strategy::Strategy(){
 	for(int i = 0 ; i < 3 ; i++){
 		Robot r;
 		r.set_id(i);
-		//if(i == 1)
-		//	r.set_task(Task::ATTACKER);
 		r.alloc_ball(&ball, &v_ball);
 		our_team.push_back(r);
 		adversary_team.push_back(r);
 	}
+
+	our_team.at(0).set_task(Task::ATTACKER);
+	our_team.at(1).set_task(Task::DEFENDER);
+	our_team.at(2).set_task(Task::GOAL_KEEPER);
 
 	for(int i = 0 ; i < 3 ; i++){
 		our_team.at(i).alloc_our_team(&our_team);
@@ -57,6 +59,28 @@ void Strategy::loop(){
 			send_commands();
 			// DON'T REMOVE send_data();
 		}else{
+			//cout << "teste" << endl;
+			for(int i = 0 ; i < 3 ; i++){
+				commands[i] = our_team.at(i).get_command();
+				commands[i].left = commands[i].left * 2.5;
+				commands[i].right = commands[i].right * 2.5;
+				commands[i].show();
+				if(commands[i].left < 0){
+					commands[i].left = 255 + fabs(commands[i].left);
+				}
+				if(commands[i].right < 0){
+					commands[i].right = 255 + fabs(commands[i].right);
+				}
+				cout << "plus" << endl;
+				commands[i].show();
+				cout << endl << endl;
+				commands[i].left = (int)commands[i].left;
+				commands[i].right = (int)commands[i].right;
+			}
+
+			//commands[0].show();
+
+			comm.sendSerialData(commands);
 			// Put your transmission code here
 		}
 

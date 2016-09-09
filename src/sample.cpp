@@ -15,7 +15,7 @@ Sample::Sample(){
 void Sample::init_sample(string main_color, bool is_debug, bool real_environment){
     this->main_color = main_color;
     this->is_debug = is_debug;
-    this->real_environment;
+    this->real_environment = real_environment;
 	
     interface_receive.createSocketReceiveState(&global_state);
 

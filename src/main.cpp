@@ -10,20 +10,21 @@
 #include "strategy.h"
 #include "boost.h"
 
-bool argParse(int argc, char** argv, string *color, bool *debug);
+bool argParse(int argc, char** argv, string *color, bool *debug, bool *real);
 
 int main(int argc, char** argv){
     srand(time(NULL));
 	string color;
     bool debug = false;
+    bool real_environment = false;
 
-	if(argParse(argc, argv, &color, &debug)){
+	if(argParse(argc, argv, &color, &debug, &real_environment)){
         /*if(debug){
             cout << "debug ON";
         }*/
         if(color == "yellow" || color == "blue"){
 		    Strategy strategy;
-		    strategy.init(color, debug, true);
+		    strategy.init(color, debug, real_environment);
         }else{
             cerr << "ERROR: Your main color must be yellow or blue." << endl;
         }
@@ -35,7 +36,7 @@ int main(int argc, char** argv){
 	return 0;
 }
 
-bool argParse(int argc, char** argv, string *color, bool *debug){
+bool argParse(int argc, char** argv, string *color, bool *debug, bool *real){
     namespace bpo = boost::program_options;
 
     // Declare the supported options.
@@ -43,6 +44,7 @@ bool argParse(int argc, char** argv, string *color, bool *debug){
     desc.add_options()
         ("help,h", "(Optional) produce help message")
         ("debug,d", "(Optional) open the debug rotine")
+        ("real,r", "(Optional) open the real transmition")
         ("color,c", bpo::value<std::string>()->default_value(" "), "(Required) Specify the main color of your team, may be yellow or blue.");
     bpo::variables_map vm;
     bpo::store(bpo::parse_command_line(argc, argv, desc), vm);
@@ -55,6 +57,10 @@ bool argParse(int argc, char** argv, string *color, bool *debug){
 
     if (vm.count("debug")){
         *debug = true;
+    }
+
+     if (vm.count("real")){
+        *real = true;
     }
 
     *color = vm["color"].as<string>();

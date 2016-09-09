@@ -209,4 +209,24 @@ namespace common{
 		path.poses = poses;
 		return path;
 	}
+
+    void clearSS(stringstream &ss){
+        ss.str(string());
+        ss.clear();
+    }
+
+    string cmdTerminal(string s){
+        char buffer[1024];
+        std::string result = "";
+
+        FILE* pipe = popen(s.c_str(), "r");
+        if (!pipe) return "ERROR";
+        
+        while(!feof(pipe)) {
+            if(fgets(buffer, 1024, pipe) != NULL)
+                result += buffer;
+        }
+        pclose(pipe);
+        return result;
+    }
 }

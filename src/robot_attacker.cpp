@@ -23,7 +23,7 @@ void Robot::AT_calc_action(){
     pp.setRobots(our_poses, adversary_poses);
 
     AT_projection();
-    AT_path_planning();
+    //AT_path_planning();
 
     //btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::BALL);
     btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::POSITION);
@@ -35,7 +35,7 @@ void Robot::AT_calc_action(){
     //path.poses.push_back(pose);
     //path.poses.push_back(final_pose);
 
-    //calc_cmd_to();
+    calc_cmd_to();
 }
 
 void Robot::AT_path_planning(){
@@ -44,9 +44,9 @@ void Robot::AT_path_planning(){
     if(distance_between_projections > new_distance_between_projections){
         distance_between_projections = new_distance_between_projections;
     }else{*/
-        path = pp.solvePath(id, projection);
-        final_pose = path.poses.at(path.poses.size()-1);
-        final_pose.z = final_pose.z * (180/M_PI);
+        //path = pp.solvePath(id, projection);
+        //final_pose = path.poses.at(path.poses.size()-1);
+        //final_pose.z = final_pose.z * (180/M_PI);
         //path.show();
         //distance_between_projections = 0;
     //}
