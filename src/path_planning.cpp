@@ -19,8 +19,8 @@ PathPlanning::PathPlanning(){
 
 Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
     bool easy = true;
-    //ob::StateSpacePtr space(new ob::ReedsSheppStateSpace);
-    ob::StateSpacePtr space(new ob::DubinsStateSpace);
+    ob::StateSpacePtr space(new ob::ReedsSheppStateSpace);
+    //ob::StateSpacePtr space(new ob::DubinsStateSpace);
     
     ob::ScopedState<> start(space), goal(space);
     ob::RealVectorBounds bounds(2);
@@ -29,8 +29,8 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
         bounds.setHigh(170);
     else
     {
-        bounds.high[0] = 6;
-        bounds.high[1] = .6;
+        bounds.high[0] = 170;
+        bounds.high[1] = 0.5;
     }
     space->as<ob::SE2StateSpace>()->setBounds(bounds);
 
@@ -70,8 +70,12 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
     }
     else
     {
-        start[0] = start[1] = .5; start[2] = .5*boost::math::constants::pi<double>();;
-        goal[0] = 5.5; goal[1] = .5; goal[2] = .5*boost::math::constants::pi<double>();
+        start[0] = 0.5;
+        start[1] = 0.5;
+        start[2] = 0.5*boost::math::constants::pi<double>();;
+        goal[0] = 5.5;
+        goal[1] = 0.5;
+        goal[2] = 0.5*boost::math::constants::pi<double>();
     }
     ss.setStartAndGoalStates(start, goal);
 
