@@ -33,7 +33,6 @@ addons:
       - libzmq3
       - libzmq3-dev
       - libboost-all-dev
-      - libompl10
       - libompl-dev
       
 script:
