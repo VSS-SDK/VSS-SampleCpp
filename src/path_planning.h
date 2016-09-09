@@ -29,6 +29,8 @@ protected:
     btVector3 goal_pose;
     
     static bool isStateValid(const ob::State *state);
+    static bool isStateValidEasy(const ob::SpaceInformation *si, const ob::State *state);
+    static bool isStateValidHard(const ob::SpaceInformation *si, const ob::State *state);
 
 public:
     PathPlanning();  

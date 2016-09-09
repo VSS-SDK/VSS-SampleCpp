@@ -4,9 +4,12 @@
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/spaces/SE2StateSpace.h>
 #include <ompl/base/spaces/SE3StateSpace.h>
+#include <ompl/base/spaces/DubinsStateSpace.h>
+#include <ompl/base/spaces/ReedsSheppStateSpace.h>
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/base/Path.h>
 #include <ompl/base/State.h>
+#include <ompl/base/ScopedState.h>
 
 // apt-get install on debian
 #include <ompl/geometric/planners/rrt/RRTConnect.h>

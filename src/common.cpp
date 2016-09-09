@@ -193,14 +193,14 @@ namespace common{
 		return path;
 	}
 
-    Path PathGeometric2Path(og::PathGeometric *path_geo){
+    Path PathGeometric2Path(og::PathGeometric path_geo){
 		Path path;
 		vector<btVector3> poses;
 
-		vector<ob::State*> states = path_geo->getStates();
+		vector<ob::State*> states = path_geo.getStates();
 
 		for(int i = 0 ; i < states.size() ; i++){
-            cout << "teste" << endl;
+            //cout << "teste" << endl;
 			ob::SE2StateSpace::StateType* state = states.at(i)->as<ob::SE2StateSpace::StateType>();
 			btVector3 p(state->getX(), state->getY(), state->getYaw());
 			poses.push_back(p);

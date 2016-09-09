@@ -18,6 +18,84 @@ PathPlanning::PathPlanning(){
 }
 
 Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
+    bool easy = true;
+    //ob::StateSpacePtr space(new ob::ReedsSheppStateSpace);
+    ob::StateSpacePtr space(new ob::DubinsStateSpace);
+    
+    ob::ScopedState<> start(space), goal(space);
+    ob::RealVectorBounds bounds(2);
+    bounds.setLow(0);
+    if (easy)
+        bounds.setHigh(170);
+    else
+    {
+        bounds.high[0] = 6;
+        bounds.high[1] = .6;
+    }
+    space->as<ob::SE2StateSpace>()->setBounds(bounds);
+
+    // define a simple setup class
+    og::SimpleSetup ss(space);
+
+    // set state validity checking for this space
+    const ob::SpaceInformation *si = ss.getSpaceInformation().get();
+    auto isStateValid = easy ? isStateValidEasy : isStateValidHard;
+    ss.setStateValidityChecker([isStateValid, si](const ob::State *state)
+        {
+            return isStateValid(si, state);
+        });
+
+    // set the start and goal states
+    if (easy)
+    {   
+        
+        //start[0] = (int)robots.at(id_robot).x/10.0; 
+        //start[1] = (int)robots.at(id_robot).y/10.0;
+        //start[2] = 0;
+        //goal[0] = (int)goal_pose.x/10.0;
+        //goal[1] = (int)goal_pose.y/10.0;
+        //goal[2] = -.99*boost::math::constants::pi<double>();
+        
+        start[0] = 100.0;
+        start[1] = 100.0;
+        start[2] = 0.0;
+        goal[0] = 1.0;
+        goal[1] = 1.0;
+        goal[2] = 3.0;//-.99*boost::math::constants::pi<double>();
+
+        cout << "TESTE" << endl;
+        cout << "start: " << start[0] << ", " << start[1] << ", " << start[2] << endl;
+        cout << "goal: " << goal[0] << ", " << goal[1] << ", " << goal[2] << endl;
+        cout << "FINAL DO TESTE" << endl;
+    }
+    else
+    {
+        start[0] = start[1] = .5; start[2] = .5*boost::math::constants::pi<double>();;
+        goal[0] = 5.5; goal[1] = .5; goal[2] = .5*boost::math::constants::pi<double>();
+    }
+    ss.setStartAndGoalStates(start, goal);
+
+    // this call is optional, but we put it in to get more output information
+    ss.getSpaceInformation()->setStateValidityCheckingResolution(0.005);
+    //ss.setup();
+    //ss.print();
+
+    // attempt to solve the problem within 30 seconds of planning time
+    ob::PlannerStatus solved = ss.solve(30.0);
+
+    if(solved){
+        std::vector<double> reals;
+
+        ss.simplifySolution();
+        og::PathGeometric path_geo = ss.getSolutionPath();
+        //path_geo.interpolate(1000);
+        path = PathGeometric2Path(path_geo);
+        for(int i = 0 ; i < path.poses.size() ; i++){
+            path.poses.at(i).x += 20;
+            path.poses.at(i).y += 20;
+        }
+        path_geo.printAsMatrix(std::cout);
+    }
     /*ob::StateSpacePtr space(new ob::SE2StateSpace());
 
     ob::RealVectorBounds bounds(2);
@@ -65,7 +143,51 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
         std::cout << "No solution found" << std::endl;
     }*/
 
-    // construct the state space we are planning in
+    /*ob::StateSpacePtr space(new ob::ReedsSheppStateSpace);
+
+    ob::RealVectorBounds bounds(2);
+    bounds.setLow(0);
+    bounds.setHigh(170);
+
+    space->as<ob::ReedsSheppStateSpace>()->setBounds(bounds);
+
+    ob::SpaceInformationPtr si(new ob::SpaceInformation(space));
+
+    si->setStateValidityChecker(std::bind(&isStateValid, std::placeholders::_1));
+
+    ob::ScopedState<ob::ReedsSheppStateSpace> start(space);
+    ob::ScopedState<ob::ReedsSheppStateSpace> goal(space);
+
+    start->setX((int)robots.at(id_robot).x);
+    start->setY((int)robots.at(id_robot).y);
+    start->setYaw(0);
+
+    goal->setX(goal_pose.x);
+    goal->setY(goal_pose.y);
+    goal->setYaw(0);
+
+    ob::ProblemDefinitionPtr pdef(new ob::ProblemDefinition(si));
+
+    pdef->setStartAndGoalStates(start, goal);
+
+    ob::PlannerPtr planner(new og::RRTConnect(si));
+
+    planner->setProblemDefinition(pdef);
+
+    planner->setup();
+
+    //si->printSettings(std::cout);
+
+    //pdef->print(std::cout);
+
+    ob::PlannerStatus solved = planner->solve(1.0);
+
+    if(solved){
+        ob::PathPtr path_ptr = pdef->getSolutionPath();
+        path = PathPtr2Path(path_ptr);
+    }*/
+
+    /* construct the state space we are planning in
         ob::StateSpacePtr space(new ob::SE3StateSpace());
     
         // set the bounds for the R^3 part of SE(3)
@@ -87,7 +209,7 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
     
         // create a random goal state
         ob::ScopedState<> goal(space);
-        goal.random();*/
+        goal.random();
 
         ob::ScopedState<ob::SE3StateSpace> start(space);
         ob::ScopedState<ob::SE3StateSpace> goal(space);
@@ -130,7 +252,7 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
            cout << "teste" << endl;
            ob::PathPtr path_ptr = pdef->getSolutionPath();
            path = PathPtr2Path(path_ptr);
-       }
+       }*/
 
     return path;
 }
@@ -151,6 +273,20 @@ bool PathPlanning::isStateValid(const ob::State *state){
     
     return ok;
 }
+
+
+bool PathPlanning::isStateValidEasy(const ob::SpaceInformation *si, const ob::State *state)
+{
+    const ob::SE2StateSpace::StateType *s = state->as<ob::SE2StateSpace::StateType>();
+    double x=s->getX(), y=s->getY();
+    return si->satisfiesBounds(s) && (x<5 || x>13 || (y>8.5 && y<9.5));
+}
+
+bool PathPlanning::isStateValidHard(const ob::SpaceInformation *si, const ob::State *state)
+{
+    return si->satisfiesBounds(state);
+}
+
 
 void PathPlanning::setBounds(float lowBound, float highBound){
     this->lowBound = lowBound;

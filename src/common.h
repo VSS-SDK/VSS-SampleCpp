@@ -180,7 +180,7 @@ namespace common{
 
     Path PathPtr2Path(ob::PathPtr);
 
-    Path PathGeometric2Path(og::PathGeometric*);
+    Path PathGeometric2Path(og::PathGeometric);
 }
 
 #endif
