@@ -17,8 +17,8 @@ Strategy::Strategy(){
 	for(int i = 0 ; i < 3 ; i++){
 		Robot r;
 		r.set_id(i);
-		if(i == 1)
-			r.set_task(Task::ATTACKER);
+		//if(i == 1)
+		//	r.set_task(Task::ATTACKER);
 		r.alloc_ball(&ball, &v_ball);
 		our_team.push_back(r);
 		adversary_team.push_back(r);

@@ -177,4 +177,36 @@ namespace common{
         return state;
     }
 
+    Path PathPtr2Path(ob::PathPtr path_ptr){
+		Path path;
+		vector<btVector3> poses;
+
+		vector<ob::State*> states = boost::static_pointer_cast<og::PathGeometric>(path_ptr)->getStates();
+
+		for(int i = 0 ; i < states.size() ; i++){
+			ob::SE2StateSpace::StateType* state = states.at(i)->as<ob::SE2StateSpace::StateType>();
+			btVector3 p(state->getX(), state->getY(), state->getYaw());
+			poses.push_back(p);
+		}
+
+		path.poses = poses;
+		return path;
+	}
+
+    Path PathGeometric2Path(og::PathGeometric *path_geo){
+		Path path;
+		vector<btVector3> poses;
+
+		vector<ob::State*> states = path_geo->getStates();
+
+		for(int i = 0 ; i < states.size() ; i++){
+            cout << "teste" << endl;
+			ob::SE2StateSpace::StateType* state = states.at(i)->as<ob::SE2StateSpace::StateType>();
+			btVector3 p(state->getX(), state->getY(), state->getYaw());
+			poses.push_back(p);
+		}
+
+		path.poses = poses;
+		return path;
+	}
 }

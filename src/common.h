@@ -12,6 +12,7 @@
 #include "iostream"
 #include "math.h"
 #include "VSS-Interface/interface.h"
+#include "ompl.h"
 
 using namespace std;
 
@@ -176,6 +177,10 @@ namespace common{
     double radian(btVector3, btVector3);
 
     State Global_State2State(vss_state::Global_State global_state, string main_color);
+
+    Path PathPtr2Path(ob::PathPtr);
+
+    Path PathGeometric2Path(og::PathGeometric*);
 }
 
 #endif

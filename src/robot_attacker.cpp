@@ -10,13 +10,7 @@
 
 void Robot::AT_calc_action(){
     path.poses.clear();
-    if(debug_pos){
-        debug_pos = false;
-        final_pose.x = (rand() % 80) + 30;
-        final_pose.y = (rand() % 60) + 30;
-        final_pose.z = rand() % 360;
-    }
-
+    
     vector<btVector3> our_poses;
     vector<btVector3> adversary_poses;
 
@@ -26,6 +20,11 @@ void Robot::AT_calc_action(){
     }
 
     apf.set_robots(our_poses, adversary_poses);
+    pp.setRobots(our_poses, adversary_poses);
+
+    AT_projection();
+    AT_path_planning();
+
     //btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::BALL);
     btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::POSITION);
     
@@ -33,8 +32,31 @@ void Robot::AT_calc_action(){
     step_pose.y = pose.y + potential.y;
     step_pose.z = pose.z + potential.z;
         
-    path.poses.push_back(pose);
-    path.poses.push_back(final_pose);
+    //path.poses.push_back(pose);
+    //path.poses.push_back(final_pose);
 
     calc_cmd_to();
+}
+
+void Robot::AT_path_planning(){
+    //cout << "TESTE TESTE TESTE" << endl;
+    /*float new_distance_between_projections = distancePoint(projection, projection_to_plan)
+    if(distance_between_projections > new_distance_between_projections){
+        distance_between_projections = new_distance_between_projections;
+    }else{*/
+        path = pp.solvePath(id, projection);
+        //path.show();
+        //distance_between_projections = 0;
+    //}
+}
+
+void Robot::AT_projection(){
+    if(debug_pos){
+        debug_pos = false;
+        final_pose.x = (rand() % 130) + 20;
+        final_pose.y = (rand() % 110) + 10;
+        final_pose.z = rand() % 360;
+    }
+
+    projection = final_pose;
 }

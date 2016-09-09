@@ -16,12 +16,14 @@ Robot::Robot(){
     angle_to_spin = 90.0;
 	distance_to_stop = 10.0;
 
-    need_brutal_mode = false;
-    need_to_replan_path = true;    
+    need_brutal_mode = false;   
     front = true;
 
 	task = Task::GOAL_KEEPER;
 	debug_pos = true;
+
+	need_to_replan_path = true; 
+	distance_between_projections = 0.0;
 }
 
 void Robot::calc_action(){
@@ -37,6 +39,20 @@ void Robot::calc_action(){
 		}break;
 	}
 }
+
+/*void Robot::check_need_to_replan_path(){
+	switch(task){
+		case Task::GOAL_KEEPER:{
+			GK_check_need_to_replan_path();
+		}break;
+		case Task::DEFENDER:{
+			DF_check_need_to_replan_path();
+		}break;
+		case Task::ATTACKER:{
+			AT_check_need_to_replan_path();
+		}break;
+	}
+}*/
 
 // MODEL BLAZIC
 void Robot::calc_cmd_to(){

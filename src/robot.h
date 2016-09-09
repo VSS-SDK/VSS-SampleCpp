@@ -11,8 +11,10 @@
 
 #include "common.h"
 #include "potential_fields.h"
+#include "path_planning.h"
 
 using namespace common;
+
 
 class Robot{
 protected:
@@ -39,8 +41,11 @@ protected:
     vector<Robot> *our_team, *adversary_team;
     btVector3 *ball, *v_ball;
 
+    btVector3 projection, projection_to_plan;
+    float distance_between_projections;
+
     PotentialFields apf;
-    // PID pid;
+    PathPlanning pp;
 
     void calc_cmd_to();
     void check_opportunities();
@@ -50,6 +55,14 @@ protected:
     void GK_calc_action();
     void DF_calc_action();
     void AT_calc_action();
+
+    void GK_path_planning();
+    void DF_path_planning();
+    void AT_path_planning();
+
+    void GK_projection();
+    void DF_projection();
+    void AT_projection();
 
     bool debug_pos;
 public:
