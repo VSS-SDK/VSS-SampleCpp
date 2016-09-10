@@ -23,10 +23,10 @@ void Robot::AT_calc_action(){
     pp.setRobots(our_poses, adversary_poses);
 
     AT_projection();
-    //AT_path_planning();
+    AT_path_planning();
 
-    //btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::BALL);
-    btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::POSITION);
+    btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::BALL);
+    //btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::POSITION);
     
     step_pose.x = pose.x + potential.x;
     step_pose.y = pose.y + potential.y;
@@ -39,11 +39,6 @@ void Robot::AT_calc_action(){
 }
 
 void Robot::AT_path_planning(){
-    //cout << "TESTE TESTE TESTE" << endl;
-    /*float new_distance_between_projections = distancePoint(projection, projection_to_plan)
-    if(distance_between_projections > new_distance_between_projections){
-        distance_between_projections = new_distance_between_projections;
-    }else{*/
         //path = pp.solvePath(id, projection);
         //final_pose = path.poses.at(path.poses.size()-1);
         //final_pose.z = final_pose.z * (180/M_PI);
@@ -60,5 +55,7 @@ void Robot::AT_projection(){
         final_pose.z = rand() % 360;
     }
 
+    final_pose = *ball;
     projection = final_pose;
+    //projection = *ball;
 }

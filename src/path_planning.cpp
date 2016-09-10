@@ -18,7 +18,8 @@ PathPlanning::PathPlanning(){
 }
 
 Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
-    bool easy = true;
+    this->id_robot = id_robot;
+    /*bool easy = true;
     ob::StateSpacePtr space(new ob::ReedsSheppStateSpace);
     //ob::StateSpacePtr space(new ob::DubinsStateSpace);
     
@@ -99,12 +100,12 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
             path.poses.at(i).y += 20;
         }
         path_geo.printAsMatrix(std::cout);
-    }
-    /*ob::StateSpacePtr space(new ob::SE2StateSpace());
+    }*/
+    ob::StateSpacePtr space(new ob::SE2StateSpace());
 
     ob::RealVectorBounds bounds(2);
-    bounds.setLow(lowBound);
-    bounds.setHigh(highBound);
+    bounds.setLow(0);
+    bounds.setHigh(200);
 
     space->as<ob::SE2StateSpace>()->setBounds(bounds);
 
@@ -115,13 +116,20 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
     ob::ScopedState<ob::SE2StateSpace> start(space);
     ob::ScopedState<ob::SE2StateSpace> goal(space);
 
-
-    start->setX((int)robots.at(id_robot).x);
-    start->setY((int)robots.at(id_robot).y);
+    double x_i = robots.at(id_robot).x;
+    double y_i = robots.at(id_robot).y;
+    
+    cout << x_i << ", " << y_i << endl;
+    start->setX(88);
+    start->setY(59);
     //start->setYaw(0);
+    //start->setX(20);
+    //start->setY(20);
 
-    goal->setX(goal_pose.x);
-    goal->setY(goal_pose.y);
+    goal->setX(100);
+    goal->setY(101);
+    //goal->setX(goal_pose.x);
+    //goal->setY(goal_pose.y);
     //goal->setYaw(0);
 
 
@@ -130,6 +138,11 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
     pdef->setStartAndGoalStates(start, goal);
 
     ob::PlannerPtr planner(new og::RRTConnect(si));
+    //ob::PlannerPtr planner(new og::RRT(si));          // GOOD
+    //ob::PlannerPtr planner(new og::LazyRRT(si));      // GOOD
+    //ob::PlannerPtr planner(new og::pRRT(si));
+
+    //ob::PlannerPtr planner(new og::PRMstar(si));        // VERY GOOD
 
     planner->setProblemDefinition(pdef);
 
@@ -143,9 +156,7 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
         ob::PathPtr path_ptr;
         path_ptr = pdef->getSolutionPath();
         path = PathPtr2Path(path_ptr);
-    }else{
-        std::cout << "No solution found" << std::endl;
-    }*/
+    }
 
     /*ob::StateSpacePtr space(new ob::ReedsSheppStateSpace);
 
@@ -269,7 +280,7 @@ bool PathPlanning::isStateValid(const ob::State *state){
 
     for(int i = 0 ; i < robotsStatic.size() ; i++){
         //robotsStatic.at(i).show();
-        double dis = sqrt((x-robotsStatic.at(i).x)*(x-robotsStatic.at(i).x) + (y-robotsStatic.at(i).y)*(y-robotsStatic.at(i).y)) - 1;/*robotsStatic.at(i).radius*/;
+        double dis = sqrt((x-robotsStatic.at(i).x)*(x-robotsStatic.at(i).x) + (y-robotsStatic.at(i).y)*(y-robotsStatic.at(i).y)) - 8.0;
         if(dis < 0.0){
             ok = false;
         }
