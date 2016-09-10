@@ -25,8 +25,8 @@ void Robot::AT_calc_action(){
     AT_projection();
     AT_path_planning();
 
-    btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::BALL);
-    //btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::POSITION);
+    //btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::BALL);
+    btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::POSITION);
     
     step_pose.x = pose.x + potential.x;
     step_pose.y = pose.y + potential.y;
@@ -56,6 +56,6 @@ void Robot::AT_projection(){
     }
 
     final_pose = *ball;
-    projection = final_pose;
+    //projection = final_pose;
     //projection = *ball;
 }

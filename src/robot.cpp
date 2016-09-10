@@ -24,6 +24,7 @@ Robot::Robot(){
 
 	need_to_replan_path = true; 
 	distance_between_projections = 0.0;
+	deltaTimeIntegrative = 30;
 }
 
 void Robot::calc_action(){
@@ -85,11 +86,30 @@ void Robot::calc_cmd_to(){
 		front = true;
 	}
 	
+	cout << "testee" << endl;
+	if(contIntegrative < deltaTimeIntegrative){
+		errorsIntegrative.push_back(angulation_robot_robot_goal);
+		contIntegrative++;
+	}else{
+		vector<float> tempIntegrative(errorsIntegrative.size()-1);
+		std::copy(errorsIntegrative.begin(), errorsIntegrative.end()-1, tempIntegrative.begin());
+		tempIntegrative.push_back(angulation_robot_robot_goal);
+		errorsIntegrative = tempIntegrative;
+	}
+
+	float sumError = 0;
+	for(int i = 0; i < errorsIntegrative.size();i++){
+		sumError += errorsIntegrative.at(i);
+	}
+
+	float PI = 0.008*angulation_robot_robot_goal + 0.001*sumError;
+
 	if(front){
-		// Regras de movimentação
+		
+				// Regras de movimentação
 		if(fabs(angulation_robot_robot_goal) < angle_to_spin){
-			cmd.left = distance_robot_goal - (0.012*angulation_robot_robot_goal * robot_side_size);
-			cmd.right = distance_robot_goal + (0.012*angulation_robot_robot_goal * robot_side_size);
+			cmd.left = distance_robot_goal - (PI * robot_side_size);
+			cmd.right = distance_robot_goal + (PI * robot_side_size);
 			
 			cmd.left *= 3.0;
 			cmd.right *= 3.0;
@@ -111,8 +131,8 @@ void Robot::calc_cmd_to(){
 				
 		}
 		if(fabs(angulation_robot_robot_goal) < angle_to_spin){
-			cmd.left = distance_robot_goal + (0.012*angulation_robot_robot_goal * robot_side_size);
-			cmd.right = distance_robot_goal - (0.012*angulation_robot_robot_goal * robot_side_size);
+			cmd.left = distance_robot_goal + (PI * robot_side_size);
+			cmd.right = distance_robot_goal - (PI * robot_side_size);
 			
 			cmd.left *= -3.0;
 			cmd.right *= -3.0;

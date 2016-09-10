@@ -62,8 +62,8 @@ void Strategy::loop(){
 			//cout << "teste" << endl;
 			for(int i = 0 ; i < 3 ; i++){
 				commands[i] = our_team.at(i).get_command();
-				commands[i].left = commands[i].left * 2.5;
-				commands[i].right = commands[i].right * 2.5;
+				commands[i].left = commands[i].left * 3.0;
+				commands[i].right = commands[i].right * 3.0;
 				commands[i].show();
 				if(commands[i].left < 0){
 					commands[i].left = 255 + fabs(commands[i].left);

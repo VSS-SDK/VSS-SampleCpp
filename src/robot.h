@@ -25,6 +25,10 @@ protected:
     float angle_to_spin;
     float distance_to_stop;
 
+    vector<float> errorsIntegrative;
+    int deltaTimeIntegrative;
+    int contIntegrative;
+
     bool need_brutal_mode;           // Potential Fields OFF
     bool need_to_replan_path;    
     bool front;
