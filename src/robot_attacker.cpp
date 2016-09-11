@@ -32,8 +32,8 @@ void Robot::AT_calc_action(){
     step_pose.y = pose.y + potential.y;
     step_pose.z = pose.z + potential.z;
         
-    //path.poses.push_back(pose);
-    //path.poses.push_back(final_pose);
+    path.poses.push_back(pose);
+    path.poses.push_back(final_pose);
 
     calc_cmd_to();
 }
@@ -55,7 +55,7 @@ void Robot::AT_projection(){
         final_pose.z = rand() % 360;
     }
 
-    final_pose = *ball;
-    //projection = final_pose;
+    //final_pose = *ball;
+    projection = final_pose;
     //projection = *ball;
 }

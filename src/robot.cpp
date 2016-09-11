@@ -86,8 +86,7 @@ void Robot::calc_cmd_to(){
 		front = true;
 	}
 	
-	cout << "testee" << endl;
-	if(contIntegrative < deltaTimeIntegrative){
+	/*if(contIntegrative < deltaTimeIntegrative){
 		errorsIntegrative.push_back(angulation_robot_robot_goal);
 		contIntegrative++;
 	}else{
@@ -100,13 +99,11 @@ void Robot::calc_cmd_to(){
 	float sumError = 0;
 	for(int i = 0; i < errorsIntegrative.size();i++){
 		sumError += errorsIntegrative.at(i);
-	}
-
-	float PI = 0.008*angulation_robot_robot_goal + 0.001*sumError;
+	}*/
 
 	if(front){
-		
-				// Regras de movimentação
+		float PI = 0.008*angulation_robot_robot_goal;// + 0.001*sumError;
+
 		if(fabs(angulation_robot_robot_goal) < angle_to_spin){
 			cmd.left = distance_robot_goal - (PI * robot_side_size);
 			cmd.right = distance_robot_goal + (PI * robot_side_size);
@@ -127,9 +124,11 @@ void Robot::calc_cmd_to(){
 		if(angulation_robot_robot_goal < 0){
 			angulation_robot_robot_goal += 180;
 		}else{
-			angulation_robot_robot_goal -= 180;
-				
+			angulation_robot_robot_goal -= 180;		
 		}
+
+		float PI = 0.008*angulation_robot_robot_goal;// + 0.001*sumError;
+
 		if(fabs(angulation_robot_robot_goal) < angle_to_spin){
 			cmd.left = distance_robot_goal + (PI * robot_side_size);
 			cmd.right = distance_robot_goal - (PI * robot_side_size);
