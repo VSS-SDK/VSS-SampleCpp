@@ -25,6 +25,8 @@ Robot::Robot(){
 	need_to_replan_path = true; 
 	distance_between_projections = 0.0;
 	deltaTimeIntegrative = 30;
+	act_pose_of_path = 1;
+	status = 0;
 }
 
 void Robot::calc_action(){
@@ -102,7 +104,7 @@ void Robot::calc_cmd_to(){
 	}*/
 
 	if(front){
-		float PI = 0.008*angulation_robot_robot_goal;// + 0.001*sumError;
+		float PI = 0.012*angulation_robot_robot_goal;// + 0.001*sumError;
 
 		if(fabs(angulation_robot_robot_goal) < angle_to_spin){
 			cmd.left = distance_robot_goal - (PI * robot_side_size);
@@ -127,7 +129,7 @@ void Robot::calc_cmd_to(){
 			angulation_robot_robot_goal -= 180;		
 		}
 
-		float PI = 0.008*angulation_robot_robot_goal;// + 0.001*sumError;
+		float PI = 0.012*angulation_robot_robot_goal;// + 0.001*sumError;
 
 		if(fabs(angulation_robot_robot_goal) < angle_to_spin){
 			cmd.left = distance_robot_goal + (PI * robot_side_size);
@@ -150,7 +152,7 @@ void Robot::calc_cmd_to(){
 	if(distancePoint(pose, final_pose) < distance_to_stop){
 		cmd.left = 0;
 		cmd.right = 0;
-		debug_pos = true;
+		//debug_pos = true;
 	}
 }
 

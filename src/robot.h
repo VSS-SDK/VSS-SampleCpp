@@ -15,7 +15,6 @@
 
 using namespace common;
 
-
 class Robot{
 protected:
     int id;
@@ -28,6 +27,9 @@ protected:
     vector<float> errorsIntegrative;
     int deltaTimeIntegrative;
     int contIntegrative;
+    int rand_ite;
+    int act_pose_of_path;
+    int status;
 
     bool need_brutal_mode;           // Potential Fields OFF
     bool need_to_replan_path;    

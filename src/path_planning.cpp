@@ -15,11 +15,12 @@ PathPlanning::PathPlanning(){
     highBound = 170;   
     timeToResolve = 1;
     planner = PLANNER_RRTSTAR;
+    step_size = 15;0;
 }
 
 Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
-    this->id_robot = id_robot;
-    /*bool easy = true;
+    /*this->id_robot = id_robot;
+    bool easy = true;
     ob::StateSpacePtr space(new ob::ReedsSheppStateSpace);
     //ob::StateSpacePtr space(new ob::DubinsStateSpace);
     
@@ -57,14 +58,21 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
         //goal[1] = (int)goal_pose.y/10.0;
         //goal[2] = -.99*boost::math::constants::pi<double>();
         
-        start[0] = 100.0;
-        start[1] = 100.0;
-        start[2] = 0.0;
-        goal[0] = 1.0;
-        goal[1] = 1.0;
-        goal[2] = 3.0;//-.99*boost::math::constants::pi<double>();
+        int x_i = robots.at(id_robot).x;
+        int y_i = robots.at(id_robot).y;
 
-        cout << "TESTE" << endl;
+        int x_f = goal_pose.x;
+        int y_f = goal_pose.y;
+    
+        start[0] = x_i;
+        start[1] = y_i;
+        start[2] = 0.0;
+        
+        goal[0] = x_f;
+        goal[1] = y_f;
+        goal[2] = 0.0;//-.99*boost::math::constants::pi<double>();
+
+        /*cout << "TESTE" << endl;
         cout << "start: " << start[0] << ", " << start[1] << ", " << start[2] << endl;
         cout << "goal: " << goal[0] << ", " << goal[1] << ", " << goal[2] << endl;
         cout << "FINAL DO TESTE" << endl;
@@ -78,7 +86,7 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
         goal[1] = 0.5;
         goal[2] = 0.5*boost::math::constants::pi<double>();
     }
-    ss.setStartAndGoalStates(start, goal);
+    ss.setStartAndGoalStates(start, goal, 0.5);
 
     // this call is optional, but we put it in to get more output information
     ss.getSpaceInformation()->setStateValidityCheckingResolution(0.005);
@@ -91,21 +99,21 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
     if(solved){
         std::vector<double> reals;
 
-        ss.simplifySolution();
+        //ss.simplifySolution();
         og::PathGeometric path_geo = ss.getSolutionPath();
         //path_geo.interpolate(1000);
         path = PathGeometric2Path(path_geo);
-        for(int i = 0 ; i < path.poses.size() ; i++){
+        /*for(int i = 0 ; i < path.poses.size() ; i++){
             path.poses.at(i).x += 20;
             path.poses.at(i).y += 20;
         }
-        path_geo.printAsMatrix(std::cout);
+        //path_geo.printAsMatrix(std::cout);
     }*/
     ob::StateSpacePtr space(new ob::SE2StateSpace());
 
     ob::RealVectorBounds bounds(2);
     bounds.setLow(0);
-    bounds.setHigh(200);
+    bounds.setHigh(170);
 
     space->as<ob::SE2StateSpace>()->setBounds(bounds);
 
@@ -118,27 +126,31 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
 
     double x_i = robots.at(id_robot).x;
     double y_i = robots.at(id_robot).y;
-    
-    cout << x_i << ", " << y_i << endl;
-    start->setX(88);
-    start->setY(59);
-    //start->setYaw(0);
-    //start->setX(20);
-    //start->setY(20);
 
-    goal->setX(100);
-    goal->setY(101);
-    //goal->setX(goal_pose.x);
-    //goal->setY(goal_pose.y);
+    double x_f = goal_pose.x;
+    double y_f = goal_pose.y;
+    
+    //cout << x_i << ", " << y_i << endl;
+    //start->setX(88);
+    //start->setY(59);
+    //start->setYaw(0);
+    start->setX(x_i);
+    start->setY(y_i);
+    //start->setYaw(0);
+
+    //goal->setX(100);
+    //goal->setY(101);
+    goal->setX(x_f);
+    goal->setY(y_f);
     //goal->setYaw(0);
 
 
     ob::ProblemDefinitionPtr pdef(new ob::ProblemDefinition(si));
 
-    pdef->setStartAndGoalStates(start, goal);
+    pdef->setStartAndGoalStates(start, goal, 0.1);
 
-    ob::PlannerPtr planner(new og::RRTConnect(si));
-    //ob::PlannerPtr planner(new og::RRT(si));          // GOOD
+    //ob::PlannerPtr planner(new og::RRTConnect(si));
+    ob::PlannerPtr planner(new og::RRT(si));          // GOOD
     //ob::PlannerPtr planner(new og::LazyRRT(si));      // GOOD
     //ob::PlannerPtr planner(new og::pRRT(si));
 
@@ -278,13 +290,17 @@ bool PathPlanning::isStateValid(const ob::State *state){
     double x = state2D->getX();
     double y = state2D->getY();
 
-    for(int i = 0 ; i < robotsStatic.size() ; i++){
+    if(x < 10 || x > 150 || y < 10 || y > 110){
+        ok = false;
+    }
+
+    /*for(int i = 0 ; i < robotsStatic.size() ; i++){
         //robotsStatic.at(i).show();
-        double dis = sqrt((x-robotsStatic.at(i).x)*(x-robotsStatic.at(i).x) + (y-robotsStatic.at(i).y)*(y-robotsStatic.at(i).y)) - 8.0;
+        double dis = sqrt((x-robotsStatic.at(i).x)*(x-robotsStatic.at(i).x) + (y-robotsStatic.at(i).y)*(y-robotsStatic.at(i).y)) - 1.0;
         if(dis < 0.0){
             ok = false;
         }
-    }
+    }*/
     
     return ok;
 }

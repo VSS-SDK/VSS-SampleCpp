@@ -23,6 +23,7 @@ protected:
     float lowBound, highBound;                              // Limites do espaço
     typePlanner planner;                                    // Algoritmo de planejamento de trajetória
     planningObjective objectiveType;
+    float step_size;
 
     Path path;
     vector<btVector3> robots;
