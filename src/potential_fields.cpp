@@ -17,11 +17,12 @@ PotentialFields::PotentialFields(){
 	radiusPosition = 1.0;
 	areaPosition = 5.0;
 
-	beta = 0.4; //0.4
-	INF = 0.4; //20
+	beta = 0.9; //0.4
+	INF = 1.0; //20
 	radiusRobot = 11.3 / 2.0; // Diagonal de um quadrado L = L*sqrt(2). L = 8 = diagonal 11.3 / 2.0 = raio
 	areaRobot = 20.0;
 
+	max_module = 15.0;
 
 	id = 0;
 	is_last = true;
@@ -41,8 +42,9 @@ btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOT
 	this->go_to = go_to;
 
 	attractive_force();
-	//repulsiveForceOurRobots();
-	//repulsiveForceAdvRobots();
+	repulsive_force_our_robots();
+	repulsive_force_adversary_robots();
+	normalize();
 
 	return result;
 }
@@ -108,15 +110,81 @@ void PotentialFields::attractive_force(){
 	}
 
 
-
 	result.x += x;
 	result.y += y;
 }
 
 void PotentialFields::repulsive_force_our_robots(){
-	// TODO
+	double theta;
+	double distances;
+	int k;
+
+	for(int j = 0 ; j < our_robots.size() ; j++){
+		if(id != j){
+			theta = radian(our_robots.at(id), our_robots.at(j));
+			distances = distancePoint(our_robots.at(id), our_robots.at(j));
+
+			if(distances <= radiusRobot){
+				//se esta escostado no obstaculo, recebe um vetor maximo 
+				result.x += sign(cos(theta))*INF;
+				result.y += sign(sin(theta))*INF;
+
+			}else if(distances <= (radiusRobot + areaRobot)){
+				//se esta dentro da area de influencia
+				result.x += beta*(areaRobot + radiusRobot - distances)*cos(theta/*/180.0*M_PI*/); 
+				result.y += beta*(areaRobot + radiusRobot - distances)*sin(theta/*180.0*M_PI*/);
+
+				result.x += rand() % 3;
+				k++;
+				result.y += rand() % 3;
+				k++;	
+			}
+		}
+	}
 }
 
 void PotentialFields::repulsive_force_adversary_robots(){
-	// TODO
+	double theta;
+	double distances;
+	int k;
+
+	for(int j = 0 ; j < adversary_robots.size() ; j++){
+		theta = radian(our_robots.at(id), adversary_robots.at(j));
+		distances = distancePoint(our_robots.at(id), adversary_robots.at(j));
+
+		if(distances <= radiusRobot){
+			//se esta escostado no obstaculo, recebe um vetor maximo 
+			result.x += sign(cos(theta))*INF;
+			result.y += sign(sin(theta))*INF;
+
+		}else if(distances <= (radiusRobot + areaRobot)){
+			//se esta dentro da area de influencia
+			result.x += beta*(areaRobot + radiusRobot - distances)*cos(theta/*180.0*M_PI*/); 
+			result.y += beta*(areaRobot + radiusRobot - distances)*sin(theta/*180.0*M_PI*/);
+
+			result.x += rand() % 3;
+			k++;
+			result.y += rand() % 3;
+			k++;	
+		}
+	}
+}
+
+void PotentialFields::normalize(){
+	float size;
+	float overshoot;
+
+	size = distancePoint(btVector3(0, 0, 0), result);
+
+	// Trata overshoot criado pelo campo repulsivo
+
+	overshoot = size/max_module;
+
+	if(overshoot > 1.00){
+		overshoot *= 100.0;
+		result.x = (result.x / overshoot)*100.0;
+		result.y = (result.y / overshoot)*100.0;
+	}
+
+	cout << distancePoint(btVector3(0, 0, 0), result) << endl;
 }

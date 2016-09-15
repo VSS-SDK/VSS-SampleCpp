@@ -17,6 +17,7 @@ class PotentialFields{
 protected:
     int id;
     bool is_last;
+    float max_module;
     float beta, INF, radiusRobot, areaRobot;
     float alpha, radiusBall, areaBall;
     float omega, radiusPosition, areaPosition;
@@ -27,6 +28,8 @@ protected:
     GOTO go_to;
 
     int sign(float signal);
+    void normalize();
+
 	void attractive_force();
 	void repulsive_force_our_robots();
 	void repulsive_force_adversary_robots();
