@@ -126,13 +126,13 @@ void PotentialFields::repulsive_force_our_robots(){
 
 			if(distances <= radiusRobot){
 				//se esta escostado no obstaculo, recebe um vetor maximo 
-				result.x += sign(cos(theta))*INF;
+				result.x += sign(cos(theta))*beta;
 				result.y += sign(sin(theta))*INF;
 
 			}else if(distances <= (radiusRobot + areaRobot)){
 				//se esta dentro da area de influencia
 				result.x += beta*(areaRobot + radiusRobot - distances)*cos(theta/*/180.0*M_PI*/); 
-				result.y += beta*(areaRobot + radiusRobot - distances)*sin(theta/*180.0*M_PI*/);	
+				result.y += INF*(areaRobot + radiusRobot - distances)*sin(theta/*180.0*M_PI*/);	
 			}
 		}
 	}
@@ -149,13 +149,13 @@ void PotentialFields::repulsive_force_adversary_robots(){
 
 		if(distances <= radiusRobot){
 			//se esta escostado no obstaculo, recebe um vetor maximo 
-			result.x += sign(cos(theta))*INF;
+			result.x += sign(cos(theta))*beta;
 			result.y += sign(sin(theta))*INF;
 
 		}else if(distances <= (radiusRobot + areaRobot)){
 			//se esta dentro da area de influencia
 			result.x += beta*(areaRobot + radiusRobot - distances)*cos(theta/*180.0*M_PI*/); 
-			result.y += beta*(areaRobot + radiusRobot - distances)*sin(theta/*180.0*M_PI*/);	
+			result.y += INF*(areaRobot + radiusRobot - distances)*sin(theta/*180.0*M_PI*/);	
 		}
 	}
 }
