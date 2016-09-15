@@ -52,8 +52,6 @@ btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOT
 int PotentialFields::sign(float signal){
 	if(signal < 0){
 		return -1;
-	}else if(signal == 0){
-		return 0;
 	}else{
 		return 1;
 	}
@@ -126,13 +124,13 @@ void PotentialFields::repulsive_force_our_robots(){
 
 			if(distances <= radiusRobot){
 				//se esta escostado no obstaculo, recebe um vetor maximo 
-				result.x += sign(cos(theta))*beta;
-				result.y += sign(sin(theta))*INF;
+				result.x += tanh(cos(theta))*beta;
+				result.y += tanh(sin(theta))*INF;
 
 			}else if(distances <= (radiusRobot + areaRobot)){
 				//se esta dentro da area de influencia
-				result.x += beta*(areaRobot + radiusRobot - distances)*cos(theta/*/180.0*M_PI*/); 
-				result.y += INF*(areaRobot + radiusRobot - distances)*sin(theta/*180.0*M_PI*/);	
+				result.x += beta*(areaRobot + radiusRobot - distances)*cos(theta); 
+				result.y += INF*(areaRobot + radiusRobot - distances)*sin(theta);	
 			}
 		}
 	}
@@ -149,13 +147,13 @@ void PotentialFields::repulsive_force_adversary_robots(){
 
 		if(distances <= radiusRobot){
 			//se esta escostado no obstaculo, recebe um vetor maximo 
-			result.x += sign(cos(theta))*beta;
-			result.y += sign(sin(theta))*INF;
+			result.x += tanh(cos(theta))*beta;
+			result.y += tanh(sin(theta))*INF;
 
 		}else if(distances <= (radiusRobot + areaRobot)){
 			//se esta dentro da area de influencia
-			result.x += beta*(areaRobot + radiusRobot - distances)*cos(theta/*180.0*M_PI*/); 
-			result.y += INF*(areaRobot + radiusRobot - distances)*sin(theta/*180.0*M_PI*/);	
+			result.x += beta*(areaRobot + radiusRobot - distances)*cos(theta); 
+			result.y += INF*(areaRobot + radiusRobot - distances)*sin(theta);	
 		}
 	}
 }
