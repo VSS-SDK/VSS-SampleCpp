@@ -18,8 +18,8 @@ PotentialFields::PotentialFields(){
 	areaPosition = 5.0;
 
 	beta = 0.9; //0.4
-	INF = 1.0; //20
-	radiusRobot = 11.3 / 2.0; // Diagonal de um quadrado L = L*sqrt(2). L = 8 = diagonal 11.3 / 2.0 = raio
+	INF = 1.1; //20
+	radiusRobot = 11.3 / 1.6; // Diagonal de um quadrado L = L*sqrt(2). L = 8 = diagonal 11.3 / 2.0 = raio
 	areaRobot = 20.0;
 
 	max_module = 15.0;
@@ -44,6 +44,7 @@ btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOT
 	attractive_force();
 	repulsive_force_our_robots();
 	repulsive_force_adversary_robots();
+	
 	normalize();
 
 	return result;
