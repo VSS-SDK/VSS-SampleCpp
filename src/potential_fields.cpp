@@ -132,12 +132,7 @@ void PotentialFields::repulsive_force_our_robots(){
 			}else if(distances <= (radiusRobot + areaRobot)){
 				//se esta dentro da area de influencia
 				result.x += beta*(areaRobot + radiusRobot - distances)*cos(theta/*/180.0*M_PI*/); 
-				result.y += beta*(areaRobot + radiusRobot - distances)*sin(theta/*180.0*M_PI*/);
-
-				result.x += rand() % 3;
-				k++;
-				result.y += rand() % 3;
-				k++;	
+				result.y += beta*(areaRobot + radiusRobot - distances)*sin(theta/*180.0*M_PI*/);	
 			}
 		}
 	}
@@ -160,12 +155,7 @@ void PotentialFields::repulsive_force_adversary_robots(){
 		}else if(distances <= (radiusRobot + areaRobot)){
 			//se esta dentro da area de influencia
 			result.x += beta*(areaRobot + radiusRobot - distances)*cos(theta/*180.0*M_PI*/); 
-			result.y += beta*(areaRobot + radiusRobot - distances)*sin(theta/*180.0*M_PI*/);
-
-			result.x += rand() % 3;
-			k++;
-			result.y += rand() % 3;
-			k++;	
+			result.y += beta*(areaRobot + radiusRobot - distances)*sin(theta/*180.0*M_PI*/);	
 		}
 	}
 }

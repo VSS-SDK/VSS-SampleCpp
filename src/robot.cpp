@@ -110,8 +110,8 @@ void Robot::calc_cmd_to(){
 			cmd.left = distance_robot_goal - (PI * robot_side_size);
 			cmd.right = distance_robot_goal + (PI * robot_side_size);
 			
-			cmd.left *= 3.0;
-			cmd.right *= 3.0;
+			cmd.left *= 2.5;
+			cmd.right *= 2.5;
 		}else{
 			// SPIN
 			if(angulation_robot_robot_goal >= 0){
@@ -135,8 +135,8 @@ void Robot::calc_cmd_to(){
 			cmd.left = distance_robot_goal + (PI * robot_side_size);
 			cmd.right = distance_robot_goal - (PI * robot_side_size);
 			
-			cmd.left *= -3.0;
-			cmd.right *= -3.0;
+			cmd.left *= -2.5;
+			cmd.right *= -2.5;
 		}else{
 			// SPIN
 			if(angulation_robot_robot_goal >= 0){

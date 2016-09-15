@@ -13,7 +13,7 @@ vector<btVector3> robotsStatic;
 PathPlanning::PathPlanning(){
     lowBound = 0;
     highBound = 170;   
-    timeToResolve = 1;
+    timeToResolve = 0.1;
     planner = PLANNER_RRTSTAR;
     step_size = 15;0;
 }
@@ -130,20 +130,11 @@ Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
     double x_f = goal_pose.x;
     double y_f = goal_pose.y;
     
-    //cout << x_i << ", " << y_i << endl;
-    //start->setX(88);
-    //start->setY(59);
-    //start->setYaw(0);
     start->setX(x_i);
     start->setY(y_i);
-    //start->setYaw(0);
 
-    //goal->setX(100);
-    //goal->setY(101);
     goal->setX(x_f);
     goal->setY(y_f);
-    //goal->setYaw(0);
-
 
     ob::ProblemDefinitionPtr pdef(new ob::ProblemDefinition(si));
 
