@@ -9,6 +9,7 @@
 #include "path_planning.h"
 
 vector<btVector3> robotsStatic;
+int staticID;
 
 PathPlanning::PathPlanning(){
     lowBound = 0;
@@ -19,6 +20,7 @@ PathPlanning::PathPlanning(){
 }
 
 Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
+    staticID = id_robot;
     ob::StateSpacePtr space(new ob::SE2StateSpace());
 
     ob::RealVectorBounds bounds(2);
@@ -78,17 +80,21 @@ bool PathPlanning::isStateValid(const ob::State *state){
     double x = state2D->getX();
     double y = state2D->getY();
 
-    if(x < 10 || x > 150 || y < 10 || y > 110){
+    if(x < 30 || x > 130 || y < 20 || y > 100){
         ok = false;
     }
 
-    /*for(int i = 0 ; i < robotsStatic.size() ; i++){
-        //robotsStatic.at(i).show();
-        double dis = sqrt((x-robotsStatic.at(i).x)*(x-robotsStatic.at(i).x) + (y-robotsStatic.at(i).y)*(y-robotsStatic.at(i).y)) - 1.0;
-        if(dis < 0.0){
-            ok = false;
+    for(int i = 0 ; i < robotsStatic.size() ; i++){
+        if(i != staticID){
+            double dis = sqrt((x-robotsStatic.at(i).x)*(x-robotsStatic.at(i).x) + (y-robotsStatic.at(i).y)*(y-robotsStatic.at(i).y));
+            cout << "dist:" << dis << endl;
+            if(dis < RADIUS_ROBOT){
+                ok = false;
+                cout << "FALSE" << endl;
+            }
+            cout << endl;
         }
-    }*/
+    }
     
     return ok;
 }

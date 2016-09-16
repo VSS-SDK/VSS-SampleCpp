@@ -23,6 +23,7 @@ protected:
     float max_aceleration_wheel;
     float angle_to_spin;
     float distance_to_stop;
+    int resolve_iterator;
 
     vector<float> errorsIntegrative;
     int deltaTimeIntegrative;
@@ -36,6 +37,7 @@ protected:
     bool need_brutal_mode;           // Potential Fields OFF
     bool need_to_replan_path;    
     bool front;
+    bool collision;
     Task task;
 
     btVector3 pose, history_pose;
@@ -85,13 +87,16 @@ public:
     void set_task(Task);
     void set_pose(btVector3);
     void set_v_pose(btVector3);
+    void set_collision(bool);
 
     btVector3 get_pose();
     btVector3 get_v_pose();
     btVector3 get_final_pose();
     btVector3 get_step_pose();
     Path get_path();
+    bool get_collision();
     Command get_command();
+    int get_resolve_iterator();
 
     void calc_action();
 };

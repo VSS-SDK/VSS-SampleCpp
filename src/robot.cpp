@@ -29,6 +29,7 @@ Robot::Robot(){
 	status = 0;
 	count_pose = 0;
 	rear_count = 0;
+	resolve_iterator = 0;
 }
 
 void Robot::calc_action(){
@@ -105,7 +106,7 @@ void Robot::calc_cmd_to(){
 		sumError += errorsIntegrative.at(i);
 	}*/
 
-	if(count_pose >= 60){
+	if(count_pose >= 60 && status != -1){
 		float distance = distancePoint(history_pose, pose);
 		if(distance < RADIUS_ROBOT/3.0){
 			rear_count = 20;
@@ -220,6 +221,10 @@ void Robot::set_v_pose(btVector3 v_pose){
     this->v_pose = v_pose;
 }
 
+void Robot::set_collision(bool collision){
+	this->collision = collision;
+}
+
 btVector3 Robot::get_pose(){
 	return pose;
 }
@@ -242,4 +247,12 @@ Path Robot::get_path(){
 
 Command Robot::get_command(){
     return cmd;
+}
+
+int Robot::get_resolve_iterator(){
+	return resolve_iterator;
+}
+
+bool Robot::get_collision(){
+	return collision;
 }
