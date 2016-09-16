@@ -157,6 +157,9 @@ void PotentialFields::repulsive_force_adversary_robots(){
 			result.y += INF*(areaRobot + radiusRobot - distances)*sin(theta);	
 		}
 	}
+
+	//result.x *= 3.5;
+	//result.y *= 3.5;
 }
 
 void PotentialFields::normalize(){

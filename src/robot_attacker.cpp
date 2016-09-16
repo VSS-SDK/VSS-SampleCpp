@@ -71,8 +71,8 @@ btVector3 Robot::generate_free_pose(){
     while(!pose_ok){
         pose_ok = true;
 
-        new_pose.x = (rand() % 100) + 30;
-        new_pose.y = (rand() % 100) + 20;
+        new_pose.x = (rand() % 120) + 20;
+        new_pose.y = (rand() % 110) + 10;
         new_pose.z = rand() % 360;
         
         for(int i = 0 ; i < our_team->size() ; i++){

@@ -20,6 +20,7 @@ PathPlanning::PathPlanning(){
 }
 
 Path PathPlanning::solvePath(int id_robot, btVector3 goal_pose){
+    path.poses.clear();
     staticID = id_robot;
     ob::StateSpacePtr space(new ob::SE2StateSpace());
 
@@ -80,7 +81,7 @@ bool PathPlanning::isStateValid(const ob::State *state){
     double x = state2D->getX();
     double y = state2D->getY();
 
-    if(x < 30 || x > 130 || y < 20 || y > 100){
+    if(x < 20 || x > 140 || y < 20 || y > 100){
         ok = false;
     }
 
