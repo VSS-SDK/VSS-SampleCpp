@@ -27,6 +27,8 @@ Robot::Robot(){
 	deltaTimeIntegrative = 30;
 	act_pose_of_path = 1;
 	status = 0;
+	count_pose = 0;
+	rear_count = 0;
 }
 
 void Robot::calc_action(){
@@ -103,57 +105,80 @@ void Robot::calc_cmd_to(){
 		sumError += errorsIntegrative.at(i);
 	}*/
 
-	if(front){
-		float PI = 0.012*angulation_robot_robot_goal;// + 0.001*sumError;
+	if(count_pose >= 60){
+		float distance = distancePoint(history_pose, pose);
+		if(distance < RADIUS_ROBOT/3.0){
+			rear_count = 15;
+		}
+		history_pose = pose;
+		count_pose = 0;
+	}
 
-		if(fabs(angulation_robot_robot_goal) < angle_to_spin){
-			cmd.left = distance_robot_goal - (PI * robot_side_size);
-			cmd.right = distance_robot_goal + (PI * robot_side_size);
-			
-			cmd.left *= 2.5;
-			cmd.right *= 2.5;
-		}else{
-			// SPIN
-			if(angulation_robot_robot_goal >= 0){
-				cmd.left = -50;
-				cmd.right = 50;
+	if(rear_count <= 0){
+		if(front){
+			float PI = 0.012*angulation_robot_robot_goal;// + 0.001*sumError;
+
+			if(fabs(angulation_robot_robot_goal) < angle_to_spin){
+				cmd.left = distance_robot_goal - (PI * robot_side_size);
+				cmd.right = distance_robot_goal + (PI * robot_side_size);
+				
+				cmd.left *= 2.5;
+				cmd.right *= 2.5;
 			}else{
-				cmd.left = 50;
-				cmd.right = -50;
+				// SPIN
+				if(angulation_robot_robot_goal >= 0){
+					cmd.left = -50;
+					cmd.right = 50;
+				}else{
+					cmd.left = 50;
+					cmd.right = -50;
+				}
+			}
+		}else{
+			if(angulation_robot_robot_goal < 0){
+				angulation_robot_robot_goal += 180;
+			}else{
+				angulation_robot_robot_goal -= 180;		
+			}
+
+			float PI = 0.012*angulation_robot_robot_goal;// + 0.001*sumError;
+
+			if(fabs(angulation_robot_robot_goal) < angle_to_spin){
+				cmd.left = distance_robot_goal + (PI * robot_side_size);
+				cmd.right = distance_robot_goal - (PI * robot_side_size);
+				
+				cmd.left *= -2.5;
+				cmd.right *= -2.5;
+			}else{
+				// SPIN
+				if(angulation_robot_robot_goal >= 0){
+					cmd.left = 50;
+					cmd.right = -50;
+				}else{
+					cmd.left = -50;
+					cmd.right = 50;
+				}
 			}
 		}
+
+		if(distancePoint(pose, final_pose) < distance_to_stop){
+			cmd.left = 0;
+			cmd.right = 0;
+		}
+
+		count_pose++;
 	}else{
-		if(angulation_robot_robot_goal < 0){
-			angulation_robot_robot_goal += 180;
+		cout << "rear:" << rear_count << endl;
+		if(front){
+			cmd.left = -25;
+			cmd.right = -25;
 		}else{
-			angulation_robot_robot_goal -= 180;		
+			cmd.left = 25;
+			cmd.right = 25;
 		}
-
-		float PI = 0.012*angulation_robot_robot_goal;// + 0.001*sumError;
-
-		if(fabs(angulation_robot_robot_goal) < angle_to_spin){
-			cmd.left = distance_robot_goal + (PI * robot_side_size);
-			cmd.right = distance_robot_goal - (PI * robot_side_size);
-			
-			cmd.left *= -2.5;
-			cmd.right *= -2.5;
-		}else{
-			// SPIN
-			if(angulation_robot_robot_goal >= 0){
-				cmd.left = 50;
-				cmd.right = -50;
-			}else{
-				cmd.left = -50;
-				cmd.right = 50;
-			}
-		}
+		rear_count--;
 	}
 
-	if(distancePoint(pose, final_pose) < distance_to_stop){
-		cmd.left = 0;
-		cmd.right = 0;
-		//debug_pos = true;
-	}
 }
 
 void Robot::alloc_our_team(vector<Robot> *our_team){

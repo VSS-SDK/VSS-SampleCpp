@@ -175,5 +175,5 @@ void PotentialFields::normalize(){
 		result.y = (result.y / overshoot)*100.0;
 	}
 
-	cout << distancePoint(btVector3(0, 0, 0), result) << endl;
+	//cout << distancePoint(btVector3(0, 0, 0), result) << endl;
 }

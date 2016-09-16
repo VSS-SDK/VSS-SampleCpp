@@ -23,7 +23,8 @@ void Robot::AT_calc_action(){
     AT_projection();
 
     //btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::BALL);
-    if( distancePoint(pose, path.poses.at(act_pose_of_path)) < 8.0 ){
+    if( distancePoint(pose, path.poses.at(act_pose_of_path)) < RADIUS_ROBOT*2.0 ){
+        if(act_pose_of_path < path.poses.size()-1)
         act_pose_of_path++;
     }
 
@@ -33,7 +34,6 @@ void Robot::AT_calc_action(){
     step_pose.y = pose.y + potential.y;
     step_pose.z = pose.z + potential.z;
     
-        
     calc_cmd_to();
 }
 
@@ -53,15 +53,43 @@ void Robot::AT_projection(){
     if(distancePoint(pose, projection) < 10.0 || status == 0){
         status = 1;
         act_pose_of_path = 0;
-        // /debug_pos = false;
-        //rand_ite = 0;
-        final_pose.x = (rand() % 130) + 20;
-        final_pose.y = (rand() % 110) + 10;
-        final_pose.z = rand() % 360;
+
+        final_pose = generate_free_pose();
 
         projection = final_pose;
 
         AT_path_planning();
     }
     //rand_ite++;
+}
+
+btVector3 Robot::generate_free_pose(){
+    bool pose_ok = false;
+    btVector3 new_pose;
+
+    while(!pose_ok){
+        pose_ok = true;
+
+        new_pose.x = (rand() % 130) + 20;
+        new_pose.y = (rand() % 110) + 10;
+        new_pose.z = rand() % 360;
+        
+        for(int i = 0 ; i < our_team->size() ; i++){
+            if( distancePoint(new_pose, our_team->at(i).pose ) < 10.0 ){
+                pose_ok = false;
+                break;
+            }
+        }
+
+        if(pose_ok){
+            for(int i = 0 ; i < adversary_team->size() ; i++){
+                if( distancePoint(new_pose, adversary_team->at(i).pose ) < 10.0 ){
+                    pose_ok = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    return new_pose;
 }

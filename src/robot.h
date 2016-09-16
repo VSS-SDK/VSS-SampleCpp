@@ -30,13 +30,15 @@ protected:
     int rand_ite;
     int act_pose_of_path;
     int status;
+    int count_pose;
+    int rear_count;
 
     bool need_brutal_mode;           // Potential Fields OFF
     bool need_to_replan_path;    
     bool front;
     Task task;
 
-    btVector3 pose;
+    btVector3 pose, history_pose;
     btVector3 v_pose;
     btVector3 final_pose;
     btVector3 step_pose;
@@ -57,6 +59,7 @@ protected:
     void check_opportunities();
     void check_need_to_replan_path();
     void check_need_to_brutal_mode();
+    btVector3 generate_free_pose();
 
     void GK_calc_action();
     void DF_calc_action();

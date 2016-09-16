@@ -17,6 +17,9 @@
 
 using namespace std;
 
+#define RADIUS_ROBOT    5.65
+#define RADIUS_BALL     2.13
+
 namespace common{
     enum { NONE = 0, GOAL_TEAM1 = 1, GOAL_TEAM2 = 2, FAULT_TEAM1 = 3, FAULT_TEAM2 = 4, PENALTY_TEAM1 = 5, PENALTY_TEAM2 = 6 };
     enum Task{ GOAL_KEEPER = 0, DEFENDER = 1, ATTACKER = 2 };
