@@ -81,19 +81,20 @@ bool PathPlanning::isStateValid(const ob::State *state){
     double x = state2D->getX();
     double y = state2D->getY();
 
-    if(x < 20 || x > 140 || y < 20 || y > 100){
+    if(x < 15 || x > 145 || y < 15 || y > 115){
         ok = false;
     }
+
 
     for(int i = 0 ; i < robotsStatic.size() ; i++){
         if(i != staticID){
             double dis = sqrt((x-robotsStatic.at(i).x)*(x-robotsStatic.at(i).x) + (y-robotsStatic.at(i).y)*(y-robotsStatic.at(i).y));
-            cout << "dist:" << dis << endl;
+            //cout << "dist:" << dis << endl;
             if(dis < RADIUS_ROBOT){
                 ok = false;
-                cout << "FALSE" << endl;
+                //cout << "FALSE" << endl;
             }
-            cout << endl;
+            //cout << endl;
         }
     }
     

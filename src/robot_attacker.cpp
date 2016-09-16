@@ -45,7 +45,14 @@ void Robot::AT_path_planning(){
     sub_projection.y = projection.y - (sin(projection.z)*15.0); 
     sub_projection.z = sub_projection.z;
 
-    path = pp.solvePath(id, sub_projection);
+    for(int i = 0 ; i < 10 ; i++){
+
+        path = pp.solvePath(id, sub_projection);
+
+        if(path.poses.size() > 0){
+            break;
+        }
+    }
     //path = pp.solvePath(id, projection);
     path.poses.push_back(projection);
 }
@@ -72,7 +79,7 @@ btVector3 Robot::generate_free_pose(){
         pose_ok = true;
 
         new_pose.x = (rand() % 120) + 20;
-        new_pose.y = (rand() % 110) + 10;
+        new_pose.y = (rand() % 90) + 20;
         new_pose.z = rand() % 360;
         
         for(int i = 0 ; i < our_team->size() ; i++){

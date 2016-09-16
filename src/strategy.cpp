@@ -100,7 +100,7 @@ void Strategy::loop(){
 void Strategy::calc_strategy(){
 	count_collision++;
 
-	if(count_collision > 30){
+	if(count_collision > 45){
 		count_collision = 0;
 		for(int i = 0 ; i < 3 ; i++){
 			our_team.at(i).set_collision(false);

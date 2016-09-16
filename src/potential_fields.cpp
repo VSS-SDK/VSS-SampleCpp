@@ -158,8 +158,8 @@ void PotentialFields::repulsive_force_adversary_robots(){
 		}
 	}
 
-	//result.x *= 3.5;
-	//result.y *= 3.5;
+	result.x *= 2.5;
+	result.y *= 2.5;
 }
 
 void PotentialFields::normalize(){
