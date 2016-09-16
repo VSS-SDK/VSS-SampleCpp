@@ -108,7 +108,7 @@ void Robot::calc_cmd_to(){
 	if(count_pose >= 60){
 		float distance = distancePoint(history_pose, pose);
 		if(distance < RADIUS_ROBOT/3.0){
-			rear_count = 15;
+			rear_count = 20;
 		}
 		history_pose = pose;
 		count_pose = 0;
@@ -168,7 +168,6 @@ void Robot::calc_cmd_to(){
 
 		count_pose++;
 	}else{
-		cout << "rear:" << rear_count << endl;
 		if(front){
 			cmd.left = -25;
 			cmd.right = -25;

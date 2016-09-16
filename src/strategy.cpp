@@ -23,7 +23,7 @@ Strategy::Strategy(){
 	}
 
 	our_team.at(0).set_task(Task::ATTACKER);
-	our_team.at(1).set_task(Task::DEFENDER);
+	our_team.at(1).set_task(Task::ATTACKER);
 	our_team.at(2).set_task(Task::DEFENDER);
 
 	for(int i = 0 ; i < 3 ; i++){
