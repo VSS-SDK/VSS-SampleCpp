@@ -24,8 +24,11 @@ protected:
     
     vector<btVector3> our_robots;
     vector<btVector3> adversary_robots; 
+    btVector3 ball;
 	btVector3 result, goal;
     GOTO go_to;
+
+    AttackerState attacker_state;
 
     int sign(float signal);
     void normalize();
@@ -33,13 +36,14 @@ protected:
 	void attractive_force();
 	void repulsive_force_our_robots();
 	void repulsive_force_adversary_robots();
+    void repulsive_force_ball();
 public:
 
     PotentialFields();
 
-    void set_robots(vector<btVector3> our_robots, vector<btVector3> adversary_robots);
+    void set_robots(vector<btVector3> our_robots, vector<btVector3> adversary_robots, btVector3 ball);
     
-	btVector3 calc_result(int, btVector3, bool, GOTO);
+	btVector3 calc_result(int, btVector3, bool, GOTO, AttackerState);
 };
 
 #endif // _POTENTIAL_FIELD_H_

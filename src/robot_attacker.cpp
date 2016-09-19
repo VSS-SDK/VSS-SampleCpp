@@ -17,16 +17,16 @@ void Robot::AT_calc_action(){
 	    adversary_poses.push_back(adversary_team->at(i).get_pose());
     }
 
-    apf.set_robots(our_poses, adversary_poses);
+    apf.set_robots(our_poses, adversary_poses, *ball);
 
     AT_projection();
-
-    btVector3 potential = apf.calc_result(id, projection, true, GOTO::POSITION);
+    
+    btVector3 potential = apf.calc_result(id, projection, true, GOTO::POSITION, attacker_state);
     
     step_pose.x = pose.x + potential.x;
     step_pose.y = pose.y + potential.y;
     step_pose.z = pose.z + potential.z;
-    
+
     calc_cmd_to();
 }
 
@@ -34,15 +34,29 @@ void Robot::AT_projection(){
     switch(attacker_state){
         case AttackerState::GET_BEHIND_THE_BALL:{
             cout << "GET_BEHIND_THE_BALL" << endl;
-            //pose.show();
-            //final_pose.show();
-            if(distancePoint(pose, final_pose) >= 10.0){
+            if(distancePoint(pose, final_pose) >= 10.0 && distancePoint(pose, *ball) >= 10.0){
                 projection = *ball;
 
                 float theta = radian(goal[goal_attack], projection);
 
-                projection.x = projection.x - (cos(theta)*20.0);
-                projection.y = projection.y - (sin(theta)*20.0);
+                projection.x = projection.x - (cos(theta)*30.0);
+                projection.y = projection.y - (sin(theta)*30.0);
+
+                if(projection.x > 160.0){
+                    projection.x = 160.0;
+                }
+
+                if(projection.x < 10.0){
+                    projection.x = 10.0;
+                }
+
+                if(projection.y > 120.0){
+                    projection.y = 120.0;
+                }
+
+                if(projection.y < 10.0){
+                    projection.y = 10.0;
+                }
             }else{
                 attacker_state = AttackerState::APPROACH_OF_THE_BALL;
             }
@@ -57,7 +71,7 @@ void Robot::AT_projection(){
         }break;
         case AttackerState::KICK_THE_BALL:{
             cout << "KICK_THE_BALL" << endl;
-            if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x > ball->x) {
+            if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x > ball->x && distancePoint(pose, *ball) <= 15.0) {
                 projection = goal[goal_attack];
             }else{
                 attacker_state = AttackerState::GET_BEHIND_THE_BALL;
@@ -66,7 +80,6 @@ void Robot::AT_projection(){
     }
 
     final_pose = projection;
-
 }
 
 btVector3 Robot::generate_free_pose(){
