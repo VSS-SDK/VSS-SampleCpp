@@ -31,6 +31,10 @@ Robot::Robot(){
 	rear_count = 0;
 
 	turn_gain = TURN_GAIN;
+
+	goal[Goal::LEFT] = btVector3(10, 65, 0);
+	goal[Goal::RIGHT] = btVector3(160, 65, 0);
+    goal_attack = Goal::LEFT;
 }
 
 void Robot::calc_action(){
@@ -210,6 +214,10 @@ void Robot::set_pose(btVector3 pose){
 
 void Robot::set_v_pose(btVector3 v_pose){
     this->v_pose = v_pose;
+}
+
+void Robot::set_goal(Goal goal_attack){
+	this->goal_attack = goal_attack;
 }
 
 btVector3 Robot::get_pose(){

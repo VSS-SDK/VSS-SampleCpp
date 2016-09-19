@@ -33,8 +33,13 @@ Strategy::Strategy(){
 	}
 }
 
-void Strategy::init(string main_color, bool is_debug, bool real_environment){
+void Strategy::init(string main_color, bool is_debug, bool real_environment, Goal goal){
 	init_sample(main_color, is_debug, real_environment);
+
+	for(int i = 0 ; i < our_team.size(); i++){
+		our_team.at(i).set_goal(goal);
+	}
+
 	loop();
 }
 

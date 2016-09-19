@@ -27,12 +27,18 @@ void Robot::AT_calc_action(){
     step_pose.y = pose.y + potential.y;
     step_pose.z = pose.z + potential.z;
     
-    calc_cmd_to();
+    //calc_cmd_to();
 }
 
 void Robot::AT_projection(){
-    final_pose = *ball;
-    projection = final_pose;
+    projection = *ball;
+
+    float theta = radian(goal[goal_attack], projection);
+
+    projection.x = projection.x + (cos(theta)*30.0);
+    projection.y = projection.y + (sin(theta)*30.0);
+
+    final_pose = projection;
 }
 
 btVector3 Robot::generate_free_pose(){

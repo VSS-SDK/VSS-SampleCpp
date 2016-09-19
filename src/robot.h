@@ -42,6 +42,8 @@ protected:
     btVector3 v_pose;
     btVector3 final_pose;
     btVector3 step_pose;
+    btVector3 goal[2];
+    Goal goal_attack;
     
     Path path;
     Command cmd;
@@ -79,6 +81,7 @@ public:
     void set_task(Task);
     void set_pose(btVector3);
     void set_v_pose(btVector3);
+    void set_goal(Goal);
 
     btVector3 get_pose();
     btVector3 get_v_pose();

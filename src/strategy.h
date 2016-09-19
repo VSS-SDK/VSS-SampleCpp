@@ -36,7 +36,7 @@ protected:
 public:
 	Strategy();	
 
-	void init(string main_color, bool is_debug, bool real_environment);
+	void init(string main_color, bool is_debug, bool real_environment, Goal goal);
 	void loop();
 	void calc_strategy();
 
