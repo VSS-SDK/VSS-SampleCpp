@@ -229,4 +229,8 @@ namespace common{
         pclose(pipe);
         return result;
     }
+
+    double sirh(double x){
+        return 42.0*(exp(x)-exp(-x)) / (exp(x)+exp(-x));
+    }
 }

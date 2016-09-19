@@ -29,6 +29,8 @@ Robot::Robot(){
 	status = 0;
 	count_pose = 0;
 	rear_count = 0;
+
+	turn_gain = TURN_GAIN;
 }
 
 void Robot::calc_action(){
@@ -101,16 +103,19 @@ void Robot::calc_cmd_to(){
 		count_pose = 0;
 	}
 
+	//turn_gain = TURN_GAIN;// + (1.0 - distancePoint(pose, final_pose)/50.0)/200.0;
+	//cout << (1.0 - distancePoint(pose, final_pose)/50.0)/200.0 << endl;
+	//cout << turn_gain << endl;
 	if(rear_count <= 0){
 		if(front){
-			float PI = 0.010*angulation_robot_robot_goal;// + 0.001*sumError;
+			float PI = turn_gain*angulation_robot_robot_goal;// + 0.001*sumError;
 
 			if(fabs(angulation_robot_robot_goal) < angle_to_spin){
 				cmd.left = distance_robot_goal - (PI * robot_side_size);
 				cmd.right = distance_robot_goal + (PI * robot_side_size);
 				
-				cmd.left *= 2.5;
-				cmd.right *= 2.5;
+				cmd.left *= 3.5;
+				cmd.right *= 3.5;
 			}else{
 				// SPIN
 				if(angulation_robot_robot_goal >= 0){
@@ -128,14 +133,14 @@ void Robot::calc_cmd_to(){
 				angulation_robot_robot_goal -= 180;		
 			}
 
-			float PI = 0.010*angulation_robot_robot_goal;// + 0.001*sumError;
+			float PI = turn_gain*angulation_robot_robot_goal;// + 0.001*sumError;
 
 			if(fabs(angulation_robot_robot_goal) < angle_to_spin){
 				cmd.left = distance_robot_goal + (PI * robot_side_size);
 				cmd.right = distance_robot_goal - (PI * robot_side_size);
 				
-				cmd.left *= -2.5;
-				cmd.right *= -2.5;
+				cmd.left *= -3.5;
+				cmd.right *= -3.5;
 			}else{
 				// SPIN
 				if(angulation_robot_robot_goal >= 0){

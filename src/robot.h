@@ -14,6 +14,8 @@
 
 using namespace common;
 
+#define TURN_GAIN 0.010
+
 class Robot{
 protected:
     int id;
@@ -22,6 +24,7 @@ protected:
     float max_aceleration_wheel;
     float angle_to_spin;
     float distance_to_stop;
+    float turn_gain;
 
     vector<float> errorsIntegrative;
     int deltaTimeIntegrative;

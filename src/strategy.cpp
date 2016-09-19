@@ -23,9 +23,9 @@ Strategy::Strategy(){
 		adversary_team.push_back(r);
 	}
 
-	our_team.at(0).set_task(Task::ATTACKER);
+	/*our_team.at(0).set_task(Task::ATTACKER);
 	our_team.at(1).set_task(Task::ATTACKER);
-	our_team.at(2).set_task(Task::ATTACKER);
+	our_team.at(2).set_task(Task::ATTACKER);*/
 
 	for(int i = 0 ; i < 3 ; i++){
 		our_team.at(i).alloc_our_team(&our_team);

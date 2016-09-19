@@ -190,6 +190,9 @@ namespace common{
     void clearSS(stringstream &ss);
 
     string cmdTerminal(string s);
+
+    //! sir hyperbolic
+    double sirh(double);
 }
 
 #endif

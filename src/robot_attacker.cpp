@@ -31,14 +31,8 @@ void Robot::AT_calc_action(){
 }
 
 void Robot::AT_projection(){
-    if(distancePoint(pose, projection) < 10.0 || status == 0){
-        status = 1;
-        act_pose_of_path = 0;
-
-        final_pose = generate_free_pose();
-
-        projection = final_pose;    
-    }
+    final_pose = *ball;
+    projection = final_pose;
 }
 
 btVector3 Robot::generate_free_pose(){
