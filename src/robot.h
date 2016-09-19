@@ -14,7 +14,7 @@
 
 using namespace common;
 
-#define TURN_GAIN 0.010
+#define TURN_GAIN 0.020
 
 class Robot{
 protected:
@@ -44,6 +44,8 @@ protected:
     btVector3 step_pose;
     btVector3 goal[2];
     Goal goal_attack;
+
+    AttackerState attacker_state;
     
     Path path;
     Command cmd;

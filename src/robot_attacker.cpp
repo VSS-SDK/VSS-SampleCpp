@@ -27,18 +27,46 @@ void Robot::AT_calc_action(){
     step_pose.y = pose.y + potential.y;
     step_pose.z = pose.z + potential.z;
     
-    //calc_cmd_to();
+    calc_cmd_to();
 }
 
 void Robot::AT_projection(){
-    projection = *ball;
+    switch(attacker_state){
+        case AttackerState::GET_BEHIND_THE_BALL:{
+            cout << "GET_BEHIND_THE_BALL" << endl;
+            //pose.show();
+            //final_pose.show();
+            if(distancePoint(pose, final_pose) >= 10.0){
+                projection = *ball;
 
-    float theta = radian(goal[goal_attack], projection);
+                float theta = radian(goal[goal_attack], projection);
 
-    projection.x = projection.x + (cos(theta)*30.0);
-    projection.y = projection.y + (sin(theta)*30.0);
+                projection.x = projection.x - (cos(theta)*20.0);
+                projection.y = projection.y - (sin(theta)*20.0);
+            }else{
+                attacker_state = AttackerState::APPROACH_OF_THE_BALL;
+            }
+        }break;
+        case AttackerState::APPROACH_OF_THE_BALL:{
+            cout << "APPROACH_OF_THE_BALL" << endl;
+            if(distancePoint(pose, *ball) >= 10.0 && pose.x > ball->x){
+                projection = *ball;
+            }else{
+                attacker_state = AttackerState::KICK_THE_BALL;
+            }
+        }break;
+        case AttackerState::KICK_THE_BALL:{
+            cout << "KICK_THE_BALL" << endl;
+            if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x > ball->x) {
+                projection = goal[goal_attack];
+            }else{
+                attacker_state = AttackerState::GET_BEHIND_THE_BALL;
+            }
+        }break;
+    }
 
     final_pose = projection;
+
 }
 
 btVector3 Robot::generate_free_pose(){

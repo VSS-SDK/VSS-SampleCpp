@@ -30,11 +30,12 @@ Robot::Robot(){
 	count_pose = 0;
 	rear_count = 0;
 
-	turn_gain = TURN_GAIN;
+	turn_gain = 0.012;
 
 	goal[Goal::LEFT] = btVector3(10, 65, 0);
 	goal[Goal::RIGHT] = btVector3(160, 65, 0);
     goal_attack = Goal::LEFT;
+	attacker_state = AttackerState::GET_BEHIND_THE_BALL;
 }
 
 void Robot::calc_action(){
@@ -118,8 +119,8 @@ void Robot::calc_cmd_to(){
 				cmd.left = distance_robot_goal - (PI * robot_side_size);
 				cmd.right = distance_robot_goal + (PI * robot_side_size);
 				
-				cmd.left *= 3.5;
-				cmd.right *= 3.5;
+				cmd.left *= 2.5;
+				cmd.right *= 2.5;
 			}else{
 				// SPIN
 				if(angulation_robot_robot_goal >= 0){
@@ -143,8 +144,8 @@ void Robot::calc_cmd_to(){
 				cmd.left = distance_robot_goal + (PI * robot_side_size);
 				cmd.right = distance_robot_goal - (PI * robot_side_size);
 				
-				cmd.left *= -3.5;
-				cmd.right *= -3.5;
+				cmd.left *= -2.5;
+				cmd.right *= -2.5;
 			}else{
 				// SPIN
 				if(angulation_robot_robot_goal >= 0){
