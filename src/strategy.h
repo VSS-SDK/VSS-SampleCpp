@@ -32,7 +32,6 @@ protected:
 	vector<Robot> our_team;
 	vector<Robot> adversary_team;
 	btVector3 ball, v_ball;
-	int collisions, count_collision, object_collisions;
 
 public:
 	Strategy();	

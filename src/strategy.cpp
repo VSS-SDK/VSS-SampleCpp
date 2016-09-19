@@ -12,9 +12,6 @@ Strategy::Strategy(){
     main_color = "yellow";
     is_debug = false;
     real_environment = false;
-	collisions = 0;
-	count_collision = 0;
-	object_collisions = 0;
 
 	srand(time(NULL));
 
@@ -63,29 +60,23 @@ void Strategy::loop(){
 			send_commands();
 			// DON'T REMOVE send_data();
 		}else{
-			//cout << "teste" << endl;
 			for(int i = 0 ; i < 3 ; i++){
 				commands[i] = our_team.at(i).get_command();
-				commands[i].left = commands[i].left * 3.0;
-				commands[i].right = commands[i].right * 3.0;
-				commands[i].show();
+				commands[i].left = commands[i].left * 3.5;
+				commands[i].right = commands[i].right * 3.5;
+
 				if(commands[i].left < 0){
 					commands[i].left = 255 + fabs(commands[i].left);
 				}
 				if(commands[i].right < 0){
 					commands[i].right = 255 + fabs(commands[i].right);
 				}
-				cout << "plus" << endl;
-				commands[i].show();
-				cout << endl << endl;
+
 				commands[i].left = (int)commands[i].left;
 				commands[i].right = (int)commands[i].right;
 			}
 
-			//commands[0].show();
-
 			comm.sendSerialData(commands);
-			// Put your transmission code here
 		}
 
 		// DON'T REMOVE debug_mode
@@ -98,47 +89,12 @@ void Strategy::loop(){
 }
 
 void Strategy::calc_strategy(){
-	count_collision++;
-
-	if(count_collision > 45){
-		count_collision = 0;
-		for(int i = 0 ; i < 3 ; i++){
-			our_team.at(i).set_collision(false);
-			adversary_team.at(i).set_collision(false);
-		}
-	}
-
 	for(int i = 0 ; i < 3 ; i++){
 		our_team.at(i).calc_action();
 	}
-
-	for(int i = 0 ; i < 3 ; i++){
-		for(int j = i+1 ; j < 3 ; j++){
-			if( distancePoint(our_team.at(i).get_pose(), our_team.at(j).get_pose()) < RADIUS_ROBOT*1.8 && !our_team.at(i).get_collision() && !our_team.at(j).get_collision() ){
-				collisions++;
-				our_team.at(i).set_collision(true);
-				our_team.at(j).set_collision(true); 
-			}
-		}
-	}
-
-	for(int i = 0 ; i < 3 ; i++){
-		for(int j = 0 ; j < 3 ; j++){
-			if( distancePoint(our_team.at(i).get_pose(), adversary_team.at(j).get_pose()) < RADIUS_ROBOT*1.8 && !our_team.at(i).get_collision() && !adversary_team.at(j).get_collision() ){
-				object_collisions++;
-				our_team.at(i).set_collision(true);
-				adversary_team.at(j).set_collision(true); 
-			}
-		}
-	}
-
-	cout << "resolve: " << our_team.at(0).get_resolve_iterator() + our_team.at(1).get_resolve_iterator() + our_team.at(2).get_resolve_iterator() - 3 << endl;
-	cout << "robot_collisions: " << collisions << endl;
-	cout << "object_collisions: " << object_collisions << endl << endl;
 }
 
 void Strategy::update_state_on_robots(){
-	//ball.show();
 	ball = state.ball;
 	v_ball = state.v_ball;
 

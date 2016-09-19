@@ -11,7 +11,6 @@
 
 #include "common.h"
 #include "potential_fields.h"
-#include "path_planning.h"
 
 using namespace common;
 
@@ -23,12 +22,9 @@ protected:
     float max_aceleration_wheel;
     float angle_to_spin;
     float distance_to_stop;
-    int resolve_iterator;
 
     vector<float> errorsIntegrative;
     int deltaTimeIntegrative;
-    int contIntegrative;
-    int rand_ite;
     int act_pose_of_path;
     int status;
     int count_pose;
@@ -37,7 +33,6 @@ protected:
     bool need_brutal_mode;           // Potential Fields OFF
     bool need_to_replan_path;    
     bool front;
-    bool collision;
     Task task;
 
     btVector3 pose, history_pose;
@@ -55,21 +50,15 @@ protected:
     float distance_between_projections;
 
     PotentialFields apf;
-    PathPlanning pp;
 
     void calc_cmd_to();
     void check_opportunities();
-    void check_need_to_replan_path();
     void check_need_to_brutal_mode();
     btVector3 generate_free_pose();
 
     void GK_calc_action();
     void DF_calc_action();
     void AT_calc_action();
-
-    void GK_path_planning();
-    void DF_path_planning();
-    void AT_path_planning();
 
     void GK_projection();
     void DF_projection();
@@ -87,16 +76,13 @@ public:
     void set_task(Task);
     void set_pose(btVector3);
     void set_v_pose(btVector3);
-    void set_collision(bool);
 
     btVector3 get_pose();
     btVector3 get_v_pose();
     btVector3 get_final_pose();
     btVector3 get_step_pose();
     Path get_path();
-    bool get_collision();
     Command get_command();
-    int get_resolve_iterator();
 
     void calc_action();
 };

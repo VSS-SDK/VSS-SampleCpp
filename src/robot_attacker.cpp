@@ -18,18 +18,10 @@ void Robot::AT_calc_action(){
     }
 
     apf.set_robots(our_poses, adversary_poses);
-    pp.setRobots(our_poses, adversary_poses);
 
     AT_projection();
 
-    //btVector3 potential = apf.calc_result(id, final_pose, true, GOTO::BALL);
-    if( distancePoint(pose, path.poses.at(act_pose_of_path)) < RADIUS_ROBOT*2.0 ){
-        if(act_pose_of_path < path.poses.size()-1){
-            act_pose_of_path++;
-        }
-    }
-
-    btVector3 potential = apf.calc_result(id, path.poses.at(act_pose_of_path), true, GOTO::POSITION);
+    btVector3 potential = apf.calc_result(id, projection, true, GOTO::POSITION);
     
     step_pose.x = pose.x + potential.x;
     step_pose.y = pose.y + potential.y;
@@ -38,36 +30,14 @@ void Robot::AT_calc_action(){
     calc_cmd_to();
 }
 
-void Robot::AT_path_planning(){
-    btVector3 sub_projection, sup_projection;
-    
-    sub_projection.x = projection.x - (cos(projection.z)*15.0);
-    sub_projection.y = projection.y - (sin(projection.z)*15.0); 
-    sub_projection.z = sub_projection.z;
-
-    for(int i = 0 ; i < 10 ; i++){
-
-        path = pp.solvePath(id, sub_projection);
-
-        if(path.poses.size() > 0){
-            break;
-        }
-    }
-    //path = pp.solvePath(id, projection);
-    path.poses.push_back(projection);
-}
-
 void Robot::AT_projection(){
     if(distancePoint(pose, projection) < 10.0 || status == 0){
-        resolve_iterator++;
         status = 1;
         act_pose_of_path = 0;
 
         final_pose = generate_free_pose();
 
-        projection = final_pose;
-
-        AT_path_planning();
+        projection = final_pose;    
     }
 }
 

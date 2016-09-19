@@ -15,9 +15,8 @@ INCLUDES = -Isrc
 
 LIBRARIES_PROTO = `pkg-config --cflags --libs protobuf`
 LIBRARIES_BOOST = -lboost_system -lboost_filesystem -lboost_program_options -lboost_thread
-LIBRARIES_OMPL = `pkg-config --cflags --libs ompl` 
 
-LIBRARIES = $(LIBRARIES_PROTO) $(LIBRARIES_BOOST) $(LIBRARIES_OMPL) -lzmq -pthread -lm -w
+LIBRARIES = $(LIBRARIES_PROTO) $(LIBRARIES_BOOST) -lzmq -pthread -lm -w
 
 
 

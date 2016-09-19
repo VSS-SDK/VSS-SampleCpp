@@ -29,7 +29,6 @@ Robot::Robot(){
 	status = 0;
 	count_pose = 0;
 	rear_count = 0;
-	resolve_iterator = 0;
 }
 
 void Robot::calc_action(){
@@ -46,19 +45,6 @@ void Robot::calc_action(){
 	}
 }
 
-/*void Robot::check_need_to_replan_path(){
-	switch(task){
-		case Task::GOAL_KEEPER:{
-			GK_check_need_to_replan_path();
-		}break;
-		case Task::DEFENDER:{
-			DF_check_need_to_replan_path();
-		}break;
-		case Task::ATTACKER:{
-			AT_check_need_to_replan_path();
-		}break;
-	}
-}*/
 
 // MODEL BLAZIC
 void Robot::calc_cmd_to(){
@@ -117,7 +103,7 @@ void Robot::calc_cmd_to(){
 
 	if(rear_count <= 0){
 		if(front){
-			float PI = 0.012*angulation_robot_robot_goal;// + 0.001*sumError;
+			float PI = 0.010*angulation_robot_robot_goal;// + 0.001*sumError;
 
 			if(fabs(angulation_robot_robot_goal) < angle_to_spin){
 				cmd.left = distance_robot_goal - (PI * robot_side_size);
@@ -142,7 +128,7 @@ void Robot::calc_cmd_to(){
 				angulation_robot_robot_goal -= 180;		
 			}
 
-			float PI = 0.012*angulation_robot_robot_goal;// + 0.001*sumError;
+			float PI = 0.010*angulation_robot_robot_goal;// + 0.001*sumError;
 
 			if(fabs(angulation_robot_robot_goal) < angle_to_spin){
 				cmd.left = distance_robot_goal + (PI * robot_side_size);
@@ -221,10 +207,6 @@ void Robot::set_v_pose(btVector3 v_pose){
     this->v_pose = v_pose;
 }
 
-void Robot::set_collision(bool collision){
-	this->collision = collision;
-}
-
 btVector3 Robot::get_pose(){
 	return pose;
 }
@@ -247,12 +229,4 @@ Path Robot::get_path(){
 
 Command Robot::get_command(){
     return cmd;
-}
-
-int Robot::get_resolve_iterator(){
-	return resolve_iterator;
-}
-
-bool Robot::get_collision(){
-	return collision;
 }
