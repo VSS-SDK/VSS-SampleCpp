@@ -31,9 +31,14 @@ void Robot::AT_calc_action(){
 }
 
 void Robot::AT_projection(){
+    if(ball_is_on_the_wall()){
+        cout << "WALL" << endl;
+    }else{
+        cout << "!WALL" << endl;
+    }
     switch(attacker_state){
         case AttackerState::GET_BEHIND_THE_BALL:{
-            cout << "GET_BEHIND_THE_BALL" << endl;
+            //cout << "GET_BEHIND_THE_BALL" << endl;
 
             btVector3 test_var;
             float theta = radian(goal[goal_attack], *ball);
@@ -47,20 +52,20 @@ void Robot::AT_projection(){
                 test_var.y -= 5;
             }
 
-            if(test_var.x > 160.0){
-                test_var.x = 160.0;
+            if(test_var.x > 160.0 - RADIUS_ROBOT){
+                test_var.x = 160.0 - RADIUS_ROBOT;
             }
 
-            if(test_var.x < 10.0){
-                test_var.x = 10.0;
+            if(test_var.x < 10 + RADIUS_ROBOT){
+                test_var.x = 10 + RADIUS_ROBOT;
             }
 
-            if(test_var.y > 120.0){
-                test_var.y = 120.0;
+            if(test_var.y > 130.0 - RADIUS_ROBOT){
+                test_var.y = 130.0 - RADIUS_ROBOT;
             }
 
-            if(test_var.y < 10.0){
-                test_var.y = 10.0;
+            if(test_var.y < RADIUS_ROBOT){
+                test_var.y = RADIUS_ROBOT;
             }
 
             if(distancePoint(pose, test_var) >= 15.0){
@@ -70,7 +75,7 @@ void Robot::AT_projection(){
             }
         }break;
         case AttackerState::APPROACH_OF_THE_BALL:{
-            cout << "APPROACH_OF_THE_BALL" << endl;
+            //cout << "APPROACH_OF_THE_BALL" << endl;
             if(distancePoint(pose, *ball) >= 10.0 && pose.x > ball->x){
                 projection = *ball;
             }else{
@@ -78,7 +83,7 @@ void Robot::AT_projection(){
             }
         }break;
         case AttackerState::KICK_THE_BALL:{
-            cout << "KICK_THE_BALL" << endl;
+            //cout << "KICK_THE_BALL" << endl;
             if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x > ball->x && distancePoint(pose, *ball) <= 15.0) {
                 projection = goal[goal_attack];
             }else{

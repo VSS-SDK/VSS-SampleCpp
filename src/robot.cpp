@@ -177,6 +177,32 @@ void Robot::calc_cmd_to(){
 
 }
 
+bool Robot::ball_is_on_the_wall(){
+	bool on_the_wall = false;
+
+	// Triangulo
+	if(ball->x < 15+10 && ball->y < 15){
+		on_the_wall = true;
+	}
+
+	// Triangulo
+	if(ball->x < 15+10 && ball->y > 120){
+		on_the_wall = true;
+	}
+
+	// Triangulo
+	if(ball->x > 150 && ball->y < 15){
+		on_the_wall = true;
+	}
+
+	// Triangulo
+	if(ball->x > 150 && ball->y > 120){
+		on_the_wall = true;
+	}
+
+	return on_the_wall;
+}
+
 void Robot::alloc_our_team(vector<Robot> *our_team){
     this->our_team = our_team;
 }

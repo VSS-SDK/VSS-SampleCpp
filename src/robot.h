@@ -71,6 +71,8 @@ protected:
     void DF_projection();
     void AT_projection();
 
+    bool ball_is_on_the_wall();
+
     bool debug_pos;
 public:
     Robot();
