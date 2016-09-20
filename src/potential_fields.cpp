@@ -78,6 +78,7 @@ btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOT
 
 	is_last = false;
 	attractive_force();
+	repulsive_force_our_robots();
 
 	normalize();
 

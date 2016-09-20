@@ -31,13 +31,67 @@ void Robot::DF_calc_action(){
     calc_cmd_to();
 }
 
-void Robot::DF_projection(){
-    float theta = radian(*ball, goal[goal_defense]);
-    if(goal_defense == Goal::RIGHT){
-        projection = btVector3(130, ball->y - (sin(theta)*fabs(ball->x-130)), 0);
-    }else{
-        projection = btVector3(40, ball->y - (sin(theta)*fabs(ball->x-40)), 0);
+void Robot::DF_projection(){ 
+    switch(defender_state){
+        case DF_MARK_THE_BALL:{
+            path.poses.clear();
+            float theta = radian(*ball, goal[goal_defense]);
+
+            //if(){
+                if(goal_defense == Goal::RIGHT){
+                    float distance_of_mark = ball->x + 40;
+
+                    if(distance_of_mark < 95){
+                        distance_of_mark = 95;
+                    }
+                    if(distance_of_mark > 130){
+                        distance_of_mark = 130;
+                    }
+
+                    projection = btVector3(distance_of_mark, ball->y - (sin(theta)*fabs(ball->x-distance_of_mark)), 0);
+
+                    // DEBUG
+                    path.poses.push_back(btVector3(distance_of_mark, 0, 0));
+                    path.poses.push_back(btVector3(distance_of_mark, 130, 0));
+                    path.poses.push_back(btVector3(130, 130, 0));
+                    path.poses.push_back(btVector3(130, 0, 0));
+                    path.poses.push_back(btVector3(distance_of_mark, 0, 0));
+                }else{
+                    if(ball->x > 40){
+                        float distance_of_mark = ball->x - 40;
+
+                        if(distance_of_mark > 75){
+                            distance_of_mark = 75;
+                        }
+
+                        if(distance_of_mark < 40){
+                            distance_of_mark = 40;
+                        }
+
+                        projection = btVector3(distance_of_mark, ball->y - (sin(theta)*fabs(ball->x-distance_of_mark)), 0);
+
+                        // DEBUG
+                        path.poses.push_back(btVector3(distance_of_mark, 0, 0));
+                        path.poses.push_back(btVector3(distance_of_mark, 130, 0));
+                        path.poses.push_back(btVector3(40, 130, 0));
+                        path.poses.push_back(btVector3(40, 0, 0));
+                        path.poses.push_back(btVector3(distance_of_mark, 0, 0));
+                    }
+                }
+
+        }break;
+        case DF_INSULATES_THE_BALL:{
+            float theta = radian(*ball, goal[goal_defense]);
+
+            if(goal_defense == Goal::RIGHT){
+                projection = btVector3(130, ball->y - (sin(theta)*fabs(ball->x-130)), 0);
+            }else{
+                projection = btVector3(40, ball->y - (sin(theta)*fabs(ball->x-40)), 0);
+            }
+        }break;
     }
+
+
     final_pose = projection;
     /*switch(attacker_state){
         case AttackerState::GET_BEHIND_THE_BALL:{
