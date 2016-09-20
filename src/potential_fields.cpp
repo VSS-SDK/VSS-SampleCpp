@@ -184,13 +184,13 @@ void PotentialFields::repulsive_force_ball(){
 
 		if(distances <= radiusRobot){
 			//se esta escostado no obstaculo, recebe um vetor maximo 
-			result.x += tanh(cos(theta))*beta;
-			result.y += tanh(sin(theta))*INF;
+			result.x += tanh(cos(theta))*0.1;
+			result.y += tanh(sin(theta))*beta;
 
 		}else if(distances <= (radiusRobot + areaRobot)){
 			//se esta dentro da area de influencia
-			result.x += beta*(areaRobot + radiusRobot- distances)*cos(theta); 
-			result.y += INF*(areaRobot + radiusRobot - distances)*sin(theta);	
+			result.x += 0.1*(areaRobot + radiusRobot- distances)*cos(theta); 
+			result.y += beta*(areaRobot + radiusRobot - distances)*sin(theta);	
 		}
 	}
 }

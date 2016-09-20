@@ -34,13 +34,15 @@ void Robot::AT_projection(){
     switch(attacker_state){
         case AttackerState::GET_BEHIND_THE_BALL:{
             cout << "GET_BEHIND_THE_BALL" << endl;
-            if(distancePoint(pose, final_pose) >= 10.0 && distancePoint(pose, *ball) >= 10.0){
-                projection = *ball;
 
-                float theta = radian(goal[goal_attack], projection);
+            btVector3 test_var;
+            float theta = radian(goal[goal_attack], *ball);
 
-                projection.x = projection.x - (cos(theta)*30.0);
-                projection.y = projection.y - (sin(theta)*30.0);
+            test_var.x = ball->x - (cos(theta)*30.0);
+            test_var.y = ball->y - (sin(theta)*30.0);
+
+            if(distancePoint(pose, test_var) >= 15.0){
+                projection = test_var;
 
                 if(projection.x > 160.0){
                     projection.x = 160.0;
