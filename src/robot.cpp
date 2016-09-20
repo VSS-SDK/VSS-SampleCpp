@@ -101,7 +101,7 @@ void Robot::calc_cmd_to(){
 
 	if(count_pose >= 30 && status != -1){
 		float distance = distancePoint(history_pose, pose);
-		if(distance < RADIUS_ROBOT/2.0){
+		if(distance < RADIUS_ROBOT){
 			rear_count = 20;
 		}
 		history_pose = pose;
@@ -201,6 +201,37 @@ bool Robot::ball_is_on_the_wall(){
 	}
 
 	return on_the_wall;
+}
+
+btVector3 Robot::generate_free_pose(){
+    bool pose_ok = false;
+    btVector3 new_pose;
+
+    while(!pose_ok){
+        pose_ok = true;
+
+        new_pose.x = (rand() % 120) + 20;
+        new_pose.y = (rand() % 90) + 20;
+        new_pose.z = rand() % 360;
+        
+        for(int i = 0 ; i < our_team->size() ; i++){
+            if( distancePoint(new_pose, our_team->at(i).pose ) < RADIUS_ROBOT*4.0 ){
+                pose_ok = false;
+                break;
+            }
+        }
+
+        if(pose_ok){
+            for(int i = 0 ; i < adversary_team->size() ; i++){
+                if( distancePoint(new_pose, adversary_team->at(i).pose ) < RADIUS_ROBOT*4.0 ){
+                    pose_ok = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    return new_pose;
 }
 
 void Robot::alloc_our_team(vector<Robot> *our_team){

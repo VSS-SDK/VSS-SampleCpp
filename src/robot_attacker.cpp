@@ -31,11 +31,11 @@ void Robot::AT_calc_action(){
 }
 
 void Robot::AT_projection(){
-    if(ball_is_on_the_wall()){
+    /*if(ball_is_on_the_wall()){
         cout << "WALL" << endl;
     }else{
         cout << "!WALL" << endl;
-    }
+    }*/
     switch(attacker_state){
         case AttackerState::GET_BEHIND_THE_BALL:{
             cout << "GET_BEHIND_THE_BALL" << endl;
@@ -109,35 +109,4 @@ void Robot::AT_projection(){
     }
 
     final_pose = projection;
-}
-
-btVector3 Robot::generate_free_pose(){
-    bool pose_ok = false;
-    btVector3 new_pose;
-
-    while(!pose_ok){
-        pose_ok = true;
-
-        new_pose.x = (rand() % 120) + 20;
-        new_pose.y = (rand() % 90) + 20;
-        new_pose.z = rand() % 360;
-        
-        for(int i = 0 ; i < our_team->size() ; i++){
-            if( distancePoint(new_pose, our_team->at(i).pose ) < RADIUS_ROBOT*4.0 ){
-                pose_ok = false;
-                break;
-            }
-        }
-
-        if(pose_ok){
-            for(int i = 0 ; i < adversary_team->size() ; i++){
-                if( distancePoint(new_pose, adversary_team->at(i).pose ) < RADIUS_ROBOT*4.0 ){
-                    pose_ok = false;
-                    break;
-                }
-            }
-        }
-    }
-
-    return new_pose;
 }

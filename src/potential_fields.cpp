@@ -48,7 +48,7 @@ btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOT
 		attractive_force();
 		repulsive_force_ball();
 		repulsive_force_our_robots();
-		repulsive_force_adversary_robots();
+		//repulsive_force_adversary_robots();
 	}else
 	if(attacker_state == AttackerState::ADJUST_TO_GET_THE_BALL){
 		attractive_force();
@@ -58,7 +58,7 @@ btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOT
 	}else
 	if(attacker_state == AttackerState::KICK_THE_BALL){
 		attractive_force();
-		repulsive_force_adversary_robots();
+		//repulsive_force_adversary_robots();
 	}
 	
 	normalize();
