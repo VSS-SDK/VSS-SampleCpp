@@ -14,6 +14,10 @@ void Robot::GK_calc_action(){
     vector<btVector3> adversary_poses;
     turn_gain = TURN_GAIN;
 
+/*
+Isso não faz absolutamente nada!!!
+*/
+
 /*	for(int i = 0 ; i < our_team->size() ; i++){
 		our_poses.push_back(our_team->at(i).get_pose());
 	    adversary_poses.push_back(adversary_team->at(i).get_pose());
