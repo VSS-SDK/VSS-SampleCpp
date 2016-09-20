@@ -37,7 +37,10 @@ Robot::Robot(){
 	goal[Goal::LEFT] = btVector3(5, 65, 0);
 	goal[Goal::RIGHT] = btVector3(165, 65, 0);
     goal_attack = Goal::LEFT;
-	attacker_state = AttackerState::GET_BEHIND_THE_BALL;
+	goal_defense = Goal::RIGHT;
+
+	attacker_state = AttackerState::AT_GET_BEHIND_THE_BALL;
+	defender_state = DefenderState::DF_MARK_THE_BALL;
 }
 
 void Robot::calc_action(){
@@ -100,15 +103,6 @@ void Robot::calc_cmd_to(){
 	for(int i = 0; i < errorsIntegrative.size();i++){
 		sumError += errorsIntegrative.at(i);
 	}*/
-
-	if(count_pose >= 30 && status != -1){
-		float distance = distancePoint(history_pose, pose);
-		if(distance < RADIUS_ROBOT/2.0){
-			rear_count = 20;
-		}
-		history_pose = pose;
-		count_pose = 0;
-	}
 
 	//turn_gain = TURN_GAIN;// + (1.0 - distancePoint(pose, final_pose)/50.0)/200.0;
 	//cout << (1.0 - distancePoint(pose, final_pose)/50.0)/200.0 << endl;
@@ -278,6 +272,11 @@ void Robot::set_v_pose(btVector3 v_pose){
 
 void Robot::set_goal(Goal goal_attack){
 	this->goal_attack = goal_attack;
+	if(goal_attack == Goal::LEFT){
+		goal_defense = Goal::RIGHT;
+	}else{
+		goal_defense = Goal::LEFT;
+	}
 }
 
 btVector3 Robot::get_pose(){

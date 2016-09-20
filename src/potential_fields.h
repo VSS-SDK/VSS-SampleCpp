@@ -29,6 +29,8 @@ protected:
     GOTO go_to;
 
     AttackerState attacker_state;
+    DefenderState defender_state;
+    GoalKeeperState goal_keeper_state;
 
     int sign(float signal);
     void normalize();
@@ -44,6 +46,8 @@ public:
     void set_robots(vector<btVector3> our_robots, vector<btVector3> adversary_robots, btVector3 ball);
     
 	btVector3 calc_result(int, btVector3, bool, GOTO, AttackerState);
+    btVector3 calc_result(int, btVector3, bool, GOTO, DefenderState);
+    btVector3 calc_result(int, btVector3, bool, GOTO, GoalKeeperState);
 };
 
 #endif // _POTENTIAL_FIELD_H_

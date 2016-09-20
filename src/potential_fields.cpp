@@ -43,27 +43,57 @@ btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOT
 	this->go_to = go_to;
 	this->attacker_state = attacker_state;
 
-	if(attacker_state == AttackerState::GET_BEHIND_THE_BALL){
+	if(attacker_state == AttackerState::AT_GET_BEHIND_THE_BALL){
 		is_last = false;
 		attractive_force();
 		repulsive_force_ball();
 		repulsive_force_our_robots();
 		//repulsive_force_adversary_robots();
 	}else
-	if(attacker_state == AttackerState::ADJUST_TO_GET_THE_BALL){
+	if(attacker_state == AttackerState::AT_ADJUST_TO_GET_THE_BALL){
 		is_last = false;
 		attractive_force();
 	}else
-	if(attacker_state == AttackerState::APPROACH_OF_THE_BALL){
+	if(attacker_state == AttackerState::AT_APPROACH_OF_THE_BALL){
 		attractive_force();
 	}else
-	if(attacker_state == AttackerState::KICK_THE_BALL){
+	if(attacker_state == AttackerState::AT_KICK_THE_BALL){
 		is_last = false;
 		attractive_force();
 		//repulsive_force_adversary_robots();
 	}
-	
+
 	normalize();
+
+	return result;
+}
+
+btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOTO go_to, DefenderState defender_state){
+	result = btVector3(0, 0, 0);
+	this->id = id;
+	this->is_last = is_last;
+	this->goal = goal;
+	this->go_to = go_to;
+	this->defender_state = defender_state;
+
+	is_last = false;
+	attractive_force();
+
+	normalize();
+
+	return result;
+}
+
+btVector3 PotentialFields::calc_result(int, btVector3, bool, GOTO, GoalKeeperState goal_keeper_state){
+	result = btVector3(0, 0, 0);
+	this->id = id;
+	this->is_last = is_last;
+	this->goal = goal;
+	this->go_to = go_to;
+	this->goal_keeper_state = goal_keeper_state;
+
+	is_last = false;
+	attractive_force();
 
 	return result;
 }

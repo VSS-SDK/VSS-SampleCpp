@@ -46,8 +46,11 @@ protected:
     btVector3 step_pose;
     btVector3 goal[2];
     Goal goal_attack;
+    Goal goal_defense;
 
     AttackerState attacker_state;
+    DefenderState defender_state;
+    GoalKeeperState goal_keeper_state;
     
     Path path;
     Command cmd;

@@ -28,6 +28,15 @@ void Robot::AT_calc_action(){
     step_pose.y = pose.y + potential.y;
     step_pose.z = pose.z + potential.z;
 
+    if(count_pose >= 30 && status != -1){
+		float distance = distancePoint(history_pose, pose);
+		if(distance < RADIUS_ROBOT/2.0){
+			rear_count = 20;
+		}
+		history_pose = pose;
+		count_pose = 0;
+	}
+
     calc_cmd_to();
 }
 
@@ -38,7 +47,7 @@ void Robot::AT_projection(){
         cout << "!WALL" << endl;
     }*/
     switch(attacker_state){
-        case AttackerState::GET_BEHIND_THE_BALL:{
+        case AttackerState::AT_GET_BEHIND_THE_BALL:{
             cout << "GET_BEHIND_THE_BALL" << endl;
 
             btVector3 test_var;
@@ -72,13 +81,13 @@ void Robot::AT_projection(){
             if(distancePoint(pose, test_var) >= 15.0){
                 projection = test_var;
             }else{
-                attacker_state = AttackerState::ADJUST_TO_GET_THE_BALL;
+                attacker_state = AttackerState::AT_ADJUST_TO_GET_THE_BALL;
             }
 
             iterator_aceleration = 0.0;
             velocity_gain = 2.5;
         }break;
-        case AttackerState::ADJUST_TO_GET_THE_BALL:{
+        case AttackerState::AT_ADJUST_TO_GET_THE_BALL:{
             cout << "ADJUST_TO_GET_THE_BALL" << endl;
 
             btVector3 test_var;
@@ -114,44 +123,44 @@ void Robot::AT_projection(){
                 turn_gain += 0.015;
                 projection = test_var;
             }else{
-                attacker_state = AttackerState::APPROACH_OF_THE_BALL;
+                attacker_state = AttackerState::AT_APPROACH_OF_THE_BALL;
             }
 
             iterator_aceleration = 0.0;
             velocity_gain = 2.5;
         }break;
-        case AttackerState::APPROACH_OF_THE_BALL:{
+        case AttackerState::AT_APPROACH_OF_THE_BALL:{
             cout << "APPROACH_OF_THE_BALL" << endl;
             if(goal_attack == Goal::LEFT){
                 if(distancePoint(pose, *ball) >= 10.0 && pose.x > ball->x){
                     projection = *ball;
                 }else{
-                    attacker_state = AttackerState::KICK_THE_BALL;
+                    attacker_state = AttackerState::AT_KICK_THE_BALL;
                 }
             }else{
                 if(distancePoint(pose, *ball) >= 10.0 && pose.x < ball->x){
                     projection = *ball;
                 }else{
-                    attacker_state = AttackerState::KICK_THE_BALL;
+                    attacker_state = AttackerState::AT_KICK_THE_BALL;
                 }
             }
 
             iterator_aceleration = 0.0;
             velocity_gain = 2.5;
         }break;
-        case AttackerState::KICK_THE_BALL:{
+        case AttackerState::AT_KICK_THE_BALL:{
             cout << "KICK_THE_BALL" << endl;
             if(goal_attack == Goal::LEFT){
                 if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x > ball->x && distancePoint(pose, *ball) <= 15.0) {
                     projection = goal[goal_attack];
                 }else{
-                    attacker_state = AttackerState::GET_BEHIND_THE_BALL;
+                    attacker_state = AttackerState::AT_GET_BEHIND_THE_BALL;
                 }
             }else{
                 if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x < ball->x && distancePoint(pose, *ball) <= 15.0) {
                     projection = goal[goal_attack];
                 }else{
-                    attacker_state = AttackerState::GET_BEHIND_THE_BALL;
+                    attacker_state = AttackerState::AT_GET_BEHIND_THE_BALL;
                 } 
             }
             turn_gain += 0.015;
