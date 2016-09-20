@@ -9,5 +9,19 @@
 #include "robot.h"
 
 void Robot::GK_calc_action(){
-    cmd = Command(-1, 1);
+    //cmd = Command(-0, 0);
+    vector<btVector3> our_poses;
+    vector<btVector3> adversary_poses;
+    for(int i = 0 ; i < our_team->size() ; i++){
+		our_poses.push_back(our_team->at(i).get_pose());
+	    adversary_poses.push_back(adversary_team->at(i).get_pose());
+    }
+    apf.set_robots(our_poses, adversary_poses, *ball);
+
+    GK_projection();
+    
+}
+
+void Robot::GK_projection(){
+
 }

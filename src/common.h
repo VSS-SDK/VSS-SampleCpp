@@ -13,7 +13,7 @@
 #include "sstream"
 #include "math.h"
 #include "VSS-Interface/interface.h"
-#include "ompl.h"
+//#include "ompl.h"
 
 using namespace std;
 
@@ -26,7 +26,7 @@ namespace common{
     enum GOTO{ POSITION = 0, BALL = 1, ROBOT = 2 };
     enum Goal{ LEFT = 0, RIGHT = 1, UNDEFINED = 2 };
     enum AttackerState{ GET_BEHIND_THE_BALL = 0, ADJUST_TO_GET_THE_BALL = 1, APPROACH_OF_THE_BALL = 2, KICK_THE_BALL = 3, SPIN_TO_KICK_THE_BALL = 4 };
-    
+
     //! This struct represents a Vector in R^3.
     struct btVector3{
         //! Data: x, y, z.
@@ -184,9 +184,9 @@ namespace common{
 
     State Global_State2State(vss_state::Global_State global_state, string main_color);
 
-    Path PathPtr2Path(ob::PathPtr);
+    //Path PathPtr2Path(ob::PathPtr);
 
-    Path PathGeometric2Path(og::PathGeometric);
+    //Path PathGeometric2Path(og::PathGeometric);
 
     //! This function clean a stringstream 
     void clearSS(stringstream &ss);
