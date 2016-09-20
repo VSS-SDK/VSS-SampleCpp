@@ -46,8 +46,11 @@ btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOT
 	if(attacker_state == AttackerState::GET_BEHIND_THE_BALL){
 		attractive_force();
 		repulsive_force_ball();
-		//repulsive_force_our_robots();
-		//repulsive_force_adversary_robots();
+		repulsive_force_our_robots();
+		repulsive_force_adversary_robots();
+	}else
+	if(attacker_state == AttackerState::ADJUST_TO_GET_THE_BALL){
+		attractive_force();
 	}else
 	if(attacker_state == AttackerState::APPROACH_OF_THE_BALL){
 		attractive_force();
@@ -184,13 +187,13 @@ void PotentialFields::repulsive_force_ball(){
 
 		if(distances <= radiusRobot){
 			//se esta escostado no obstaculo, recebe um vetor maximo 
-			result.x += tanh(cos(theta))*0.1;
-			result.y += tanh(sin(theta))*beta;
+			//result.x += tanh(cos(theta))*0.1;
+			result.y += tanh(sin(theta))*INF;
 
-		}else if(distances <= (radiusRobot + areaRobot)){
+		}else if(distances <= (radiusRobot + areaRobot + areaBall)){
 			//se esta dentro da area de influencia
-			result.x += 0.1*(areaRobot + radiusRobot- distances)*cos(theta); 
-			result.y += beta*(areaRobot + radiusRobot - distances)*sin(theta);	
+			//result.x += 0.1*(areaRobot + radiusRobot- distances)*cos(theta); 
+			result.y += INF*(areaRobot + radiusRobot - distances)*sin(theta);	
 		}
 	}
 }

@@ -99,9 +99,9 @@ void Robot::calc_cmd_to(){
 		sumError += errorsIntegrative.at(i);
 	}*/
 
-	if(count_pose >= 60 && status != -1){
+	if(count_pose >= 30 && status != -1){
 		float distance = distancePoint(history_pose, pose);
-		if(distance < RADIUS_ROBOT/3.0){
+		if(distance < RADIUS_ROBOT/2.0){
 			rear_count = 20;
 		}
 		history_pose = pose;
@@ -158,10 +158,10 @@ void Robot::calc_cmd_to(){
 			}
 		}
 
-		if(distancePoint(pose, final_pose) < distance_to_stop){
+		/*if(distancePoint(pose, final_pose) < distance_to_stop){
 			cmd.left = 0;
 			cmd.right = 0;
-		}
+		}*/
 
 		count_pose++;
 	}else{
