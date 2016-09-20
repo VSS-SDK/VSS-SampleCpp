@@ -44,6 +44,7 @@ btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOT
 	this->attacker_state = attacker_state;
 
 	if(attacker_state == AttackerState::GET_BEHIND_THE_BALL){
+		is_last = false;
 		attractive_force();
 		repulsive_force_ball();
 		repulsive_force_our_robots();

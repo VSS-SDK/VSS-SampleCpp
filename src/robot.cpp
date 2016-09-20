@@ -32,8 +32,8 @@ Robot::Robot(){
 
 	turn_gain = 0.012;
 
-	goal[Goal::LEFT] = btVector3(10, 65, 0);
-	goal[Goal::RIGHT] = btVector3(160, 65, 0);
+	goal[Goal::LEFT] = btVector3(5, 65, 0);
+	goal[Goal::RIGHT] = btVector3(165, 65, 0);
     goal_attack = Goal::LEFT;
 	attacker_state = AttackerState::GET_BEHIND_THE_BALL;
 }

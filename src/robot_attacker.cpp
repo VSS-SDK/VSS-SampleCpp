@@ -41,34 +41,31 @@ void Robot::AT_projection(){
             test_var.x = ball->x - (cos(theta)*30.0);
             test_var.y = ball->y - (sin(theta)*30.0);
 
-            if(distancePoint(pose, test_var) >= 10.0){
-                projection = test_var;
-
-                if(pose.y >= 65){
-                    projection.y += 5;
-                }else{
-                    projection.y -= 5;
-                }
-
-                if(projection.x > 160.0){
-                    projection.x = 160.0;
-                }
-
-                if(projection.x < 10.0){
-                    projection.x = 10.0;
-                }
-
-                if(projection.y > 120.0){
-                    projection.y = 120.0;
-                }
-
-                if(projection.y < 10.0){
-                    projection.y = 10.0;
-                }
+            if(pose.y >= 65){
+                test_var.y += 5;
             }else{
-                pose.show();
-                projection.show();
-                ball->show();
+                test_var.y -= 5;
+            }
+
+            if(test_var.x > 160.0){
+                test_var.x = 160.0;
+            }
+
+            if(test_var.x < 10.0){
+                test_var.x = 10.0;
+            }
+
+            if(test_var.y > 120.0){
+                test_var.y = 120.0;
+            }
+
+            if(test_var.y < 10.0){
+                test_var.y = 10.0;
+            }
+
+            if(distancePoint(pose, test_var) >= 15.0){
+                projection = test_var;
+            }else{
                 attacker_state = AttackerState::APPROACH_OF_THE_BALL;
             }
         }break;
