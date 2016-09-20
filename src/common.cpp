@@ -177,7 +177,7 @@ namespace common{
         return state;
     }
 
-    Path PathPtr2Path(ob::PathPtr path_ptr){
+    /*Path PathPtr2Path(ob::PathPtr path_ptr){
 		Path path;
 		vector<btVector3> poses;
 
@@ -208,7 +208,7 @@ namespace common{
 
 		path.poses = poses;
 		return path;
-	}
+	}*/
 
     void clearSS(stringstream &ss){
         ss.str(string());

@@ -13,7 +13,7 @@
 #include "sstream"
 #include "math.h"
 #include "VSS-Interface/interface.h"
-#include "ompl.h"
+//#include "ompl.h"
 
 using namespace std;
 
@@ -186,9 +186,9 @@ namespace common{
 
     State Global_State2State(vss_state::Global_State global_state, string main_color);
 
-    Path PathPtr2Path(ob::PathPtr);
+    //Path PathPtr2Path(ob::PathPtr);
 
-    Path PathGeometric2Path(og::PathGeometric);
+    //Path PathGeometric2Path(og::PathGeometric);
 
     //! This function clean a stringstream 
     void clearSS(stringstream &ss);
