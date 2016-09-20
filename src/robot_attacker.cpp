@@ -38,7 +38,7 @@ void Robot::AT_projection(){
     }
     switch(attacker_state){
         case AttackerState::GET_BEHIND_THE_BALL:{
-            //cout << "GET_BEHIND_THE_BALL" << endl;
+            cout << "GET_BEHIND_THE_BALL" << endl;
 
             btVector3 test_var;
             float theta = radian(goal[goal_attack], *ball);
@@ -75,19 +75,35 @@ void Robot::AT_projection(){
             }
         }break;
         case AttackerState::APPROACH_OF_THE_BALL:{
-            //cout << "APPROACH_OF_THE_BALL" << endl;
-            if(distancePoint(pose, *ball) >= 10.0 && pose.x > ball->x){
-                projection = *ball;
+            cout << "APPROACH_OF_THE_BALL" << endl;
+            if(goal_attack == Goal::LEFT){
+                if(distancePoint(pose, *ball) >= 10.0 && pose.x > ball->x){
+                    projection = *ball;
+                }else{
+                    attacker_state = AttackerState::KICK_THE_BALL;
+                }
             }else{
-                attacker_state = AttackerState::KICK_THE_BALL;
+                if(distancePoint(pose, *ball) >= 10.0 && pose.x < ball->x){
+                    projection = *ball;
+                }else{
+                    attacker_state = AttackerState::KICK_THE_BALL;
+                }
             }
         }break;
         case AttackerState::KICK_THE_BALL:{
-            //cout << "KICK_THE_BALL" << endl;
-            if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x > ball->x && distancePoint(pose, *ball) <= 15.0) {
-                projection = goal[goal_attack];
+            cout << "KICK_THE_BALL" << endl;
+            if(goal_attack == Goal::LEFT){
+                if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x > ball->x && distancePoint(pose, *ball) <= 15.0) {
+                    projection = goal[goal_attack];
+                }else{
+                    attacker_state = AttackerState::GET_BEHIND_THE_BALL;
+                }
             }else{
-                attacker_state = AttackerState::GET_BEHIND_THE_BALL;
+                if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x < ball->x && distancePoint(pose, *ball) <= 15.0) {
+                    projection = goal[goal_attack];
+                }else{
+                    attacker_state = AttackerState::GET_BEHIND_THE_BALL;
+                } 
             }
         }break;
     }

@@ -25,7 +25,7 @@ namespace common{
     enum Task{ GOAL_KEEPER = 0, DEFENDER = 1, ATTACKER = 2 };
     enum GOTO{ POSITION = 0, BALL = 1, ROBOT = 2 };
     enum Goal{ LEFT = 0, RIGHT = 1, UNDEFINED = 2 };
-    enum AttackerState{ GET_BEHIND_THE_BALL = 0, ADJUST_TO_GET_THE_BALL = 1, APPROACH_OF_THE_BALL = 2, KICK_THE_BALL = 3 };
+    enum AttackerState{ GET_BEHIND_THE_BALL = 0, ADJUST_TO_GET_THE_BALL = 1, APPROACH_OF_THE_BALL = 2, KICK_THE_BALL = 3, SPIN_TO_KICK_THE_BALL = 4 };
     
     //! This struct represents a Vector in R^3.
     struct btVector3{
