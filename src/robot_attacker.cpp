@@ -11,6 +11,7 @@
 void Robot::AT_calc_action(){
     vector<btVector3> our_poses;
     vector<btVector3> adversary_poses;
+    turn_gain = TURN_GAIN;
 
 	for(int i = 0 ; i < our_team->size() ; i++){
 		our_poses.push_back(our_team->at(i).get_pose());
@@ -43,8 +44,8 @@ void Robot::AT_projection(){
             btVector3 test_var;
             float theta = radian(goal[goal_attack], *ball);
 
-            test_var.x = ball->x - (cos(theta)*30.0);
-            test_var.y = ball->y - (sin(theta)*30.0);
+            test_var.x = ball->x - (cos(theta)*25.0);
+            test_var.y = ball->y - (sin(theta)*25.0);
 
             if(pose.y >= 65){
                 test_var.y += 5;
@@ -71,8 +72,53 @@ void Robot::AT_projection(){
             if(distancePoint(pose, test_var) >= 15.0){
                 projection = test_var;
             }else{
+                attacker_state = AttackerState::ADJUST_TO_GET_THE_BALL;
+            }
+
+            iterator_aceleration = 0.0;
+            velocity_gain = 2.5;
+        }break;
+        case AttackerState::ADJUST_TO_GET_THE_BALL:{
+            cout << "ADJUST_TO_GET_THE_BALL" << endl;
+
+            btVector3 test_var;
+            float theta = radian(goal[goal_attack], *ball);
+
+            test_var.x = ball->x - (cos(theta)*35.0);
+            test_var.y = ball->y - (sin(theta)*35.0);
+
+            if(pose.y >= 65){
+                test_var.y -= 5;
+            }else{
+                test_var.y += 5;
+            }
+
+
+            if(test_var.x > 160.0 - RADIUS_ROBOT){
+                test_var.x = 160.0 - RADIUS_ROBOT;
+            }
+
+            if(test_var.x < 10 + RADIUS_ROBOT){
+                test_var.x = 10 + RADIUS_ROBOT;
+            }
+
+            if(test_var.y > 130.0 - RADIUS_ROBOT){
+                test_var.y = 130.0 - RADIUS_ROBOT;
+            }
+
+            if(test_var.y < RADIUS_ROBOT){
+                test_var.y = RADIUS_ROBOT;
+            }
+
+            if(distancePoint(pose, test_var) >= 15.0){
+                turn_gain += 0.015;
+                projection = test_var;
+            }else{
                 attacker_state = AttackerState::APPROACH_OF_THE_BALL;
             }
+
+            iterator_aceleration = 0.0;
+            velocity_gain = 2.5;
         }break;
         case AttackerState::APPROACH_OF_THE_BALL:{
             cout << "APPROACH_OF_THE_BALL" << endl;
@@ -89,6 +135,9 @@ void Robot::AT_projection(){
                     attacker_state = AttackerState::KICK_THE_BALL;
                 }
             }
+
+            iterator_aceleration = 0.0;
+            velocity_gain = 2.5;
         }break;
         case AttackerState::KICK_THE_BALL:{
             cout << "KICK_THE_BALL" << endl;
@@ -105,6 +154,9 @@ void Robot::AT_projection(){
                     attacker_state = AttackerState::GET_BEHIND_THE_BALL;
                 } 
             }
+            turn_gain += 0.015;
+            iterator_aceleration += 0.01;
+            velocity_gain += iterator_aceleration;
         }break;
     }
 

@@ -31,6 +31,8 @@ Robot::Robot(){
 	rear_count = 0;
 
 	turn_gain = 0.012;
+	velocity_gain = 2.5;
+	iterator_aceleration = 0.0;
 
 	goal[Goal::LEFT] = btVector3(5, 65, 0);
 	goal[Goal::RIGHT] = btVector3(165, 65, 0);
@@ -101,7 +103,7 @@ void Robot::calc_cmd_to(){
 
 	if(count_pose >= 30 && status != -1){
 		float distance = distancePoint(history_pose, pose);
-		if(distance < RADIUS_ROBOT){
+		if(distance < RADIUS_ROBOT/2.0){
 			rear_count = 20;
 		}
 		history_pose = pose;
@@ -119,8 +121,8 @@ void Robot::calc_cmd_to(){
 				cmd.left = distance_robot_goal - (PI * robot_side_size);
 				cmd.right = distance_robot_goal + (PI * robot_side_size);
 				
-				cmd.left *= 2.5;
-				cmd.right *= 2.5;
+				cmd.left *= velocity_gain;
+				cmd.right *= velocity_gain;
 			}else{
 				// SPIN
 				if(angulation_robot_robot_goal >= 0){
@@ -144,8 +146,8 @@ void Robot::calc_cmd_to(){
 				cmd.left = distance_robot_goal + (PI * robot_side_size);
 				cmd.right = distance_robot_goal - (PI * robot_side_size);
 				
-				cmd.left *= -2.5;
-				cmd.right *= -2.5;
+				cmd.left *= -velocity_gain;
+				cmd.right *= -velocity_gain;
 			}else{
 				// SPIN
 				if(angulation_robot_robot_goal >= 0){

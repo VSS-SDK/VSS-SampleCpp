@@ -25,6 +25,8 @@ protected:
     float angle_to_spin;
     float distance_to_stop;
     float turn_gain;
+    float velocity_gain;
+    float iterator_aceleration;
 
     vector<float> errorsIntegrative;
     int deltaTimeIntegrative;

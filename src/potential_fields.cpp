@@ -51,12 +51,14 @@ btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOT
 		//repulsive_force_adversary_robots();
 	}else
 	if(attacker_state == AttackerState::ADJUST_TO_GET_THE_BALL){
+		is_last = false;
 		attractive_force();
 	}else
 	if(attacker_state == AttackerState::APPROACH_OF_THE_BALL){
 		attractive_force();
 	}else
 	if(attacker_state == AttackerState::KICK_THE_BALL){
+		is_last = false;
 		attractive_force();
 		//repulsive_force_adversary_robots();
 	}
@@ -191,11 +193,12 @@ void PotentialFields::repulsive_force_ball(){
 			//result.x += tanh(cos(theta))*0.1;
 			result.y += tanh(sin(theta))*INF;
 
-		}else if(distances <= (radiusRobot + areaRobot + areaBall)){
+		}else if(distances <= (radiusRobot + areaRobot)){
 			//se esta dentro da area de influencia
 			//result.x += 0.1*(areaRobot + radiusRobot- distances)*cos(theta); 
-			result.y += INF*(areaRobot + radiusRobot - distances)*sin(theta);	
+			result.y += (INF+0.2)*(areaRobot + radiusRobot - distances)*sin(theta);	
 		}
+
 	}
 }
 
