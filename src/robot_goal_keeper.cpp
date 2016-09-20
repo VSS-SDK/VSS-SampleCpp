@@ -10,4 +10,5 @@
 
 void Robot::GK_calc_action(){
     cmd = Command(-1, 1);
+    // Programar o goleiro aqui
 }
