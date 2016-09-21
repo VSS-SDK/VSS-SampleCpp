@@ -9,106 +9,92 @@
 #include "robot.h"
 
 void Robot::GK_calc_action(){
-    //cmd = Command(-1, 1);
     vector<btVector3> our_poses;
     vector<btVector3> adversary_poses;
     turn_gain = TURN_GAIN;
 
-/*
-Isso não faz absolutamente nada!!!
-*/
-
-/*	for(int i = 0 ; i < our_team->size() ; i++){
+	for(int i = 0 ; i < our_team->size() ; i++){
 		our_poses.push_back(our_team->at(i).get_pose());
 	    adversary_poses.push_back(adversary_team->at(i).get_pose());
     }
 
     apf.set_robots(our_poses, adversary_poses, *ball);
 
+    GK_may_reach_the_ball_in_time();
     GK_projection();
     
-    
-    btVector3 potential = apf.calc_result(id, projection, true, GOTO::POSITION, goal_keeper_state);
+    btVector3 potential = apf.calc_result(id, projection, true, GOTO::POSITION, defender_state);
     
     step_pose.x = pose.x + potential.x;
     step_pose.y = pose.y + potential.y;
     step_pose.z = pose.z + potential.z;
-
-    if(count_pose >= 30 && status != -1){
-		float distance = distancePoint(history_pose, pose);
-		if(distance < RADIUS_ROBOT/2.0){
-			rear_count = 20;
-		}
-		history_pose = pose;
-		count_pose = 0;
-	}
-
-    calc_cmd_to();*/
+    
+    calc_cmd_to();
 }
 
-void Robot::GK_projection(){
-    /* switch(goal_keeper_state){
-        case GoalKeeperState::GK_GET_BEHIND_THE_BALL:{
-            cout << "GK_GET_BEHIND_THE_BALL" << endl;
+void Robot::GK_projection(){ 
+    path.poses.clear();
 
-            btVector3 test_var;
-            float theta = radian(goal[goal_attack], *ball);
+    if(goal_defense == Goal::RIGHT){
+        projection = goal[goal_defense];
+        projection.x -= 10;
+    }else{
+        projection = goal[goal_defense];
+        projection.x += 10;
+    }
+    
+    /*float theta = radian(ball_in_the_future, goal[goal_defense]);
 
-            test_var.x = ball->x - (cos(theta)*25.0);
-            test_var.y = ball->y - (sin(theta)*25.0);
+    if(goal_defense == Goal::RIGHT){
+        float distance_of_mark = ball_in_the_future.x + 20;
 
-            if(pose.y >= 65){
-                test_var.y += 5;
-            }else{
-                test_var.y -= 5;
-            }
+        if(distance_of_mark < 130){
+            distance_of_mark = 130;
+        }
+        if(distance_of_mark > 150){
+            distance_of_mark = 150;
+        }
 
-            if(test_var.x > 160.0 - RADIUS_ROBOT){
-                test_var.x = 160.0 - RADIUS_ROBOT;
-            }
+        projection = btVector3(distance_of_mark, ball_in_the_future.y - (sin(theta)*fabs(ball_in_the_future.x-distance_of_mark)), 0);
 
-            if(test_var.x < 10 + RADIUS_ROBOT){
-                test_var.x = 10 + RADIUS_ROBOT;
-            }
+        // DEBUG
+        path.poses.push_back(btVector3(distance_of_mark, 0, 0));
+        path.poses.push_back(btVector3(distance_of_mark, 130, 0));
+        path.poses.push_back(btVector3(130, 130, 0));
+        path.poses.push_back(btVector3(130, 0, 0));
+        path.poses.push_back(btVector3(distance_of_mark, 0, 0));
+    }else{
+        //if(ball->x > 40){
+        float distance_of_mark = ball_in_the_future.x - 20; 
 
-            if(test_var.y > 130.0 - RADIUS_ROBOT){
-                test_var.y = 130.0 - RADIUS_ROBOT;
-            }
+        if(distance_of_mark > 75){
+            distance_of_mark = 75;
+        }
 
-            if(test_var.y < RADIUS_ROBOT){
-                test_var.y = RADIUS_ROBOT;
-            }
+        if(distance_of_mark < 30){
+            distance_of_mark = 30;
+        }
 
-            if(distancePoint(pose, test_var) >= 15.0){
-                projection = test_var;
-            }else{
-                //goal_keeper_state = GoalKeeperState::GK_ADJUST_TO_GET_THE_BALL;
-                //state.robots[0].pose.y = 0;
-            }
+        projection = btVector3(distance_of_mark, ball_in_the_future.y - (sin(theta)*fabs(ball_in_the_future.x-distance_of_mark)), 0);
 
-            iterator_aceleration = 0.0;
-            velocity_gain = 2.5;
-        }break;
-        case AttackerState::AT_KICK_THE_BALL:{
-            cout << "KICK_THE_BALL" << endl;
-            if(goal_attack == Goal::LEFT){
-                if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x > ball->x && distancePoint(pose, *ball) <= 15.0) {
-                    projection = goal[goal_attack];
-                }else{
-                    attacker_state = AttackerState::AT_GET_BEHIND_THE_BALL;
-                }
-            }else{
-                if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x < ball->x && distancePoint(pose, *ball) <= 15.0) {
-                    projection = goal[goal_attack];
-                }else{
-                    attacker_state = AttackerState::AT_GET_BEHIND_THE_BALL;
-                } 
-            }
-            turn_gain += 0.015;
-            iterator_aceleration += 0.01;
-            velocity_gain += iterator_aceleration;
-        }break;*/
-    //}
+        // DEBUG
+        path.poses.push_back(btVector3(distance_of_mark, 0, 0));
+        path.poses.push_back(btVector3(distance_of_mark, 130, 0));
+        path.poses.push_back(btVector3(40, 130, 0));
+        path.poses.push_back(btVector3(40, 0, 0));
+        path.poses.push_back(btVector3(distance_of_mark, 0, 0));
+    }*/
 
     final_pose = projection;
+}
+
+void Robot::GK_may_reach_the_ball_in_time(){
+    // this must not be calculated any time
+    //time_to_reach_the_ball = (distancePoint(pose, *ball) + RADIUS_BALL + RADIUS_ROBOT) / distancePoint(v_pose, *v_ball);
+    ball_in_the_future.x = ball->x + (v_ball->x*0.25);
+    ball_in_the_future.y = ball->y + (v_ball->y*0.25);
+    //cout << "ball: " << endl;
+    //ball->show();
+    //cout << "future: " << endl;
+    //ball_in_the_future.show();
 }
