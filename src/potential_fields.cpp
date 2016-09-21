@@ -85,7 +85,7 @@ btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOT
 	return result;
 }
 
-btVector3 PotentialFields::calc_result(int, btVector3, bool, GOTO, GoalKeeperState goal_keeper_state){
+btVector3 PotentialFields::calc_result(int id, btVector3 goal, bool is_last, GOTO go_to, GoalKeeperState goal_keeper_state){
 	result = btVector3(0, 0, 0);
 	this->id = id;
 	this->is_last = is_last;
