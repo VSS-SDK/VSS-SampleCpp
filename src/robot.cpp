@@ -44,6 +44,7 @@ Robot::Robot(){
 }
 
 void Robot::calc_action(){
+	//project_ball();
 	switch(task){
 		case Task::GOAL_KEEPER:{
 			GK_calc_action();

@@ -57,6 +57,9 @@ protected:
 
     vector<Robot> *our_team, *adversary_team;
     btVector3 *ball, *v_ball;
+    btVector3 ball_in_the_future;
+    bool reach_the_ball_in_time;
+    float time_to_reach_the_ball;
 
     btVector3 projection, projection_to_plan;
     float distance_between_projections;
@@ -75,6 +78,10 @@ protected:
     void GK_projection();
     void DF_projection();
     void AT_projection();
+
+    void GK_may_reach_the_ball_in_time();
+    void DF_may_reach_the_ball_in_time();
+    void AT_may_reach_the_ball_in_time();
 
     bool ball_is_on_the_wall();
 

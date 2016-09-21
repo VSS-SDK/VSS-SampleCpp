@@ -20,6 +20,7 @@ void Robot::AT_calc_action(){
 
     apf.set_robots(our_poses, adversary_poses, *ball);
 
+    AT_may_reach_the_ball_in_time();
     AT_projection();
     
     btVector3 potential = apf.calc_result(id, projection, true, GOTO::POSITION, attacker_state);
@@ -164,10 +165,21 @@ void Robot::AT_projection(){
                 } 
             }
             turn_gain += 0.015;
-            iterator_aceleration += 0.005;
+            iterator_aceleration += 0.0035;
             velocity_gain += iterator_aceleration;
         }break;
     }
 
     final_pose = projection;
+}
+
+void Robot::AT_may_reach_the_ball_in_time(){
+    // this must not be calculated any time
+    time_to_reach_the_ball = (distancePoint(pose, *ball) + RADIUS_BALL + RADIUS_ROBOT) / distancePoint(v_pose, *v_ball);
+    ball_in_the_future.x = ball->x + (v_ball->x*time_to_reach_the_ball)/10.0;
+    ball_in_the_future.y = ball->y + (v_ball->y*time_to_reach_the_ball)/10.0;
+    //cout << "ball: " << endl;
+    //ball->show();
+    //cout << "future: " << endl;
+    //ball_in_the_future.show();
 }
