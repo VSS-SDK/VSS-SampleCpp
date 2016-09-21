@@ -41,6 +41,7 @@ Robot::Robot(){
 
 	attacker_state = AttackerState::AT_GET_BEHIND_THE_BALL;
 	defender_state = DefenderState::DF_MARK_THE_BALL;
+	goal_keeper_state = GoalKeeperState::GK_GET_BEHIND_THE_BALL;
 }
 
 void Robot::calc_action(){

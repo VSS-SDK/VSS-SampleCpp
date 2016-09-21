@@ -49,7 +49,7 @@ void Robot::AT_projection(){
     }*/
     switch(attacker_state){
         case AttackerState::AT_GET_BEHIND_THE_BALL:{
-            cout << "GET_BEHIND_THE_BALL" << endl;
+            //cout << "GET_BEHIND_THE_BALL" << endl;
 
             btVector3 test_var;
             float theta = radian(goal[goal_attack], *ball);
@@ -89,7 +89,7 @@ void Robot::AT_projection(){
             velocity_gain = 2.5;
         }break;
         case AttackerState::AT_ADJUST_TO_GET_THE_BALL:{
-            cout << "ADJUST_TO_GET_THE_BALL" << endl;
+            //cout << "ADJUST_TO_GET_THE_BALL" << endl;
 
             btVector3 test_var;
             float theta = radian(goal[goal_attack], *ball);
@@ -131,7 +131,7 @@ void Robot::AT_projection(){
             velocity_gain = 2.5;
         }break;
         case AttackerState::AT_APPROACH_OF_THE_BALL:{
-            cout << "APPROACH_OF_THE_BALL" << endl;
+            //cout << "APPROACH_OF_THE_BALL" << endl;
             if(goal_attack == Goal::LEFT){
                 if(distancePoint(pose, *ball) >= 10.0 && pose.x > ball->x){
                     projection = *ball;
@@ -150,7 +150,7 @@ void Robot::AT_projection(){
             velocity_gain = 2.5;
         }break;
         case AttackerState::AT_KICK_THE_BALL:{
-            cout << "KICK_THE_BALL" << endl;
+            //cout << "KICK_THE_BALL" << endl;
             if(goal_attack == Goal::LEFT){
                 if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x > ball->x && distancePoint(pose, *ball) <= 15.0) {
                     projection = goal[goal_attack];
