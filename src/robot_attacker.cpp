@@ -165,7 +165,7 @@ void Robot::AT_projection(){
                 } 
             }
             turn_gain += 0.015;
-            iterator_aceleration += 0.0035;
+            iterator_aceleration += 0.0045;
             velocity_gain += iterator_aceleration;
         }break;
     }

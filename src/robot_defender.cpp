@@ -20,6 +20,7 @@ void Robot::DF_calc_action(){
 
     apf.set_robots(our_poses, adversary_poses, *ball);
 
+    DF_may_reach_the_ball_in_time();
     DF_projection();
     
     btVector3 potential = apf.calc_result(id, projection, true, GOTO::POSITION, defender_state);
@@ -32,14 +33,14 @@ void Robot::DF_calc_action(){
 }
 
 void Robot::DF_projection(){ 
-    switch(defender_state){
-        case DF_MARK_THE_BALL:{
+    /*switch(defender_state){
+        case DF_MARK_THE_BALL:{*/
             path.poses.clear();
-            float theta = radian(*ball, goal[goal_defense]);
+            float theta = radian(ball_in_the_future, goal[goal_defense]);
 
             //if(){
                 if(goal_defense == Goal::RIGHT){
-                    float distance_of_mark = ball->x + 40;
+                    float distance_of_mark = ball_in_the_future.x + 40;
 
                     if(distance_of_mark < 95){
                         distance_of_mark = 95;
@@ -48,7 +49,7 @@ void Robot::DF_projection(){
                         distance_of_mark = 130;
                     }
 
-                    projection = btVector3(distance_of_mark, ball->y - (sin(theta)*fabs(ball->x-distance_of_mark)), 0);
+                    projection = btVector3(distance_of_mark, ball_in_the_future.y - (sin(theta)*fabs(ball_in_the_future.x-distance_of_mark)), 0);
 
                     // DEBUG
                     path.poses.push_back(btVector3(distance_of_mark, 0, 0));
@@ -57,29 +58,27 @@ void Robot::DF_projection(){
                     path.poses.push_back(btVector3(130, 0, 0));
                     path.poses.push_back(btVector3(distance_of_mark, 0, 0));
                 }else{
-                    if(ball->x > 40){
-                        float distance_of_mark = ball->x - 40;
+                    float distance_of_mark = ball_in_the_future.x - 40;
 
-                        if(distance_of_mark > 75){
-                            distance_of_mark = 75;
-                        }
-
-                        if(distance_of_mark < 40){
-                            distance_of_mark = 40;
-                        }
-
-                        projection = btVector3(distance_of_mark, ball->y - (sin(theta)*fabs(ball->x-distance_of_mark)), 0);
-
-                        // DEBUG
-                        path.poses.push_back(btVector3(distance_of_mark, 0, 0));
-                        path.poses.push_back(btVector3(distance_of_mark, 130, 0));
-                        path.poses.push_back(btVector3(40, 130, 0));
-                        path.poses.push_back(btVector3(40, 0, 0));
-                        path.poses.push_back(btVector3(distance_of_mark, 0, 0));
+                    if(distance_of_mark > 75){
+                        distance_of_mark = 75;
                     }
+
+                    if(distance_of_mark < 40){
+                        distance_of_mark = 40;
+                    }
+
+                    projection = btVector3(distance_of_mark, ball_in_the_future.y - (sin(theta)*fabs(ball_in_the_future.x-distance_of_mark)), 0);
+
+                    // DEBUG
+                    path.poses.push_back(btVector3(distance_of_mark, 0, 0));
+                    path.poses.push_back(btVector3(distance_of_mark, 130, 0));
+                    path.poses.push_back(btVector3(40, 130, 0));
+                    path.poses.push_back(btVector3(40, 0, 0));
+                    path.poses.push_back(btVector3(distance_of_mark, 0, 0));
                 }
 
-        }break;
+        /*}break;
         case DF_INSULATES_THE_BALL:{
             float theta = radian(*ball, goal[goal_defense]);
 
@@ -89,132 +88,18 @@ void Robot::DF_projection(){
                 projection = btVector3(40, ball->y - (sin(theta)*fabs(ball->x-40)), 0);
             }
         }break;
-    }
-
+    }*/
 
     final_pose = projection;
-    /*switch(attacker_state){
-        case AttackerState::GET_BEHIND_THE_BALL:{
-            cout << "GET_BEHIND_THE_BALL" << endl;
+}
 
-            btVector3 test_var;
-            float theta = radian(goal[goal_attack], *ball);
-
-            test_var.x = ball->x - (cos(theta)*25.0);
-            test_var.y = ball->y - (sin(theta)*25.0);
-
-            if(pose.y >= 65){
-                test_var.y += 5;
-            }else{
-                test_var.y -= 5;
-            }
-
-            if(test_var.x > 160.0 - RADIUS_ROBOT){
-                test_var.x = 160.0 - RADIUS_ROBOT;
-            }
-
-            if(test_var.x < 10 + RADIUS_ROBOT){
-                test_var.x = 10 + RADIUS_ROBOT;
-            }
-
-            if(test_var.y > 130.0 - RADIUS_ROBOT){
-                test_var.y = 130.0 - RADIUS_ROBOT;
-            }
-
-            if(test_var.y < RADIUS_ROBOT){
-                test_var.y = RADIUS_ROBOT;
-            }
-
-            if(distancePoint(pose, test_var) >= 15.0){
-                projection = test_var;
-            }else{
-                attacker_state = AttackerState::ADJUST_TO_GET_THE_BALL;
-            }
-
-            iterator_aceleration = 0.0;
-            velocity_gain = 2.5;
-        }break;
-        case AttackerState::ADJUST_TO_GET_THE_BALL:{
-            cout << "ADJUST_TO_GET_THE_BALL" << endl;
-
-            btVector3 test_var;
-            float theta = radian(goal[goal_attack], *ball);
-
-            test_var.x = ball->x - (cos(theta)*35.0);
-            test_var.y = ball->y - (sin(theta)*35.0);
-
-            if(pose.y >= 65){
-                test_var.y -= 5;
-            }else{
-                test_var.y += 5;
-            }
-
-
-            if(test_var.x > 160.0 - RADIUS_ROBOT){
-                test_var.x = 160.0 - RADIUS_ROBOT;
-            }
-
-            if(test_var.x < 10 + RADIUS_ROBOT){
-                test_var.x = 10 + RADIUS_ROBOT;
-            }
-
-            if(test_var.y > 130.0 - RADIUS_ROBOT){
-                test_var.y = 130.0 - RADIUS_ROBOT;
-            }
-
-            if(test_var.y < RADIUS_ROBOT){
-                test_var.y = RADIUS_ROBOT;
-            }
-
-            if(distancePoint(pose, test_var) >= 15.0){
-                turn_gain += 0.015;
-                projection = test_var;
-            }else{
-                attacker_state = AttackerState::APPROACH_OF_THE_BALL;
-            }
-
-            iterator_aceleration = 0.0;
-            velocity_gain = 2.5;
-        }break;
-        case AttackerState::APPROACH_OF_THE_BALL:{
-            cout << "APPROACH_OF_THE_BALL" << endl;
-            if(goal_attack == Goal::LEFT){
-                if(distancePoint(pose, *ball) >= 10.0 && pose.x > ball->x){
-                    projection = *ball;
-                }else{
-                    attacker_state = AttackerState::KICK_THE_BALL;
-                }
-            }else{
-                if(distancePoint(pose, *ball) >= 10.0 && pose.x < ball->x){
-                    projection = *ball;
-                }else{
-                    attacker_state = AttackerState::KICK_THE_BALL;
-                }
-            }
-
-            iterator_aceleration = 0.0;
-            velocity_gain = 2.5;
-        }break;
-        case AttackerState::KICK_THE_BALL:{
-            cout << "KICK_THE_BALL" << endl;
-            if(goal_attack == Goal::LEFT){
-                if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x > ball->x && distancePoint(pose, *ball) <= 15.0) {
-                    projection = goal[goal_attack];
-                }else{
-                    attacker_state = AttackerState::GET_BEHIND_THE_BALL;
-                }
-            }else{
-                if(distancePoint(pose, goal[goal_attack]) >= 10.0 && pose.x < ball->x && distancePoint(pose, *ball) <= 15.0) {
-                    projection = goal[goal_attack];
-                }else{
-                    attacker_state = AttackerState::GET_BEHIND_THE_BALL;
-                } 
-            }
-            turn_gain += 0.015;
-            iterator_aceleration += 0.01;
-            velocity_gain += iterator_aceleration;
-        }break;
-    }
-
-    final_pose = projection;*/
+void Robot::DF_may_reach_the_ball_in_time(){
+    // this must not be calculated any time
+    //time_to_reach_the_ball = (distancePoint(pose, *ball) + RADIUS_BALL + RADIUS_ROBOT) / distancePoint(v_pose, *v_ball);
+    ball_in_the_future.x = ball->x + (v_ball->x*0.25);
+    ball_in_the_future.y = ball->y + (v_ball->y*0.25);
+    //cout << "ball: " << endl;
+    //ball->show();
+    //cout << "future: " << endl;
+    //ball_in_the_future.show();
 }
