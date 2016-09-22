@@ -65,9 +65,27 @@ void Robot::GK_projection(){
         }break;
         case GoalKeeperState::GK_SPIN_TO_KICK_THE_BALL:{
             if(distancePoint(pose, *ball) <= 10){
-                cout << "GK_SPIN_TO_KICK_THE_BALL" << endl;
-                cmd.left = 300;
-                cmd.right = -300;
+                if(goal_defense == Goal::RIGHT){
+                    if(pose.y < ball->y){
+                        cout << "GK_SPIN_RIGHT" << endl;
+                        cmd.left = 300;
+                        cmd.right = -300;
+                    }else if(pose.y > ball->y){
+                        cout << "GK_SPIN_LEFT" << endl;
+                        cmd.left = -300;
+                        cmd.right = 300;
+                    }
+                }else{
+                    if(pose.y < ball->y){
+                        cout << "GK_SPIN_LEFT" << endl;
+                        cmd.left = -300;
+                        cmd.right = 300;
+                    }else if(pose.y > ball->y){
+                        cout << "GK_SPIN_RIGHT" << endl;
+                        cmd.left = 300;
+                        cmd.right = -300;
+                    }
+                }
             }else{
                 goal_keeper_state = GoalKeeperState::GK_MARK_THE_BALL;
             }
