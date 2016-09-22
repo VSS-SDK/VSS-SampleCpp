@@ -29,32 +29,47 @@ void Robot::GK_calc_action(){
     step_pose.y = pose.y + potential.y;
     step_pose.z = pose.z + potential.z;
     
-    calc_cmd_to();
+    if(goal_keeper_state != GoalKeeperState::GK_SPIN_TO_KICK_THE_BALL){
+        calc_cmd_to();
+    }
 }
 
 void Robot::GK_projection(){
     switch(goal_keeper_state){
-        case GoalKeeperState::GK_GET_BEHIND_THE_BALL:{
-            cout << "GK_GET_BEHIND_THE_BALL" << endl;
-            path.poses.clear();
-            float theta = radian(ball_in_the_future, goal[goal_defense]);
+        case GoalKeeperState::GK_MARK_THE_BALL:{
+            if(distancePoint(pose, *ball) > 10){
+                cout << "GK_MARK_THE_BALL" << endl;
+                path.poses.clear();
+                float theta = radian(ball_in_the_future, goal[goal_defense]);
 
-            if(goal_defense == Goal::RIGHT){
-                projection = goal[goal_defense];
-                projection.x -= 10;
-                projection.y = ball_in_the_future.y - (sin(theta)*fabs(ball_in_the_future.x-150));
+                if(goal_defense == Goal::RIGHT){
+                    projection = goal[goal_defense];
+                    projection.x -= 10;
+                    projection.y = ball_in_the_future.y - (sin(theta)*fabs(ball_in_the_future.x-150));
+                }else{
+                    projection = goal[goal_defense];
+                    projection.x += 10;
+                    projection.y = ball_in_the_future.y - (sin(theta)*fabs(ball_in_the_future.x-10));
+                }
+
+                if(projection.y > 90){
+                    projection.y = 90;
+                }
+
+                if(projection.y < 50){
+                    projection.y = 50;
+                }
             }else{
-                projection = goal[goal_defense];
-                projection.x += 10;
-                projection.y = ball_in_the_future.y - (sin(theta)*fabs(ball_in_the_future.x-10));
+                goal_keeper_state = GoalKeeperState::GK_SPIN_TO_KICK_THE_BALL;
             }
-
-            if(projection.y > 90){
-                projection.y = 90;
-            }
-
-            if(projection.y < 50){
-                projection.y = 50;
+        }break;
+        case GoalKeeperState::GK_SPIN_TO_KICK_THE_BALL:{
+            if(distancePoint(pose, *ball) <= 10){
+                cout << "GK_SPIN_TO_KICK_THE_BALL" << endl;
+                cmd.left = 300;
+                cmd.right = -300;
+            }else{
+                goal_keeper_state = GoalKeeperState::GK_MARK_THE_BALL;
             }
         }break;
     }
@@ -66,17 +81,3 @@ void Robot::GK_may_reach_the_ball_in_time(){
     ball_in_the_future.x = ball->x + (v_ball->x*0.25);
     ball_in_the_future.y = ball->y + (v_ball->y*0.25);
 }
-
-
-/*
-// SPIN
-if( ( ball_in_the_future.x <= 15 &&  ball_in_the_future.x > 0) 
-&& ( ball_in_the_future.y <= (170/2) && ball_in_the_future.y >= (170/2)-20 ) ) {
-    cmd.left = -100;
-    cmd.right = 100;
-    cout << "oiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii";
-}else{
-    //cmd.left = 50;
-    //cmd.right = -50;
-}
-*/
