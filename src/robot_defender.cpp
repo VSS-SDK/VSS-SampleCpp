@@ -33,8 +33,8 @@ void Robot::DF_calc_action(){
 }
 
 void Robot::DF_projection(){ 
-    /*switch(defender_state){
-        case DF_MARK_THE_BALL:{*/
+    switch(defender_state){
+        case DF_MARK_THE_BALL:{
             path.poses.clear();
             float theta = radian(ball_in_the_future, goal[goal_defense]);
 
@@ -77,18 +77,23 @@ void Robot::DF_projection(){
                     path.poses.push_back(btVector3(40, 0, 0));
                     path.poses.push_back(btVector3(distance_of_mark, 0, 0));
                 }
-
-        /*}break;
-        case DF_INSULATES_THE_BALL:{
-            float theta = radian(*ball, goal[goal_defense]);
-
-            if(goal_defense == Goal::RIGHT){
-                projection = btVector3(130, ball->y - (sin(theta)*fabs(ball->x-130)), 0);
-            }else{
-                projection = btVector3(40, ball->y - (sin(theta)*fabs(ball->x-40)), 0);
-            }
+            //}else{
+            //    goal_defense = GoalDefense::DF_INSULATES_THE_BALL;
+            //}
         }break;
-    }*/
+        /*case DF_INSULATES_THE_BALL:{
+            if(){
+                theta = radian(*ball, goal[goal_defense]);
+                if(goal_defense == Goal::RIGHT){
+                    projection = btVector3(130, ball->y - (sin(theta)*fabs(ball->x-130)), 0);
+                }else{
+                    projection = btVector3(40, ball->y - (sin(theta)*fabs(ball->x-40)), 0);
+                }
+            }else{
+                goal_defense = GoalDefense::DF_MARK_THE_BALL;
+            }
+        }break;*/
+    }
 
     final_pose = projection;
 }
