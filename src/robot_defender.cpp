@@ -83,7 +83,7 @@ void Robot::DF_projection(){
         }break;
         /*case DF_INSULATES_THE_BALL:{
             if(){
-                theta = radian(*ball, goal[goal_defense]);
+                float theta = radian(*ball, goal[goal_defense]);
                 if(goal_defense == Goal::RIGHT){
                     projection = btVector3(130, ball->y - (sin(theta)*fabs(ball->x-130)), 0);
                 }else{
