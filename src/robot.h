@@ -14,11 +14,13 @@
 
 using namespace common;
 
-#define TURN_GAIN 0.020
+#define TURN_GAIN_REAL  0.008
+#define TURN_GAIN_SIM   0.015
 
 class Robot{
 protected:
     int id;
+    bool real_environment;
     float robot_side_size;
     float max_velocity_wheel;
     float max_aceleration_wheel;
@@ -66,7 +68,10 @@ protected:
 
     PotentialFields apf;
 
-    void calc_cmd_to();
+    //void calc_cmd_to();
+    void AT_calc_cmd();
+    void DF_calc_cmd();
+    void GK_calc_cmd();
     void check_opportunities();
     void check_need_to_brutal_mode();
     btVector3 generate_free_pose();
@@ -98,7 +103,9 @@ public:
     void set_pose(btVector3);
     void set_v_pose(btVector3);
     void set_goal(Goal);
+    void set_real_environment(bool);
 
+    Task get_task();
     btVector3 get_pose();
     btVector3 get_v_pose();
     btVector3 get_final_pose();

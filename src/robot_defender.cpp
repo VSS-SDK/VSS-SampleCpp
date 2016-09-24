@@ -11,7 +11,6 @@
 void Robot::DF_calc_action(){
     vector<btVector3> our_poses;
     vector<btVector3> adversary_poses;
-    turn_gain = TURN_GAIN;
 
 	for(int i = 0 ; i < our_team->size() ; i++){
 		our_poses.push_back(our_team->at(i).get_pose());
@@ -29,16 +28,16 @@ void Robot::DF_calc_action(){
     step_pose.y = pose.y + potential.y;
     step_pose.z = pose.z + potential.z;
     
-    calc_cmd_to();
+    DF_calc_cmd();
 }
 
 void Robot::DF_projection(){ 
-    /*switch(defender_state){
-        case DF_MARK_THE_BALL:{*/
+    switch(defender_state){
+        case DF_MARK_THE_BALL:{
             path.poses.clear();
             float theta = radian(ball_in_the_future, goal[goal_defense]);
 
-            //if(){
+            //if(distancePoint(pose, *ball) > 15){
                 if(goal_defense == Goal::RIGHT){
                     float distance_of_mark = ball_in_the_future.x + 40;
 
@@ -77,9 +76,11 @@ void Robot::DF_projection(){
                     path.poses.push_back(btVector3(40, 0, 0));
                     path.poses.push_back(btVector3(distance_of_mark, 0, 0));
                 }
-
-        /*}break;
-        case DF_INSULATES_THE_BALL:{
+            //}else{
+                //defender_state = DefenderState::DF_INSULATES_THE_BALL;
+            //}
+        }break;
+        /*case DF_INSULATES_THE_BALL:{
             float theta = radian(*ball, goal[goal_defense]);
 
             if(goal_defense == Goal::RIGHT){
@@ -87,8 +88,8 @@ void Robot::DF_projection(){
             }else{
                 projection = btVector3(40, ball->y - (sin(theta)*fabs(ball->x-40)), 0);
             }
-        }break;
-    }*/
+        }break;*/
+    }
 
     final_pose = projection;
 }
@@ -102,4 +103,8 @@ void Robot::DF_may_reach_the_ball_in_time(){
     //ball->show();
     //cout << "future: " << endl;
     //ball_in_the_future.show();
+}
+
+void Robot::DF_calc_cmd(){
+	AT_calc_cmd();
 }

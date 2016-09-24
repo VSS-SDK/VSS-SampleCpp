@@ -11,7 +11,6 @@
 void Robot::GK_calc_action(){
     vector<btVector3> our_poses;
     vector<btVector3> adversary_poses;
-    turn_gain = TURN_GAIN;
 
 	for(int i = 0 ; i < our_team->size() ; i++){
 		our_poses.push_back(our_team->at(i).get_pose());
@@ -29,29 +28,92 @@ void Robot::GK_calc_action(){
     step_pose.y = pose.y + potential.y;
     step_pose.z = pose.z + potential.z;
     
-    calc_cmd_to();
+    if(goal_keeper_state != GoalKeeperState::GK_SPIN_TO_KICK_THE_BALL && goal_keeper_state != GoalKeeperState::GK_ADJUST_ANGLE){
+        //cout << fabs(pose.x - projection.x) << endl;
+        if(fabs(pose.x - projection.x) > 5){
+            cout << "AT" << endl;
+            AT_calc_cmd();
+        }else{
+            cout << "GK" << endl;
+            GK_calc_cmd();
+        }
+    }
 }
 
-void Robot::GK_projection(){ 
+void Robot::GK_projection(){
+    float y_min = 45;
+    float y_max = 85;
     path.poses.clear();
     float theta = radian(ball_in_the_future, goal[goal_defense]);
 
-    if(goal_defense == Goal::RIGHT){
-        projection = goal[goal_defense];
-        projection.x -= 10;
-        projection.y = ball_in_the_future.y - (sin(theta)*fabs(ball_in_the_future.x-150));
-    }else{
-        projection = goal[goal_defense];
-        projection.x += 10;
-        projection.y = ball_in_the_future.y - (sin(theta)*fabs(ball_in_the_future.x-10));
-    }
+    switch(goal_keeper_state){
+        case GoalKeeperState::GK_MARK_THE_BALL:{
+            cout << "GK_MARK_THE_BALL" << endl;
+            if(distancePoint(pose, *ball) > 10){
+                path.poses.clear();
+                float theta = radian(ball_in_the_future, goal[goal_defense]);
 
-    if(projection.y > 90){
-        projection.y = 90;
-    }
+                if(goal_defense == Goal::RIGHT){
+                    projection = goal[goal_defense];
+                    projection.x -= 12;
+                    projection.y = ball_in_the_future.y - (sin(theta)*fabs(ball_in_the_future.x-150));
 
-    if(projection.y < 50){
-        projection.y = 50;
+                    path.poses.push_back(btVector3(160, y_min, 0));
+                    path.poses.push_back(btVector3(147, y_min, 0));
+                    path.poses.push_back(btVector3(147, y_max, 0));
+                    path.poses.push_back(btVector3(160, y_max, 0));
+                    
+                }else{
+                    projection = goal[goal_defense];
+                    projection.x += 12;
+                    projection.y = ball_in_the_future.y - (sin(theta)*fabs(ball_in_the_future.x-10));
+
+
+                    path.poses.push_back(btVector3(10, y_min, 0));
+                    path.poses.push_back(btVector3(23, y_min, 0));
+                    path.poses.push_back(btVector3(23, y_max, 0));
+                    path.poses.push_back(btVector3(10, y_max, 0));
+                }
+
+                if(projection.y > y_max){
+                    projection.y = y_max;
+                }
+
+                if(projection.y < y_min){
+                    projection.y = y_min;
+                }
+            }else{
+                goal_keeper_state = GoalKeeperState::GK_SPIN_TO_KICK_THE_BALL;  
+            }
+        }break;
+        case GoalKeeperState::GK_SPIN_TO_KICK_THE_BALL:{
+            cout << "GK_SPIN_TO_KICK_THE_BALL" << endl;
+            if(distancePoint(pose, *ball) <= 10){
+                if(goal_defense == Goal::RIGHT){
+                    if(pose.y < ball->y){
+                        //cout << "GK_SPIN_RIGHT" << endl;
+                        cmd.left = 245;
+                        cmd.right = -245;
+                    }else if(pose.y > ball->y){
+                        //cout << "GK_SPIN_LEFT" << endl;
+                        cmd.left = -245;
+                        cmd.right = 245;
+                    }
+                }else{
+                    if(pose.y < ball->y){
+                        //cout << "GK_SPIN_LEFT" << endl;
+                        cmd.left = -245;
+                        cmd.right = 245;
+                    }else if(pose.y > ball->y){
+                        //cout << "GK_SPIN_RIGHT" << endl;
+                        cmd.left = 245;
+                        cmd.right = -245;
+                    }
+                }
+            }else{
+                goal_keeper_state = GoalKeeperState::GK_MARK_THE_BALL;
+            }
+        }break;
     }
 
     final_pose = projection;
@@ -60,4 +122,74 @@ void Robot::GK_projection(){
 void Robot::GK_may_reach_the_ball_in_time(){
     ball_in_the_future.x = ball->x + (v_ball->x*0.25);
     ball_in_the_future.y = ball->y + (v_ball->y*0.25);
+}
+
+// MODEL BLAZIC
+void Robot::GK_calc_cmd(){
+    float distance_robot_goal;
+	float angulation_robot_goal;
+	float angulation_robot_robot_goal;
+
+	// Diferença entre angulação do robô e do objetivo
+	distance_robot_goal = distancePoint(step_pose, pose);
+	angulation_robot_goal = angulation(step_pose, pose);
+
+	angulation_robot_goal -= 180; 
+    if(angulation_robot_goal < 0){
+    	angulation_robot_goal += 360;
+    }
+
+	angulation_robot_robot_goal = pose.z - angulation_robot_goal;
+
+	if(angulation_robot_robot_goal > 180){
+		angulation_robot_robot_goal -= 360;
+	}
+
+	if(angulation_robot_robot_goal < -180){
+		angulation_robot_robot_goal += 360;
+	}
+
+    float soft_gain;
+    float cmd_adjust;
+
+    if(!real_environment){
+        soft_gain = 0.1;
+        cmd_adjust = 10;
+    }else{
+        soft_gain = 0.1;
+        cmd_adjust = 5;
+    }
+
+    //velocity_gain += 1.0;
+
+    if(pose.z > 70 && pose.z < 100){
+        if(step_pose.y > pose.y){
+            //cmd.left = distance_robot_goal;
+            //cmd.right = distance_robot_goal;
+            float soft_gain;
+			float PI = turn_gain*angulation_robot_robot_goal;// + 0.001*sumError;
+
+            cmd.left = distance_robot_goal + (PI * robot_side_size)*soft_gain;
+            cmd.right = distance_robot_goal - (PI * robot_side_size)*soft_gain;
+            
+            cmd.left *= -velocity_gain;
+            cmd.right *= -velocity_gain;
+        }else{
+            float PI = turn_gain*angulation_robot_robot_goal;// + 0.001*sumError;
+
+            cmd.left = distance_robot_goal - (PI * robot_side_size)*soft_gain;
+            cmd.right = distance_robot_goal + (PI * robot_side_size)*soft_gain;
+            
+            cmd.left *= velocity_gain;
+            cmd.right *= velocity_gain;
+        }
+    }else{
+        if(pose.z > 90){
+            cmd.right = cmd_adjust;
+            cmd.left = 1;
+        }else{
+            cmd.right = -cmd_adjust;
+            cmd.left = 1;
+        }
+    }
 }

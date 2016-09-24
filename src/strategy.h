@@ -10,6 +10,7 @@
 #define _STRATEGY_H_
 
 #include "sample.h"
+#include "thread"
 #include "robot.h"
 #include "SirSoccer-COM/Communication.h"
 
@@ -28,16 +29,21 @@ class Strategy : public Sample{
 		Sample :: common::Debug debug;
 	*/
 protected:
+	thread *main_thread;
+	thread *comm_thread;
 	Communication comm;
 	vector<Robot> our_team;
 	vector<Robot> adversary_team;
 	btVector3 ball, v_ball;
-
+	Goal goal_attack;
+    Goal goal_defense;
+	
 public:
 	Strategy();	
 
 	void init(string main_color, bool is_debug, bool real_environment, Goal goal);
 	void loop();
+	void communication();
 	void calc_strategy();
 
 	void update_state_on_robots();

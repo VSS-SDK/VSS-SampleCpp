@@ -36,11 +36,64 @@ Strategy::Strategy(){
 void Strategy::init(string main_color, bool is_debug, bool real_environment, Goal goal){
 	init_sample(main_color, is_debug, real_environment);
 
-	for(int i = 0 ; i < our_team.size(); i++){
-		our_team.at(i).set_goal(goal);
+	goal_attack = goal;
+	if(goal_attack == Goal::LEFT){
+		goal_defense = Goal::RIGHT;
+	}else{
+		goal_defense = Goal::LEFT;
 	}
 
-	loop();
+	for(int i = 0 ; i < our_team.size(); i++){
+		our_team.at(i).set_goal(goal);
+		our_team.at(i).set_real_environment(real_environment);
+	}
+
+	if(!real_environment){
+		loop();
+	}else{
+		main_thread = new thread(bind(&Strategy::loop, this));
+		comm_thread = new thread(bind(&Strategy::communication, this));
+
+		main_thread->join();
+		comm_thread->join();
+	}
+}
+
+void Strategy::communication(){
+	while(true){
+		for(int i = 0 ; i < 3 ; i++){
+			commands[i] = our_team.at(i).get_command();
+			commands[i].left = commands[i].left * 3.5;
+			commands[i].right = commands[i].right * 3.5;
+
+			if(commands[i].left < 0){
+				commands[i].left = 255 + fabs(commands[i].left);
+			}else
+			if(commands[i].left > 255){
+				commands[i].left = 255;
+			}
+
+			if(commands[i].right < 0){
+				commands[i].right = 255 + fabs(commands[i].right);
+			}else
+			if(commands[i].right > 255){
+				commands[i].right = 255;
+			}
+
+			if(commands[i].left > 509){
+				commands[i].left = 509;
+			}
+
+			if(commands[i].right > 509){
+				commands[i].right = 509;
+			}
+
+			commands[i].left = (int)commands[i].left;
+			commands[i].right = (int)commands[i].right;
+		}
+		//commands[0].show();
+		comm.sendSerialData(commands);
+	}
 }
 
 void Strategy::loop(){
@@ -64,24 +117,6 @@ void Strategy::loop(){
 			// DON'T REMOVE send_data();
 			send_commands();
 			// DON'T REMOVE send_data();
-		}else{
-			for(int i = 0 ; i < 3 ; i++){
-				commands[i] = our_team.at(i).get_command();
-				commands[i].left = commands[i].left * 3.5;
-				commands[i].right = commands[i].right * 3.5;
-
-				if(commands[i].left < 0){
-					commands[i].left = 255 + fabs(commands[i].left);
-				}
-				if(commands[i].right < 0){
-					commands[i].right = 255 + fabs(commands[i].right);
-				}
-
-				commands[i].left = (int)commands[i].left;
-				commands[i].right = (int)commands[i].right;
-			}
-
-			comm.sendSerialData(commands);
 		}
 
 		// DON'T REMOVE debug_mode
@@ -94,9 +129,47 @@ void Strategy::loop(){
 }
 
 void Strategy::calc_strategy(){
-	for(int i = 0 ; i < 3 ; i++){
-		our_team.at(i).calc_action();
+	float distance_min = 1024;
+	int id_min = 0;
+
+	/*for(int i = 0 ; i < our_team.size() ; i++){
+		float new_distance = distancePoint(ball, our_team.at(i).get_pose());
+		if(new_distance < distance_min){
+			distance_min = new_distance;
+			id_min = i;
+		}
 	}
+
+	if(our_team.at(id_min).get_task() != Task::ATTACKER){
+		if(goal_attack = Goal::LEFT){
+			if(ball.x < our_team.at(id_min).get_pose().x){
+				for(int i = 0 ; i < our_team.size() ; i++){
+					if(our_team.at(i).get_task() == Task::ATTACKER){
+						our_team.at(i).set_task(Task::DEFENDER);
+						our_team.at(id_min).set_task(Task::ATTACKER);
+					}
+				}
+			}
+		}else{
+			if(ball.x > our_team.at(id_min).get_pose().x){
+				for(int i = 0 ; i < our_team.size() ; i++){
+					if(our_team.at(i).get_task() == Task::ATTACKER){
+						our_team.at(i).set_task(Task::DEFENDER);
+						our_team.at(id_min).set_task(Task::ATTACKER);
+					}
+				}
+			}
+		}
+		cout << "ruim" << endl;
+	}*/
+
+
+	/*for(int i = 0 ; i < our_team.size() ; i++){
+		our_team.at(i).calc_action();
+	}*/
+	our_team.at(0).calc_action();
+	our_team.at(1).calc_action();
+	our_team.at(2).calc_action();
 }
 
 void Strategy::update_state_on_robots(){

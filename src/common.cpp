@@ -48,11 +48,11 @@ namespace common{
 
         state.v_ball_kalman.x = global_state.balls(0).k_v_pose().x();       // Kalman Vel X
         state.v_ball_kalman.y = global_state.balls(0).k_v_pose().y();       // Kalman Vel Y
-
+        
         if(main_color == "yellow"){
             for(int i = 0 ; i < 3 ; i++){
                 // Yellow Robots POSE
-                state.robots[i].pose.x =  global_state.robots_yellow(i).pose().x();           // Pos X
+                state.robots[i].pose.x = global_state.robots_yellow(i).pose().x();           // Pos X
                 state.robots[i].pose.y = global_state.robots_yellow(i).pose().y();           // Pos Y
                 state.robots[i].pose.z =  global_state.robots_yellow(i).pose().yaw();         // Rotation in Z Axis (YAW)
 
