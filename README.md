@@ -38,6 +38,13 @@ $ make
 $ ./VSS-SampleStrategy -c [yellow || blue]
 ```
 
+
+Gallery
+-------
+![screenshot 1](https://raw.githubusercontent.com/SIRLab/VSS-SampleStrategy/master/images/top.png)
+
+
+
 License
 -------
 
