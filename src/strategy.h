@@ -41,7 +41,7 @@ protected:
 public:
 	Strategy();	
 
-	void init(string main_color, bool is_debug, bool real_environment, Goal goal);
+	void init(string main_color, bool is_debug, bool real_environment, Goal goal, string ip_receive_state, string ip_send_debug, string ip_send_command);
 	void loop();
 	void communication();
 	void calc_strategy();

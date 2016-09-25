@@ -33,8 +33,8 @@ Strategy::Strategy(){
 	}
 }
 
-void Strategy::init(string main_color, bool is_debug, bool real_environment, Goal goal){
-	init_sample(main_color, is_debug, real_environment);
+void Strategy::init(string main_color, bool is_debug, bool real_environment, Goal goal, string ip_receive_state, string ip_send_debug, string ip_send_command){
+	init_sample(main_color, is_debug, real_environment, ip_receive_state, ip_send_debug, ip_send_command);
 
 	goal_attack = goal;
 	if(goal_attack == Goal::LEFT){
