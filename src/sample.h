@@ -27,6 +27,7 @@ private:
 	vss_debug::Global_Debug global_debug;
 
 protected:
+	string ip_receive_state, ip_send_debug, ip_send_command;
     string main_color;
     bool is_debug;
     bool real_environment;
@@ -39,7 +40,7 @@ protected:
 public:
     Sample();
 
-    void init_sample(string main_color, bool is_debug, bool real_environment);
+    void init_sample(string main_color, bool is_debug, bool real_environment, string ip_receive_state, string ip_send_debug, string ip_send_command);
     void receive_state();
     void send_commands();
     void send_debug();

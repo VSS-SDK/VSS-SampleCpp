@@ -10,23 +10,20 @@
 #include "strategy.h"
 #include "boost.h"
 
-bool argParse(int argc, char** argv, string *color, bool *debug);
+bool argParse(int argc, char** argv, string *color, bool *debug, string *ip_receive_state, string *ip_send_debug, string *ip_send_command);
 
 int main(int argc, char** argv){
 	string color;
     bool debug = false;
+    string ip_receive_state, ip_send_debug, ip_send_command;
 
-	if(argParse(argc, argv, &color, &debug)){
-        /*if(debug){
-            cout << "debug ON";
-        }*/
+	if(argParse(argc, argv, &color, &debug, &ip_receive_state, &ip_send_debug, &ip_send_command)){
         if(color == "yellow" || color == "blue"){
 		    Strategy strategy;
-		    strategy.init(color, debug, true);
+		    strategy.init(color, debug, true, ip_receive_state, ip_send_debug, ip_send_command);
         }else{
             cerr << "ERROR: Your main color must be yellow or blue." << endl;
         }
-        
 	}else{
 		cerr << "ERROR: You must enter a main color." << endl;
 	}
@@ -34,7 +31,7 @@ int main(int argc, char** argv){
 	return 0;
 }
 
-bool argParse(int argc, char** argv, string *color, bool *debug){
+bool argParse(int argc, char** argv, string *color, bool *debug, string *ip_receive_state, string *ip_send_debug, string *ip_send_command){
     namespace bpo = boost::program_options;
 
     // Declare the supported options.
@@ -42,6 +39,9 @@ bool argParse(int argc, char** argv, string *color, bool *debug){
     desc.add_options()
         ("help,h", "(Optional) produce help message")
         ("debug,d", "(Optional) open the debug rotine")
+        ("ip_receive_state,i", bpo::value<std::string>()->default_value("localhost"), "(Optional) Specify the IP from pc it's running VSS-Vision.")
+        ("ip_send_debug,I", bpo::value<std::string>()->default_value("localhost"), "(Optional) Specify the IP from pc it's running VSS-Viewer.")
+        ("ip_send_command,s", bpo::value<std::string>()->default_value("localhost"), "(Optional) Specify the IP from pc it's running VSS-Simulator.")
         ("color,c", bpo::value<std::string>()->default_value(" "), "(Required) Specify the main color of your team, may be yellow or blue.");
     bpo::variables_map vm;
     bpo::store(bpo::parse_command_line(argc, argv, desc), vm);
@@ -56,6 +56,12 @@ bool argParse(int argc, char** argv, string *color, bool *debug){
         *debug = true;
     }
 
+    *ip_receive_state = vm["ip_receive_state"].as<string>();    
+
+    *ip_send_debug = vm["ip_send_debug"].as<string>();
+
+    *ip_send_command = vm["ip_send_command"].as<string>();
+    
     *color = vm["color"].as<string>();
 
     if(*color == " "){

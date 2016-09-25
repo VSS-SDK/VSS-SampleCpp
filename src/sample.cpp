@@ -12,24 +12,33 @@ Sample::Sample(){
 
 }
 
-void Sample::init_sample(string main_color, bool is_debug, bool real_environment){
+void Sample::init_sample(string main_color, bool is_debug, bool real_environment, string ip_receive_state, string ip_send_debug, string ip_send_command){
     this->main_color = main_color;
     this->is_debug = is_debug;
     this->real_environment;
-	
-    interface_receive.createSocketReceiveState(&global_state);
+	this->ip_receive_state = "tcp://" + ip_receive_state + ":5555";
+	this->ip_send_debug = "tcp://" + ip_send_debug;
+	this->ip_send_command = "tcp://" + ip_send_command;
+
+    interface_receive.createSocketReceiveState(&global_state, this->ip_receive_state);
 
 	if(main_color == "yellow"){
-		interface_send.createSendCommandsTeam1(&global_commands);
+		this->ip_send_command += ":5556";
+		interface_send.createSendCommandsTeam1(&global_commands, this->ip_send_command);
 		
-		if(is_debug)
-			interface_debug.createSendDebugTeam1(&global_debug);
+		if(is_debug){
+			this->ip_send_debug += ":5558";
+			interface_debug.createSendDebugTeam1(&global_debug, this->ip_send_debug);
+		}
 
 	}else{
-		interface_send.createSendCommandsTeam2(&global_commands);
+		this->ip_send_command += ":5557";
+		interface_send.createSendCommandsTeam2(&global_commands, this->ip_send_command);
 
-		if(is_debug)
-			interface_debug.createSendDebugTeam2(&global_debug);
+		if(is_debug){
+			this->ip_send_debug += ":5559";
+			interface_debug.createSendDebugTeam2(&global_debug, this->ip_send_debug);
+		}
 	}
 }
 
