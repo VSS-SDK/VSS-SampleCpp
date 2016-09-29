@@ -35,8 +35,9 @@ protected:
     bool real_environment;
     int situation;
 
+    btVector3 commands[3];
     common::State state;
-	common::Command commands[3];
+	//common::Command commands[3];
     common::Debug debug;
 
 public:
