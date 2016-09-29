@@ -36,8 +36,8 @@ void Robot::DF_projection(){
         case DF_MARK_THE_BALL:{
             path.poses.clear();
             float theta = radian(ball_in_the_future, goal[goal_defense]);
-
-            //if(distancePoint(pose, *ball) > 15){
+            
+            //if(distancePoint(pose, *ball) > 10){
                 if(goal_defense == Goal::RIGHT){
                     float distance_of_mark = ball_in_the_future.x + 40;
 
@@ -77,9 +77,36 @@ void Robot::DF_projection(){
                     path.poses.push_back(btVector3(distance_of_mark, 0, 0));
                 }
             //}else{
-                //defender_state = DefenderState::DF_INSULATES_THE_BALL;
+              //  defender_state = DefenderState::DF_SPIN_TO_KICK_THE_BALL;
             //}
         }break;
+        /*case DefenderState::DF_SPIN_TO_KICK_THE_BALL:{
+            if(distancePoint(pose, *ball) <= 10){
+                if(goal_defense == Goal::RIGHT){
+                    if(pose.y < ball->y){
+                        //cout << "GK_SPIN_RIGHT" << endl;
+                        cmd.left = 245;
+                        cmd.right = -245;
+                    }else if(pose.y > ball->y){
+                        //cout << "GK_SPIN_LEFT" << endl;
+                        cmd.left = -245;
+                        cmd.right = 245;
+                    }
+                }else{
+                    if(pose.y < ball->y){
+                        //cout << "GK_SPIN_LEFT" << endl;
+                        cmd.left = -245;
+                        cmd.right = 245;
+                    }else if(pose.y > ball->y){
+                        //cout << "GK_SPIN_RIGHT" << endl;
+                        cmd.left = 245;
+                        cmd.right = -245;
+                    }
+                }
+            }else{
+                defender_state = DefenderState::DF_MARK_THE_BALL;
+            }
+        }break;*/
         /*case DF_INSULATES_THE_BALL:{
             float theta = radian(*ball, goal[goal_defense]);
 
