@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 VSS-SampleStrategy
 ==================
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)][gpl3]
@@ -71,3 +72,9 @@ You are allowed and encouraged to use this software on the IEEE Very Small Size 
 [vss-viewer]: https://github.com/SIRLab/VSS-Viewer
 [vss-sample]: https://github.com/SIRLab/VSS-SampleStrategy
 [sirlab_site]: http://sirlab.github.io/vss.html
+=======
+VSS-Interface
+-------------
+Interface que possibilita a comunicação entre os projetos do VSS-SDK.
+
+>>>>>>> 49ff22afbc14360ae67d08b6cc758164b58d5fd8

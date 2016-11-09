@@ -32,6 +32,8 @@ protected:
     bool is_debug;
     bool real_environment;
     int situation;
+    string name;
+    int flag_init;
 
     common::State state;
 	common::Command commands[3];
@@ -40,7 +42,7 @@ protected:
 public:
     Sample();
 
-    void init_sample(string main_color, bool is_debug, bool real_environment, string ip_receive_state, string ip_send_debug, string ip_send_command);
+    void init_sample(string main_color, bool is_debug, bool real_environment, string ip_receive_state, string ip_send_debug, string ip_send_command, string name);
     void receive_state();
     void send_commands();
     void send_debug();

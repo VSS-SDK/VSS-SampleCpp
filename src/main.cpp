@@ -10,17 +10,18 @@
 #include "strategy.h"
 #include "boost.h"
 
-bool argParse(int argc, char** argv, string *color, bool *debug, string *ip_receive_state, string *ip_send_debug, string *ip_send_command);
+bool argParse(int argc, char** argv, string *color, bool *debug, string *ip_receive_state, string *ip_send_debug, string *ip_send_command, string *name);
 
 int main(int argc, char** argv){
 	string color;
     bool debug = false;
+    string name;
     string ip_receive_state, ip_send_debug, ip_send_command;
 
-	if(argParse(argc, argv, &color, &debug, &ip_receive_state, &ip_send_debug, &ip_send_command)){
+	if(argParse(argc, argv, &color, &debug, &ip_receive_state, &ip_send_debug, &ip_send_command, &name)){
         if(color == "yellow" || color == "blue"){
 		    Strategy strategy;
-		    strategy.init(color, debug, true, ip_receive_state, ip_send_debug, ip_send_command);
+		    strategy.init(color, debug, false, ip_receive_state, ip_send_debug, ip_send_command, name);
         }else{
             cerr << "ERROR: Your main color must be yellow or blue." << endl;
         }
@@ -31,7 +32,7 @@ int main(int argc, char** argv){
 	return 0;
 }
 
-bool argParse(int argc, char** argv, string *color, bool *debug, string *ip_receive_state, string *ip_send_debug, string *ip_send_command){
+bool argParse(int argc, char** argv, string *color, bool *debug, string *ip_receive_state, string *ip_send_debug, string *ip_send_command, string *name){
     namespace bpo = boost::program_options;
 
     // Declare the supported options.
@@ -39,6 +40,7 @@ bool argParse(int argc, char** argv, string *color, bool *debug, string *ip_rece
     desc.add_options()
         ("help,h", "(Optional) produce help message")
         ("debug,d", "(Optional) open the debug rotine")
+        ("name,n", bpo::value<std::string>()->default_value("sample"), "(Optional) Specify the name of the strategy.")
         ("ip_receive_state,i", bpo::value<std::string>()->default_value("localhost"), "(Optional) Specify the IP from pc it's running VSS-Vision.")
         ("ip_send_debug,I", bpo::value<std::string>()->default_value("localhost"), "(Optional) Specify the IP from pc it's running VSS-Viewer.")
         ("ip_send_command,s", bpo::value<std::string>()->default_value("localhost"), "(Optional) Specify the IP from pc it's running VSS-Simulator.")
@@ -55,6 +57,8 @@ bool argParse(int argc, char** argv, string *color, bool *debug, string *ip_rece
     if (vm.count("debug")){
         *debug = true;
     }
+
+    *name = vm["name"].as<string>();  
 
     *ip_receive_state = vm["ip_receive_state"].as<string>();    
 

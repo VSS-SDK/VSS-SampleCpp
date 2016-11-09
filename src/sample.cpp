@@ -12,10 +12,12 @@ Sample::Sample(){
 
 }
 
-void Sample::init_sample(string main_color, bool is_debug, bool real_environment, string ip_receive_state, string ip_send_debug, string ip_send_command){
+void Sample::init_sample(string main_color, bool is_debug, bool real_environment, string ip_receive_state, string ip_send_debug, string ip_send_command, string name){
+	flag_init = 0;
     this->main_color = main_color;
     this->is_debug = is_debug;
-    this->real_environment;
+    this->real_environment = real_environment;
+	this->name = name;
 	this->ip_receive_state = "tcp://" + ip_receive_state + ":5555";
 	this->ip_send_debug = "tcp://" + ip_send_debug;
 	this->ip_send_command = "tcp://" + ip_send_command;
@@ -50,7 +52,12 @@ void Sample::receive_state(){
 
 void Sample::send_commands(){
     global_commands = vss_command::Global_Commands();
-	global_commands.set_situation(NONE); 
+	global_commands.set_situation(NONE);
+
+	if(flag_init == 0){
+		global_commands.set_name(name);
+		flag_init = 1;
+	}
 
 	if(main_color == "yellow"){
 		global_commands.set_is_team_yellow(true);

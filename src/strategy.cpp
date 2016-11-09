@@ -18,8 +18,8 @@ Strategy::Strategy(){
 	srand(time(NULL));
 }
 
-void Strategy::init(string main_color, bool is_debug, bool real_environment, string ip_receive_state, string ip_send_debug, string ip_send_command){
-	init_sample(main_color, is_debug, real_environment, ip_receive_state, ip_send_debug, ip_send_command);
+void Strategy::init(string main_color, bool is_debug, bool real_environment, string ip_receive_state, string ip_send_debug, string ip_send_command, string name){
+	init_sample(main_color, is_debug, real_environment, ip_receive_state, ip_send_debug, ip_send_command, name);
 	loop();
 }
 
@@ -58,7 +58,7 @@ void Strategy::calc_strategy(){
 	//state.robots[0].pose.show();
 	// commands[1]
 	// commands[2]
-	debug.robots_final_pose[0] = final;
+	//debug.robots_final_pose[0] = final;
 
 	for(int i = 0 ; i < 3 ; i++){
 		debug.robots_path[i].poses.clear();

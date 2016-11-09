@@ -15,6 +15,10 @@
 
 # Fortran module files
 *.mod
+<<<<<<< HEAD
+=======
+*.smod
+>>>>>>> 49ff22afbc14360ae67d08b6cc758164b58d5fd8
 
 # Compiled Static libraries
 *.lai
@@ -22,14 +26,26 @@
 *.a
 *.lib
 
+<<<<<<< HEAD
 # Junk Files
 .vscode/.browse.VC*
 *.pb.cc
 *.pb.h
 
+=======
+# Remove Junk Files
+*.vscode/.browse.VC.*
+*.pb.cc
+*.pb.h
+
+
+>>>>>>> 49ff22afbc14360ae67d08b6cc758164b58d5fd8
 # Executables
 *.exe
 *.out
 *.app
+<<<<<<< HEAD
 VSS-SampleStrategy
 VSS-SampleStrategy-Debug
+=======
+>>>>>>> 49ff22afbc14360ae67d08b6cc758164b58d5fd8
