@@ -11,7 +11,7 @@
 
 #include "iostream"
 #include "math.h"
-#include "VSS-Interface/interface.h"
+#include "VSS-Interface/cpp/interface.h"
 
 using namespace std;
 

@@ -64,4 +64,4 @@ clean: message_cleaning
 	@rm $(RELEASE) $(FILE_NAMES)
 
 proto:
-	cd src/VSS-Interface/protos && make -f protos.make
+	cd src/VSS-Interface && ./protos.sh
