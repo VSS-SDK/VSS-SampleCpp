@@ -14,7 +14,7 @@ Installation
 Cloning
 -------
 ```
-$ git clone --recursive https://github.com/SIRLab/VSS-SampleStrategy.git
+$ git clone --recursive https://github.com/SIRLab/VSS-SampleCpp.git
 ```
 
 
@@ -43,6 +43,6 @@ You are allowed and encouraged to use this software on the IEEE Very Small Size 
 
 [gpl3]: http://www.gnu.org/licenses/gpl-3.0/
 [travis]: https://travis-ci.org/SIRLab/VSS-SampleRust
-[install]: https://github.com/SIRLab/VSS-SampleStrategy/blob/master/INSTALL.md
+[install]: https://github.com/SIRLab/VSS-SampleCppy/blob/master/INSTALL.md
 [youtube]: https://www.youtube.com/watch?v=qYsNPGvAuME
 [vss-sdk]: http://sirlab.github.io/VSS-SDK
