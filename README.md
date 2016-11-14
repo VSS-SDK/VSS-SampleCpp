@@ -2,7 +2,6 @@ VSS-SampleCpp
 =============
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)][gpl3]
 [![Build Status](https://travis-ci.org/SIRLab/VSS-SampleCpp.svg?branch=master)][travis]
-[![Link: Youtube](https://img.shields.io/badge/Link-Youtube-red.svg)][youtube]
 
 
 Mais informações podem ser encontradas em [VSS-SDK][vss-sdk].
