@@ -7,7 +7,7 @@ Mais informações podem ser encontradas em [VSS-SDK][vss-sdk].
 
 ## Lendo um pacote state
 
-```c_cpp
+```cpp
 global_state.balls(0).pose().x();       // Pos X
 global_state.balls(0).pose().y();       // Pos Y
 
@@ -22,7 +22,7 @@ global_state.robots_blue(i).pose().yaw();       // Rot Z
 
 ## Montando um pacote commands
 
-```c_cpp
+```cpp
 global_commands = vss_command::Global_Commands();
 
 global_commands.set_situation(NONE);
@@ -39,7 +39,7 @@ for(int i = 0 ; i < 3 ; i++){
 
 ## Motando um pacote debug
 
-```c_cpp
+```cpp
 global_debug = vss_debug::Global_Debug();
 	
 for(int i = 0 ; i < 3 ; i++){
