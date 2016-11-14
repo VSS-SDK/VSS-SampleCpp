@@ -59,6 +59,25 @@ for(int i = 0 ; i < 3 ; i++){
 }
 ```
 
+## Trocando pacotes (state, commands e debug)
+
+```cpp
+void createSocketReceiveState(vss_state::Global_State*, string addr_client_multicast = "tcp://localhost:5555");
+void receiveState();
+
+void createSendCommandsTeam1(vss_command::Global_Commands*, string addr_client_simulator_team1 = "tcp://localhost:5556");
+void sendCommandTeam1();
+
+void createSendCommandsTeam2(vss_command::Global_Commands*, string addr_client_simulator_team2 = "tcp://localhost:5557");
+void sendCommandTeam2();
+
+void createSendDebugTeam1(vss_debug::Global_Debug*, string addr_client_debug_team1 = "tcp://localhost:5558");
+void sendDebugTeam1();
+
+void createSendDebugTeam2(vss_debug::Global_Debug*, string addr_client_debug_team2 = "tcp://localhost:5559");
+void sendDebugTeam2();
+```
+
 Installation
 ------------
 [INSTALL][install]
