@@ -37,7 +37,7 @@ for(int i = 0 ; i < 3 ; i++){
 }
 ```
 
-## Motando um pacote debug
+## Montando um pacote debug
 
 ```cpp
 global_debug = vss_debug::Global_Debug();
