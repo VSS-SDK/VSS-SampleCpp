@@ -43,6 +43,5 @@
 *.exe
 *.out
 *.app
-VSS-SampleStrategy
-VSS-SampleStrategy-Debug
+VSS-SampleCpp
 
