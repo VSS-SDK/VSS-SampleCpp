@@ -31,7 +31,8 @@ FILE_NAMES = $(FILE_NAMES_SRC) $(FILE_NAMES_PROTOS)
 
 
 RELEASE = VSS-SampleCpp
-DEBUG = VSS-SampleCpp-Debug
+
+
 
 .cpp.o:
 	@$(CCX) $(INCLUDES) $(LIBRARIES) -Wall -Wformat -c -o $@ $< -w
@@ -48,17 +49,11 @@ message_compiling:
 message_cleaning:
 	@echo Cleaning VSS-SampleCpp ...
 
-yellow:
-	./$(RELEASE) -c yellow
-
-blue:
-	./$(RELEASE) -c blue
+run:
+	./VSS-SampleCpp
 
 release: $(FILE_NAMES)
 	@$(CCX) -o $(RELEASE) $(FILE_NAMES) $(LIBRARIES) $(INCLUDES)
-
-debug: 
-	$(CCX) -g $(shell find -name '*.cpp') $(shell find -name '*.cc') $(LIBRARIES) $(INCLUDES) -o $(DEBUG)
 
 clean: message_cleaning
 	@rm $(RELEASE) $(FILE_NAMES)
