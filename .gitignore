@@ -44,4 +44,4 @@
 *.out
 *.app
 VSS-SampleCpp
-
+build/*
