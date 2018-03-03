@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/johnathan/Repositories/SDK/VSS-SampleCpp/src/main.cpp
+cstdlib
+/home/johnathan/Repositories/SDK/VSS-SampleCpp/src/cstdlib
+interface.h
+/home/johnathan/Repositories/SDK/VSS-SampleCpp/src/interface.h
+

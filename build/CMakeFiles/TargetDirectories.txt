@@ -1,0 +1,9 @@
+/home/johnathan/Repositories/SDK/VSS-SampleCpp/build/CMakeFiles/edit_cache.dir
+/home/johnathan/Repositories/SDK/VSS-SampleCpp/build/CMakeFiles/package_source.dir
+/home/johnathan/Repositories/SDK/VSS-SampleCpp/build/CMakeFiles/rebuild_cache.dir
+/home/johnathan/Repositories/SDK/VSS-SampleCpp/build/CMakeFiles/package.dir
+/home/johnathan/Repositories/SDK/VSS-SampleCpp/build/CMakeFiles/vss-sample.dir
+/home/johnathan/Repositories/SDK/VSS-SampleCpp/build/CMakeFiles/list_install_components.dir
+/home/johnathan/Repositories/SDK/VSS-SampleCpp/build/CMakeFiles/install.dir
+/home/johnathan/Repositories/SDK/VSS-SampleCpp/build/CMakeFiles/install/strip.dir
+/home/johnathan/Repositories/SDK/VSS-SampleCpp/build/CMakeFiles/install/local.dir

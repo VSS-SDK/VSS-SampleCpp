@@ -1,0 +1,1 @@
+/usr/bin/c++   -g -Wall -Werror -std=c++11 -pthread   CMakeFiles/vss-sample.dir/src/main.cpp.o  -o vss-sample  -Lusr/lib -rdynamic -lvss-interface -lprotobuf -lboost_program_options -Wl,-rpath,usr/lib: 

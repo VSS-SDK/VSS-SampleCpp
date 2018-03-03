@@ -7,7 +7,7 @@
  */
 
 #include "cstdlib"
-#include "VSS-Interface/cpp/interface.h"
+#include "interface.h"
 
 Interface interface_receive;                    //! Interface de recebimento de estados
 vss_state::Global_State global_state;           //! Pacote que define um estado
@@ -67,14 +67,12 @@ void receive_state(){
 
 void send_commands(){
     global_commands = vss_command::Global_Commands();       // Devemos limpar, pois funciona como um vector
-	global_commands.set_situation(0);                       // Situação normal de jogo
-	global_commands.set_name("simple");                     // Nome da equipe. NOTE que não é necessário enviar sempre isso
 	global_commands.set_is_team_yellow(true);
-	
+
 	for(int i = 0 ; i < 3 ; i++){                           // todos os robôs vão girar
 		vss_command::Robot_Command *robot = global_commands.add_robot_commands();
 		robot->set_id(i);
-		robot->set_left_vel(1);                             
+		robot->set_left_vel(1);
 		robot->set_right_vel(-1);
 	}
 
@@ -84,8 +82,8 @@ void send_commands(){
 
 void send_debug(){
 	global_debug = vss_debug::Global_Debug();                       // Devemos limpar, pois funciona como um vector
-	
-	for(int i = 0 ; i < 3 ; i++){                                   // Todos os robôs terão o vetor de movimentação variado perto deles mesmos                           
+
+	for(int i = 0 ; i < 3 ; i++){                                   // Todos os robôs terão o vetor de movimentação variado perto deles mesmos
 		vss_debug::Pose *steps = global_debug.add_step_poses();
 		steps->set_id(i);
 		steps->set_x(global_state.robots_yellow(i).pose().x() - 10 + rand()%20);
@@ -93,7 +91,7 @@ void send_debug(){
 		steps->set_yaw(global_state.robots_yellow(i).pose().yaw());
 	}
 
-	for(int i = 0 ; i < 3 ; i++){                                   // Todos os robôs terão a pose final variada perto da bola 
+	for(int i = 0 ; i < 3 ; i++){                                   // Todos os robôs terão a pose final variada perto da bola
 		vss_debug::Pose *finals = global_debug.add_final_poses();
 		finals->set_id(i);
 		finals->set_x(global_state.balls(0).pose().x() - 10 + rand()%20);
@@ -104,14 +102,14 @@ void send_debug(){
 	for(int i = 0 ; i < 3 ; i++){                                    // Todos os robôs teram um caminho que leva para a bola
 		vss_debug::Path *paths = global_debug.add_paths();
 		paths->set_id(i);
-		
+
         // Pose do robô
         vss_debug::Pose *poses1 = paths->add_poses();
         poses1->set_id(i);
         poses1->set_x(global_state.robots_yellow(i).pose().x());
         poses1->set_y(global_state.robots_yellow(i).pose().y());
         poses1->set_yaw(0);
-		
+
         // Pose da bola
         vss_debug::Pose *poses2 = paths->add_poses();
         poses2->set_id(i);
