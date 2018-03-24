@@ -45,3 +45,4 @@
 *.app
 VSS-SampleCpp
 build/*
+cmake-build-debug/*
