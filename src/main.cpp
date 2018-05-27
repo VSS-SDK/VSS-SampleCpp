@@ -7,6 +7,7 @@
  */
 
 #include <StateReceiver.h>
+#include <CommandSender.h>
 #include "cstdlib"
 #include "interface.h"
 
@@ -15,22 +16,22 @@ using namespace vss;
 StateReceiver stateReceiver;
 State state;
 
-Interface interface_send;                       //! Interface de envio de comandos
-vss_command::Global_Commands global_commands;   //! Pacote que define um comando
+CommandSender commandSender;
+Command command;
 
 Interface interface_debug;                      //! Interface de envio de informações de debug visual
 vss_debug::Global_Debug global_debug;           //! Pacote que define o debug visual
 
-void receive_state();
 void send_commands();
 void send_debug();
 
 int main(int argc, char** argv){
     srand(time(NULL));
-    stateReceiver.createSocket(); //! VSS-Vision e VSS-Simulator abrem um socket na porta 5555
 
-    interface_send.createSendCommandsTeam1(&global_commands, "tcp://localhost:5556");   //! Team2 abre o socket na porta 5557
-	interface_debug.createSendDebugTeam1(&global_debug, "tcp://localhost:5558");        //! Team2 abre o socket na porta 5559
+    stateReceiver.createSocket(); //! VSS-Vision e VSS-Simulator abrem um socket na porta 5555
+	commandSender.createSocket(TeamType::Yellow);
+
+    interface_debug.createSendDebugTeam1(&global_debug, "tcp://localhost:5558");        //! Team2 abre o socket na porta 5559
 
     while(true){
     	state = stateReceiver.receiveState(FieldTransformationType::None);
@@ -42,18 +43,20 @@ int main(int argc, char** argv){
 }
 
 void send_commands(){
-    global_commands = vss_command::Global_Commands();       // Devemos limpar, pois funciona como um vector
-	global_commands.set_is_team_yellow(true);
+	Command command;
 
-	for(int i = 0 ; i < 3 ; i++){                           // todos os robôs vão girar
-		vss_command::Robot_Command *robot = global_commands.add_robot_commands();
-		robot->set_id(i);
-		robot->set_left_vel(1);
-		robot->set_right_vel(-1);
+	command.id = 0;
+
+	for(int i = 0 ; i < 3 ; i++){
+	    WheelsCommand wCommand;
+		wCommand.id = i;
+		wCommand.leftVel = 10;
+		wCommand.rightVel = -10;
+
+		command.commands.push_back(wCommand);
 	}
 
-    interface_send.sendCommandTeam1();                      // Não bloqueante, envia os comandos para o VSS-Simulator
-    // NOTE que aqui entraria o código de envio para robôs reais
+	commandSender.sendCommand(command);
 }
 
 void send_debug(){
