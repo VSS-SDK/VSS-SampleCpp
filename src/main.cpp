@@ -6,11 +6,14 @@
  * file, You can obtain one at http://www.gnu.org/licenses/gpl-3.0/.
  */
 
+#include <StateReceiver.h>
 #include "cstdlib"
 #include "interface.h"
 
-Interface interface_receive;                    //! Interface de recebimento de estados
-vss_state::Global_State global_state;           //! Pacote que define um estado
+using namespace vss;
+
+StateReceiver stateReceiver;
+State state;
 
 Interface interface_send;                       //! Interface de envio de comandos
 vss_command::Global_Commands global_commands;   //! Pacote que define um comando
@@ -24,45 +27,18 @@ void send_debug();
 
 int main(int argc, char** argv){
     srand(time(NULL));
-    interface_receive.createSocketReceiveState(&global_state, "tcp://localhost:5555");  //! VSS-Vision e VSS-Simulator abrem um socket na porta 5555
-	interface_send.createSendCommandsTeam1(&global_commands, "tcp://localhost:5556");   //! Team2 abre o socket na porta 5557
+    stateReceiver.createSocket(); //! VSS-Vision e VSS-Simulator abrem um socket na porta 5555
+
+    interface_send.createSendCommandsTeam1(&global_commands, "tcp://localhost:5556");   //! Team2 abre o socket na porta 5557
 	interface_debug.createSendDebugTeam1(&global_debug, "tcp://localhost:5558");        //! Team2 abre o socket na porta 5559
 
     while(true){
-        receive_state();
+    	state = stateReceiver.receiveState(FieldTransformationType::None);
         send_commands();
         send_debug();
     }
 
 	return 0;
-}
-
-void receive_state(){
-    interface_receive.receiveState();           //! Bloqueante até o VSS-Vision ou VSS-Simulator enviar um estado
-
-    global_state.balls(0).pose().x();           // Pos X da bola
-    global_state.balls(0).pose().y();           // Pos Y da bola
-
-    global_state.balls(0).v_pose().x();         // Vel X da bola
-    global_state.balls(0).v_pose().y();         // Vel Y da bola
-
-    for(int i = 0 ; i < 3 ; i++){
-        global_state.robots_yellow(i).pose().x();           // Pos X do robô amarelo i
-        global_state.robots_yellow(i).pose().y();           // Pos Y do robô amarelo i
-        global_state.robots_yellow(i).pose().yaw();         // Rot Z do robô amarelo i
-
-        global_state.robots_yellow(i).v_pose().x();         // Vel X do robô amarelo i
-        global_state.robots_yellow(i).v_pose().y();         // Vel Y do robô amarelo i
-        global_state.robots_yellow(i).v_pose().yaw();       // Vel Z do robô amarelo i
-
-        global_state.robots_blue(i).pose().x();             // Pos X do robô azul i
-        global_state.robots_blue(i).pose().y();             // Pos Y do robô azul i
-        global_state.robots_blue(i).pose().yaw();           // Rot Z do robô azul i
-
-        global_state.robots_blue(i).v_pose().x();           // Vel X do robô azul i
-        global_state.robots_blue(i).v_pose().y();           // Vel Y do robô azul i
-        global_state.robots_blue(i).v_pose().yaw();         // Vel Z do robô azul i
-    }
 }
 
 void send_commands(){
@@ -86,16 +62,16 @@ void send_debug(){
 	for(int i = 0 ; i < 3 ; i++){                                   // Todos os robôs terão o vetor de movimentação variado perto deles mesmos
 		vss_debug::Pose *steps = global_debug.add_step_poses();
 		steps->set_id(i);
-		steps->set_x(global_state.robots_yellow(i).pose().x() - 10 + rand()%20);
-		steps->set_y(global_state.robots_yellow(i).pose().y() - 10 + rand()%20);
-		steps->set_yaw(global_state.robots_yellow(i).pose().yaw());
+		steps->set_x(state.teamYellow[i].x - 10 + rand()%20);
+		steps->set_y(state.teamYellow[i].y - 10 + rand()%20);
+		steps->set_yaw(state.teamYellow[i].angle);
 	}
 
 	for(int i = 0 ; i < 3 ; i++){                                   // Todos os robôs terão a pose final variada perto da bola
 		vss_debug::Pose *finals = global_debug.add_final_poses();
 		finals->set_id(i);
-		finals->set_x(global_state.balls(0).pose().x() - 10 + rand()%20);
-		finals->set_y(global_state.balls(0).pose().y() - 10 + rand()%20);
+		finals->set_x(state.teamYellow[i].x - 10 + rand()%20);
+		finals->set_y(state.teamYellow[i].y - 10 + rand()%20);
 		finals->set_yaw(0);
 	}
 
@@ -106,15 +82,15 @@ void send_debug(){
         // Pose do robô
         vss_debug::Pose *poses1 = paths->add_poses();
         poses1->set_id(i);
-        poses1->set_x(global_state.robots_yellow(i).pose().x());
-        poses1->set_y(global_state.robots_yellow(i).pose().y());
+        poses1->set_x(state.teamYellow[i].x);
+        poses1->set_y(state.teamYellow[i].y);
         poses1->set_yaw(0);
 
         // Pose da bola
         vss_debug::Pose *poses2 = paths->add_poses();
         poses2->set_id(i);
-        poses2->set_x(global_state.balls(0).pose().x());
-        poses2->set_y(global_state.balls(0).pose().y());
+        poses2->set_x(state.ball.x - 10 + rand()%20);
+        poses2->set_y(state.ball.y - 10 + rand()%20);
         poses2->set_yaw(0);
 	}
 
