@@ -46,3 +46,5 @@
 VSS-SampleCpp
 build/*
 cmake-build-debug/*
+.idea/*
+.idea/
