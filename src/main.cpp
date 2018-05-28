@@ -48,12 +48,12 @@ void send_commands(){
 	command.id = 0;
 
 	for(int i = 0 ; i < 3 ; i++){
-	    WheelsCommand wCommand;
-		wCommand.id = i;
-		wCommand.leftVel = 10;
-		wCommand.rightVel = -10;
+	    WheelsCommand wheelsCommand;
+        wheelsCommand.id = i;
+        wheelsCommand.leftVel = 10;
+        wheelsCommand.rightVel = -10;
 
-		command.commands.push_back(wCommand);
+		command.commands.push_back(wheelsCommand);
 	}
 
 	commandSender.sendCommand(command);
