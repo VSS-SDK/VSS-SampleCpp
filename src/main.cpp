@@ -31,47 +31,47 @@ int main(int argc, char** argv){
     debugSender = new DebugSender();
 
     stateReceiver->createSocket();
-	commandSender->createSocket(TeamType::Yellow);
-	debugSender->createSocket(TeamType::Yellow);
+    commandSender->createSocket(TeamType::Yellow);
+    debugSender->createSocket(TeamType::Yellow);
 
     while(true){
-    	state = stateReceiver->receiveState(FieldTransformationType::None);
+        state = stateReceiver->receiveState(FieldTransformationType::None);
         send_commands();
         send_debug();
     }
 
-	return 0;
+    return 0;
 }
 
 void send_commands(){
-	Command command;
+    Command command;
 
-	command.id = 0;
+    command.id = 0;
 
-	for(int i = 0 ; i < 3 ; i++){
-	    WheelsCommand wheelsCommand;
+    for(int i = 0 ; i < 3 ; i++){
+        WheelsCommand wheelsCommand;
 
         wheelsCommand.id = i;
         wheelsCommand.leftVel = 10;
         wheelsCommand.rightVel = -10;
 
-		command.commands.push_back(wheelsCommand);
-	}
+        command.commands.push_back(wheelsCommand);
+    }
 
-	commandSender->sendCommand(command);
+    commandSender->sendCommand(command);
 }
 
 void send_debug(){
-	vss::Debug debug;
+    vss::Debug debug;
 
-	for(unsigned int i = 0 ; i < 3 ; i++){
+    for(unsigned int i = 0 ; i < 3 ; i++){
         vss::Point point;
 
         point.x = state.teamYellow[i].x - 10 + rand()%20;
         point.y = state.teamYellow[i].y - 10 + rand()%20;
 
         debug.stepPoints.push_back(point);
-	}
+    }
 
     for(unsigned int i = 0 ; i < 3 ; i++){
         vss::Pose pose;
@@ -88,15 +88,15 @@ void send_debug(){
         vss::Point point_1;
         vss::Point point_2;
 
-	    point_1.x = state.teamYellow[i].x;
-	    point_1.y = state.teamYellow[i].y;
+        point_1.x = state.teamYellow[i].x;
+        point_1.y = state.teamYellow[i].y;
 
-	    point_2.x = state.ball.x - 10 + rand()%20;
-	    point_2.y = state.ball.y - 10 + rand()%20;
+        point_2.x = state.ball.x - 10 + rand()%20;
+        point_2.y = state.ball.y - 10 + rand()%20;
 
-	    path.points.push_back(point_1);
+        path.points.push_back(point_1);
         path.points.push_back(point_2);
-	}
+    }
 
     debugSender->sendDebug(debug);
 }
