@@ -20,6 +20,7 @@ IDebugSender *debugSender;
 
 State state;
 
+
 void send_commands();
 void send_debug();
 
