@@ -6,71 +6,99 @@
  * file, You can obtain one at http://www.gnu.org/licenses/gpl-3.0/.
  */
 
-#include "sstream"
-#include "strategy.h"
-#include "boost.h"
+#include <StateReceiver.h>
+#include <CommandSender.h>
+#include <DebugSender.h>
+#include "cstdlib"
+#include "interface.h"
 
-bool argParse(int argc, char** argv, string *color, bool *debug, string *ip_receive_state, string *ip_send_debug, string *ip_send_command, string *name);
+using namespace vss;
+
+IStateReceiver *stateReceiver;
+ICommandSender *commandSender;
+IDebugSender *debugSender;
+
+State state;
+
+
+void send_commands();
+void send_debug();
 
 int main(int argc, char** argv){
-	string color;
-    bool debug = false;
-    string name;
-    string ip_receive_state, ip_send_debug, ip_send_command;
+    srand(time(NULL));
 
-	if(argParse(argc, argv, &color, &debug, &ip_receive_state, &ip_send_debug, &ip_send_command, &name)){
-        if(color == "yellow" || color == "blue"){
-		    Strategy strategy;
-		    strategy.init(color, debug, false, ip_receive_state, ip_send_debug, ip_send_command, name);
-        }else{
-            cerr << "ERROR: Your main color must be yellow or blue." << endl;
-        }
-	}else{
-		cerr << "ERROR: You must enter a main color." << endl;
-	}
+    stateReceiver = new StateReceiver();
+    commandSender = new CommandSender();
+    debugSender = new DebugSender();
 
-	return 0;
+    stateReceiver->createSocket();
+    commandSender->createSocket(TeamType::Yellow);
+    debugSender->createSocket(TeamType::Yellow);
+
+    while(true){
+        state = stateReceiver->receiveState(FieldTransformationType::None);
+        send_commands();
+        send_debug();
+    }
+
+    return 0;
 }
 
-bool argParse(int argc, char** argv, string *color, bool *debug, string *ip_receive_state, string *ip_send_debug, string *ip_send_command, string *name){
-    namespace bpo = boost::program_options;
+void send_commands(){
+    Command command;
 
-    // Declare the supported options.
-    bpo::options_description desc("Allowed options");
-    desc.add_options()
-        ("help,h", "(Optional) produce help message")
-        ("debug,d", "(Optional) open the debug rotine")
-        ("name,n", bpo::value<std::string>()->default_value("sample"), "(Optional) Specify the name of the strategy.")
-        ("ip_receive_state,i", bpo::value<std::string>()->default_value("localhost"), "(Optional) Specify the IP from pc it's running VSS-Vision.")
-        ("ip_send_debug,I", bpo::value<std::string>()->default_value("localhost"), "(Optional) Specify the IP from pc it's running VSS-Viewer.")
-        ("ip_send_command,s", bpo::value<std::string>()->default_value("localhost"), "(Optional) Specify the IP from pc it's running VSS-Simulator.")
-        ("color,c", bpo::value<std::string>()->default_value(" "), "(Required) Specify the main color of your team, may be yellow or blue.");
-    bpo::variables_map vm;
-    bpo::store(bpo::parse_command_line(argc, argv, desc), vm);
-    bpo::notify(vm);
+    command.id = 0;
 
-    if (vm.count("help")){
-        std::cout << desc << std::endl;
-        return false;
+    for(int i = 0 ; i < 3 ; i++){
+        WheelsCommand wheelsCommand;
+
+        wheelsCommand.id = i;
+        wheelsCommand.leftVel = 10;
+        wheelsCommand.rightVel = -10;
+
+        command.commands.push_back(wheelsCommand);
     }
 
-    if (vm.count("debug")){
-        *debug = true;
+    commandSender->sendCommand(command);
+}
+
+
+void send_debug(){
+    vss::Debug debug;
+
+    for(unsigned int i = 0 ; i < 3 ; i++){
+        vss::Point point;
+
+        point.x = state.teamYellow[i].x - 10 + rand()%20;
+        point.y = state.teamYellow[i].y - 10 + rand()%20;
+
+        debug.stepPoints.push_back(point);
     }
 
-    *name = vm["name"].as<string>();  
+    for(unsigned int i = 0 ; i < 3 ; i++){
+        vss::Pose pose;
 
-    *ip_receive_state = vm["ip_receive_state"].as<string>();    
+        pose.x = state.teamYellow[i].x - 10 + rand()%20;
+        pose.y = state.teamYellow[i].y - 10 + rand()%20;
+        pose.angle = state.teamYellow[i].y - 10 + rand()%20;
 
-    *ip_send_debug = vm["ip_send_debug"].as<string>();
-
-    *ip_send_command = vm["ip_send_command"].as<string>();
-    
-    *color = vm["color"].as<string>();
-
-    if(*color == " "){
-        return false;
+        debug.finalPoses.push_back(pose);
     }
 
-    return true;
+    for(unsigned int i = 0 ; i < 3 ; i++){
+        vss::Path path;
+        vss::Point point_1;
+        vss::Point point_2;
+
+        point_1.x = state.teamYellow[i].x;
+        point_1.y = state.teamYellow[i].y;
+
+        point_2.x = state.ball.x - 10 + rand()%20;
+        point_2.y = state.ball.y - 10 + rand()%20;
+
+        path.points.push_back(point_1);
+        path.points.push_back(point_2);
+    }
+
+    debugSender->sendDebug(debug);
 }
