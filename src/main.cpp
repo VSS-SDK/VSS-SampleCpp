@@ -6,9 +6,9 @@
  * file, You can obtain one at http://www.gnu.org/licenses/gpl-3.0/.
  */
 
-#include <StateReceiver.h>
-#include <CommandSender.h>
-#include <DebugSender.h>
+#include <Communications/StateReceiver.h>
+#include <Communications/CommandSender.h>
+#include <Communications/DebugSender.h>
 #include "cstdlib"
 #include "interface.h"
 
@@ -47,12 +47,9 @@ int main(int argc, char** argv){
 void send_commands(){
     Command command;
 
-    command.id = 0;
-
     for(int i = 0 ; i < 3 ; i++){
         WheelsCommand wheelsCommand;
 
-        wheelsCommand.id = i;
         wheelsCommand.leftVel = 10;
         wheelsCommand.rightVel = -10;
 
