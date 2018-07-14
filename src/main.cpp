@@ -10,7 +10,6 @@
 #include <Communications/CommandSender.h>
 #include <Communications/DebugSender.h>
 #include "cstdlib"
-#include "interface.h"
 
 using namespace vss;
 
