@@ -9,6 +9,7 @@
 #include <Communications/StateReceiver.h>
 #include <Communications/CommandSender.h>
 #include <Communications/DebugSender.h>
+#include <Builders/StdinInterpreterBuilder.h>
 #include "cstdlib"
 
 using namespace vss;
@@ -22,16 +23,45 @@ State state;
 void send_commands();
 void send_debug();
 
+vss::ExecutionConfig loadExecutionConfig(int argc, char** argv){
+    auto stdinInterpreterBuilder = new vss::StdinInterpreterBuilder();
+
+    stdinInterpreterBuilder
+            ->onStateRecvAddr()
+            ->onStatePort()
+            ->onYellowDebugSendAddr()
+            ->onYellowDebugPort()
+            ->onBlueDebugSendAddr()
+            ->onBlueDebugPort()
+            ->onBlueCmdSendAddr()
+            ->onBlueCmdPort()
+            ->onYellowCmdSendAddr()
+            ->onYellowCmdPort()
+            ->onEnvironmentType()
+            ->onSideAttackType()
+            ->onTeamType();
+
+    auto stdinInterpreter = stdinInterpreterBuilder->buildInterpreter();
+
+    return stdinInterpreter->extractExecutionConfig(argc, argv);
+}
+
+
 int main(int argc, char** argv){
+    auto executionConfig = loadExecutionConfig(argc, argv);
+
+    if(!executionConfig.isValidConfiguration)
+        return 0;
+
     srand(time(NULL));
 
     stateReceiver = new StateReceiver();
     commandSender = new CommandSender();
     debugSender = new DebugSender();
 
-    stateReceiver->createSocket();
-    commandSender->createSocket(TeamType::Yellow);
-    debugSender->createSocket(TeamType::Yellow);
+    stateReceiver->createSocket(executionConfig);
+    commandSender->createSocket(executionConfig);
+    debugSender->createSocket(executionConfig);
 
     while(true){
         state = stateReceiver->receiveState(FieldTransformationType::None);
