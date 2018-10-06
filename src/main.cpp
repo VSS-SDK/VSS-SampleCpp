@@ -19,7 +19,6 @@ IDebugSender *debugSender;
 
 State state;
 
-
 void send_commands();
 void send_debug();
 
@@ -36,6 +35,8 @@ int main(int argc, char** argv){
 
     while(true){
         state = stateReceiver->receiveState(FieldTransformationType::None);
+        std::cout << state << std::endl;
+
         send_commands();
         send_debug();
     }
@@ -47,12 +48,7 @@ void send_commands(){
     Command command;
 
     for(int i = 0 ; i < 3 ; i++){
-        WheelsCommand wheelsCommand;
-
-        wheelsCommand.leftVel = 10;
-        wheelsCommand.rightVel = -10;
-
-        command.commands.push_back(wheelsCommand);
+        command.commands.push_back(WheelsCommand(10, -10));
     }
 
     commandSender->sendCommand(command);
@@ -63,37 +59,17 @@ void send_debug(){
     vss::Debug debug;
 
     for(unsigned int i = 0 ; i < 3 ; i++){
-        vss::Point point;
-
-        point.x = state.teamYellow[i].x - 10 + rand()%20;
-        point.y = state.teamYellow[i].y - 10 + rand()%20;
-
-        debug.stepPoints.push_back(point);
+        debug.stepPoints.push_back(Point(85 + rand()%20, 65 + rand()%20));
     }
 
     for(unsigned int i = 0 ; i < 3 ; i++){
-        vss::Pose pose;
-
-        pose.x = state.teamYellow[i].x - 10 + rand()%20;
-        pose.y = state.teamYellow[i].y - 10 + rand()%20;
-        pose.angle = state.teamYellow[i].y - 10 + rand()%20;
-
-        debug.finalPoses.push_back(pose);
+        debug.finalPoses.push_back(Pose(85 + rand()%20, 65 + rand()%20, rand()%20));
     }
 
     for(unsigned int i = 0 ; i < 3 ; i++){
         vss::Path path;
-        vss::Point point_1;
-        vss::Point point_2;
-
-        point_1.x = state.teamYellow[i].x;
-        point_1.y = state.teamYellow[i].y;
-
-        point_2.x = state.ball.x - 10 + rand()%20;
-        point_2.y = state.ball.y - 10 + rand()%20;
-
-        path.points.push_back(point_1);
-        path.points.push_back(point_2);
+        path.points.push_back(Point(85, 65));
+        path.points.push_back(Point(85 + rand()%20, 65 + rand()%20));
     }
 
     debugSender->sendDebug(debug);
