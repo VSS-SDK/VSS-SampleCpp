@@ -6,11 +6,8 @@
  * file, You can obtain one at http://www.gnu.org/licenses/gpl-3.0/.
  */
 
-#include <Communications/StateReceiver.h>
 #include <Communications/CommandSender.h>
-#include <Communications/DebugSender.h>
 #include <zconf.h>
-#include "cstdlib"
 
 using namespace vss;
 
