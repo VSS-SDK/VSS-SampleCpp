@@ -23,12 +23,7 @@ int main(int argc, char** argv){
         Command command;
 
         for(int i = 0 ; i < 3 ; i++){
-            WheelsCommand wheelsCommand;
-
-            wheelsCommand.leftVel = 10;
-            wheelsCommand.rightVel = -10;
-
-            command.commands.push_back(wheelsCommand);
+            command.commands.push_back(WheelsCommand(10, -10));
         }
 
         commandSender->sendCommand(command);
