@@ -3,16 +3,16 @@
 [![Trello](https://img.shields.io/badge/Trello-SDK-blue.svg)][vss-sdk-trello]
 [![Slack](https://img.shields.io/badge/Slack-Channel-551a8b.svg)][slack]
 
-O VSS-SampleCpp são exemplos de códigos em C++ que se comunicam com os projetos do VSS-SDK.
-Esse projeto utiliza o [VSS-Core][vss-core] como interface de comunicação.
-
-Mais informações podem ser encontradas em [VSS-SDK][vss-sdk].
-
 **Branches**
 1. receive-states
 2. send-commands
 3. send-debugs
 4. all-communications
+
+O VSS-SampleCpp são exemplos de códigos em C++ que se comunicam com os projetos do VSS-SDK.
+Esse projeto utiliza o [VSS-Core][vss-core] como interface de comunicação.
+
+Mais informações podem ser encontradas em [VSS-SDK][vss-sdk].
 
 ## Desenvolvimento
 ```
