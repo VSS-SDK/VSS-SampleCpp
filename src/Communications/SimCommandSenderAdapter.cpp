@@ -3,16 +3,16 @@
 //
 
 #include <Communications/CommandSender.h>
-#include <Communications/CommandSenderAdapter.h>
+#include <Communications/SimCommandSenderAdapter.h>
 
-CommandSenderAdapter::CommandSenderAdapter(vss::ExecutionConfig &executionConfig) {
+SimCommandSenderAdapter::SimCommandSenderAdapter(vss::ExecutionConfig &executionConfig) {
     this->executionConfig = executionConfig;
 
     this->commandSender = new vss::CommandSender();
     this->commandSender->createSocket(this->executionConfig);
 }
 
-void CommandSenderAdapter::send(vss::Command command) {
+void SimCommandSenderAdapter::send(vss::Command command) {
     this->commandSender->sendCommand(command);
 }
 

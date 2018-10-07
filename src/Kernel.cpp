@@ -7,7 +7,10 @@
 Kernel::Kernel(vss::ExecutionConfig executionConfig) {
     this->executionConfig = executionConfig;
 
-    commandSender = new CommandSenderAdapter(this->executionConfig);
+    // Constrói o CommandSender com base no EnvironmentType
+    commandSenderFactory = new CommandSenderFactory();
+
+    commandSender = commandSenderFactory->create(this->executionConfig);
     debugSender = new DebugSenderAdapter(this->executionConfig);
     stateReceiver = new StateReceiverAdapter(this->executionConfig);
 }

@@ -5,9 +5,10 @@
 #ifndef VSS_SAMPLE_KERNEL_H
 #define VSS_SAMPLE_KERNEL_H
 
-#include <Communications/CommandSenderAdapter.h>
+#include <Communications/SimCommandSenderAdapter.h>
 #include <Communications/DebugSenderAdapter.h>
 #include <Communications/StateReceiverAdapter.h>
+#include <Factories/CommandSenderFactory.h>
 
 class Kernel {
 public:
@@ -22,6 +23,7 @@ private:
     vss::Debug debug;
     vss::Command command;
 
+    ICommandSenderFactory* commandSenderFactory;
     ICommandSenderAdapter* commandSender;
     IDebugSenderAdapter* debugSender;
     IStateReceiverAdapter* stateReceiver;

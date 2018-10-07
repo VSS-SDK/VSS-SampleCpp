@@ -10,16 +10,15 @@
 #include <Domain/ExecutionConfig.h>
 #include <Domain/Command.h>
 
-class CommandSenderAdapter : public ICommandSenderAdapter {
+class SimCommandSenderAdapter : public ICommandSenderAdapter {
 public:
-    CommandSenderAdapter(vss::ExecutionConfig&);
+    SimCommandSenderAdapter(vss::ExecutionConfig&);
 
     void send(vss::Command) override;
 
 private:
     vss::ICommandSender *commandSender;
     vss::ExecutionConfig executionConfig;
-
 };
 
 #endif //VSS_SAMPLE_COMMANDSENDERADAPTER_H
