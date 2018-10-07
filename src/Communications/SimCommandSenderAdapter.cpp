@@ -16,3 +16,7 @@ void SimCommandSenderAdapter::send(vss::Command command) {
     this->commandSender->sendCommand(command);
 }
 
+std::string SimCommandSenderAdapter::getType() {
+    return type;
+}
+

@@ -15,8 +15,11 @@ public:
     SimCommandSenderAdapter(vss::ExecutionConfig&);
 
     void send(vss::Command) override;
+    std::string getType() override;
 
 private:
+    const std::string type = "SimCommandSenderAdapter";
+
     vss::ICommandSender *commandSender;
     vss::ExecutionConfig executionConfig;
 };

@@ -14,8 +14,11 @@ public:
     RealCommandSenderAdapter(vss::ExecutionConfig&);
 
     void send(vss::Command) override;
+    std::string getType() override;
 
 private:
+    const std::string type = "RealCommandSenderAdapter";
+
     vss::ExecutionConfig executionConfig;
 };
 

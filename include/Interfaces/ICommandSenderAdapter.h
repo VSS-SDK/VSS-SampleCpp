@@ -10,6 +10,7 @@
 class ICommandSenderAdapter {
 public:
     virtual void send(vss::Command) = 0;
+    virtual std::string getType() = 0;
 };
 
 #endif //VSS_SAMPLE_ICOMMANDSENDERADAPTER_H

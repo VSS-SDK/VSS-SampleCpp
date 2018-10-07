@@ -11,3 +11,7 @@ RealCommandSenderAdapter::RealCommandSenderAdapter(vss::ExecutionConfig &executi
 void RealCommandSenderAdapter::send(vss::Command command) {
     // Envia o comando para os robôs reais
 }
+
+std::string RealCommandSenderAdapter::getType() {
+    return type;
+}
