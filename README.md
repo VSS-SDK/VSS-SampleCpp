@@ -10,6 +10,7 @@
 4. all-communications
 5. with-stdin-options
 6. object-oriented
+7. unit-tests
 
 O VSS-SampleCpp são exemplos de códigos em C++ que se comunicam com os projetos do VSS-SDK.
 Esse projeto utiliza o [VSS-Core][vss-core] como interface de comunicação.
