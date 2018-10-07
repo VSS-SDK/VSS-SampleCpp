@@ -7,6 +7,8 @@ find_package(PkgConfig)
 INCLUDE(FindProtobuf)
 FIND_PACKAGE(Protobuf REQUIRED)
 
+include_directories(include include/Communications include/Interfaces)
+include_directories(src src/Communications)
 
 file(GLOB_RECURSE SRCS_CPP src/*.cpp)
 file(GLOB_RECURSE SRCS_CC src/*.cc)
