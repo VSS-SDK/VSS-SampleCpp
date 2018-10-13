@@ -7,12 +7,9 @@
 
 #include <Interfaces/IMathModel.h>
 
-class BlazicModel : public IMathModel {
+class Rodetas2017Model : public IMathModel {
 public:
     vss::WheelsCommand getCommand(vss::Robot actual, vss::Robot objective) override;
-
-private:
-    double getFit(vss::Pose, vss::Pose);
 };
 
 #endif //VSS_SAMPLE_BLAZICMODEL_H

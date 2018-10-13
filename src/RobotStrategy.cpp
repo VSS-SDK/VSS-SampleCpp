@@ -5,7 +5,7 @@
 #include <RobotStrategy.h>
 #include <Domain/ExecutionConfig.h>
 #include <Factories/StrategyFactory.h>
-#include <MathModels/BlazicModel.h>
+#include <MathModels/Rodetas2017Model.h>
 
 RobotStrategy::RobotStrategy(unsigned int index, StrategyType strategyType, vss::ExecutionConfig& executionConfig) {
     this->strategyFactory = new StrategyFactory();
@@ -13,7 +13,7 @@ RobotStrategy::RobotStrategy(unsigned int index, StrategyType strategyType, vss:
 
     this->index = index;
     this->strategy = strategyFactory->create(strategyType);
-    this->mathModel = new BlazicModel();
+    this->mathModel = new Rodetas2017Model();
 }
 
 vss::WheelsCommand RobotStrategy::getCommand(vss::State state) {
