@@ -12,7 +12,6 @@ public:
     vss::WheelsCommand getCommand(vss::Robot actual, vss::Robot objective) override;
 
 private:
-    bool objectAndActualAreEqual(vss::Robot actual, vss::Robot objective);
     double getFit(vss::Pose, vss::Pose);
 };
 

@@ -8,7 +8,7 @@
 
 
 vss::WheelsCommand BlazicModel::getCommand(vss::Robot actual, vss::Robot objective) {
-    if(this->objectAndActualAreEqual(actual, objective))
+    if(actual == objective)
         return vss::WheelsCommand(0,0);
 
     auto wheelsCommand = vss::WheelsCommand(10, -10);
@@ -24,28 +24,6 @@ vss::WheelsCommand BlazicModel::getCommand(vss::Robot actual, vss::Robot objecti
     }*/
 
     return wheelsCommand;
-}
-
-bool BlazicModel::objectAndActualAreEqual(vss::Robot actual, vss::Robot objective) {
-    if(actual.x != objective.x)
-        return false;
-
-    if(actual.y != objective.y)
-        return false;
-
-    if(actual.angle != objective.angle)
-        return false;
-
-    if(actual.speedX != objective.speedX)
-        return false;
-
-    if(actual.speedY != objective.speedY)
-        return false;
-
-    if(actual.speedAngle != objective.speedAngle)
-        return false;
-
-    return true;
 }
 
 double BlazicModel::getFit(vss::Pose difference, vss::Pose act) {
