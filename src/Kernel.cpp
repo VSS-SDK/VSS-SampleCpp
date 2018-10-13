@@ -4,7 +4,7 @@
 
 #include <Kernel.h>
 
-Kernel::Kernel(vss::ExecutionConfig executionConfig) {
+Kernel::Kernel(vss::ExecutionConfig& executionConfig) {
     this->executionConfig = executionConfig;
 
     // Constrói o CommandSender com base no EnvironmentType
@@ -13,26 +13,20 @@ Kernel::Kernel(vss::ExecutionConfig executionConfig) {
     commandSender = commandSenderFactory->create(this->executionConfig);
     debugSender = new DebugSenderAdapter(this->executionConfig);
     stateReceiver = new StateReceiverAdapter(this->executionConfig);
+
+    this->team = new Team(this->executionConfig);
 }
 
 void Kernel::run() {
     while(true) {
         this->state = stateReceiver->receive(vss::FieldTransformationType::None);
-        this->sendCommand();
+
+        this->command = team->getCommandFromState(state);
+        this->commandSender->send(command);
+
         this->sendDebug();
     }
 }
-
-void Kernel::sendCommand(){
-    this->command = vss::Command();
-
-    for(int i = 0 ; i < 3 ; i++){
-        command.commands.push_back(vss::WheelsCommand(10, -10));
-    }
-
-    this->commandSender->send(command);
-}
-
 
 void Kernel::sendDebug(){
     this->debug = vss::Debug();

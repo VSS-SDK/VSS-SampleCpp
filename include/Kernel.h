@@ -9,10 +9,11 @@
 #include <Communications/DebugSenderAdapter.h>
 #include <Communications/StateReceiverAdapter.h>
 #include <Factories/CommandSenderFactory.h>
+#include "Team.h"
 
 class Kernel {
 public:
-    Kernel(vss::ExecutionConfig);
+    Kernel(vss::ExecutionConfig&);
 
     void run();
 
@@ -28,7 +29,8 @@ private:
     IDebugSenderAdapter* debugSender;
     IStateReceiverAdapter* stateReceiver;
 
-    void sendCommand();
+    Team* team;
+
     void sendDebug();
 };
 
