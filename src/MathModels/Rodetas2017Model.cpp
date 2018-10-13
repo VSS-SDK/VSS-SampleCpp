@@ -11,7 +11,7 @@ vss::WheelsCommand Rodetas2017Model::getCommand(vss::Robot actual, vss::Robot ob
     if(actual == objective)
         return vss::WheelsCommand(0,0);
 
-    auto wheelsCommand = vss::WheelsCommand(10, -10);
+    auto wheelsCommand = vss::WheelsCommand(0, 0);
 
     float standardPower = 20;
     auto angleToObjective = vss::Math::angleBetween(actual, objective);
