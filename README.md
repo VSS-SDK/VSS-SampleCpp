@@ -11,12 +11,12 @@
 5. with-stdin-options
 6. object-oriented
 7. unit-tests
+7. go-to-ball
 
 O VSS-SampleCpp são exemplos de códigos em C++ que se comunicam com os projetos do VSS-SDK.
-Esse projeto utiliza o [VSS-Core][vss-core] como interface de comunicação.
+Esse projeto utiliza o [VSS-Core][corecpp] como interface de comunicação.
 
 Mais informações podem ser encontradas em [VSS-SDK][vss-sdk].
-
 
 ## Desenvolvimento
 ```
@@ -24,6 +24,20 @@ $ sudo ./configure.sh
 $ cd build
 $ ./vss-sample
 ```
+
+## VSS-Samples
+> Versão em C++: [VSS-SampleCpp][samplecpp]
+
+> Versão em Python: [VSS-SamplePy][samplepy]
+
+> Versão em Rust: [VSS-SampleRust][samplerust]
+
+## VSS-Cores
+> Versão em C++: [VSS-CoreCpp][corecpp]
+
+>Versão em Python: [VSS-CorePy][corepy]
+
+> Versão em Rust: [VSS-CoreRust][corerust]
 
 # Licença
 
@@ -33,8 +47,12 @@ Você pode utilizar esse código. Caso o faça, nos informe.
 
 [gpl3]: http://www.gnu.org/licenses/gpl-3.0/
 [travis]: https://travis-ci.org/SIRLab/VSS-SampleRust
-[install]: https://github.com/SIRLab/VSS-SampleCppy/blob/master/INSTALL.md
-[vss-sdk]: http://sirlab.github.io/VSS-SDK
-[vss-core]: https://github.com/SIRLab/VSS-Core
+[vss-sdk]: https://vss-sdk.github.io
 [vss-sdk-trello]: https://trello.com/b/b4dVV6ug/vss-sdk
 [slack]: https://vss-sdk.slack.com
+[samplecpp]: https://github.com/VSS-SDK/VSS-SampleCpp
+[samplepy]: https://github.com/VSS-SDK/VSS-SamplePy
+[samplerust]: https://github.com/VSS-SDK/VSS-SampleRust
+[corecpp]: https://github.com/VSS-SDK/VSS-Core
+[corepy]: https://github.com/VSS-SDK/VSS-CorePy
+[corerust]: https://github.com/VSS-SDK/VSS-CoreRust
